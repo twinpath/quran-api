@@ -14,6 +14,8 @@
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
 	],
+	"minify": true,
+	"keep_names": false,
 	"workers_dev": true,
 	"routes": [
 		{
