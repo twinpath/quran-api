@@ -14,6 +14,13 @@
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
 	],
+	"workers_dev": true,
+	"routes": [
+		{
+			"pattern": "quran.dyzulk.com",
+			"custom_domain": true
+		}
+	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".open-next/assets"
