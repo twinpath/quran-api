@@ -18,11 +18,11 @@
 		"binding": "ASSETS",
 		"directory": ".open-next/assets"
 	},
-	"images": {
-		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
-		"binding": "IMAGES"
-	},
+	// "images": {
+	// 	// Enable image optimization
+	// 	// see https://opennext.js.org/cloudflare/howtos/image
+	// 	"binding": "IMAGES"
+	// },
 	"services": [
 		{
 			// Self-reference service binding, the service name must match the worker name
