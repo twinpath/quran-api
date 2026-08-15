@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
+
+const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
+
+const dmSans = DM_Sans({subsets:['latin'],variable:'--font-sans'});
+
+export const dynamic = "force-dynamic";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -23,11 +32,16 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" className={cn("font-sans", dmSans.variable, geistHeading.variable)}>
 			<head>
 				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
 			</head>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+				<TooltipProvider>
+					{children}
+					<Toaster />
+				</TooltipProvider>
+			</body>
 		</html>
 	);
 }
