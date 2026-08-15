@@ -1,0 +1,104 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import type { PlaygroundState, PlaygroundResponse, CodeSnippetLang } from "@/types/api";
+import { API_ENDPOINTS, buildEndpointUrl, generateCodeSnippet } from "@/lib/api-endpoints";
+import { SITE_URL } from "@/lib/constants";
+
+const DEFAULT_STATE: PlaygroundState = {
+  selectedEndpointId: API_ENDPOINTS[0].id,
+  paramValues: {},
+  response: null,
+  isLoading: false,
+  activeSnippetLang: "curl",
+};
+
+/**
+ * Hook for managing the interactive API playground state.
+ */
+export function useApiPlayground() {
+  const [state, setState] = useState<PlaygroundState>(DEFAULT_STATE);
+
+  const selectedEndpoint = API_ENDPOINTS.find((e) => e.id === state.selectedEndpointId) ?? API_ENDPOINTS[0];
+
+  const selectEndpoint = useCallback((endpointId: string) => {
+    setState((prev) => ({
+      ...prev,
+      selectedEndpointId: endpointId,
+      paramValues: {},
+      response: null,
+    }));
+  }, []);
+
+  const setParamValue = useCallback((name: string, value: string) => {
+    setState((prev) => ({
+      ...prev,
+      paramValues: { ...prev.paramValues, [name]: value },
+    }));
+  }, []);
+
+  const setSnippetLang = useCallback((lang: CodeSnippetLang) => {
+    setState((prev) => ({ ...prev, activeSnippetLang: lang }));
+  }, []);
+
+  const executeRequest = useCallback(async () => {
+    setState((prev) => ({ ...prev, isLoading: true, response: null }));
+
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : SITE_URL;
+    const url = buildEndpointUrl(selectedEndpoint, state.paramValues, baseUrl);
+
+    const startTime = performance.now();
+
+    try {
+      const res = await fetch(url);
+      const data = (await res.json()) as Record<string, unknown>;
+      const latencyMs = performance.now() - startTime;
+
+      const response: PlaygroundResponse = {
+        status: res.status,
+        statusText: res.statusText,
+        latencyMs,
+        data,
+      };
+
+      setState((prev) => ({ ...prev, isLoading: false, response }));
+    } catch {
+      const latencyMs = performance.now() - startTime;
+
+      // Fallback to sample response on error (e.g. CORS in dev)
+      const response: PlaygroundResponse = {
+        status: 200,
+        statusText: "OK (Sample)",
+        latencyMs,
+        data: selectedEndpoint.sampleResponse,
+      };
+
+      setState((prev) => ({ ...prev, isLoading: false, response }));
+    }
+  }, [selectedEndpoint, state.paramValues]);
+
+  const resolvedUrl = buildEndpointUrl(
+    selectedEndpoint,
+    state.paramValues,
+    typeof globalThis.window !== "undefined" ? window.location.origin : SITE_URL,
+  );
+
+  const codeSnippet = generateCodeSnippet(
+    selectedEndpoint,
+    state.paramValues,
+    state.activeSnippetLang,
+    typeof globalThis.window !== "undefined" ? window.location.origin : SITE_URL,
+  );
+
+  return {
+    state,
+    selectedEndpoint,
+    endpoints: API_ENDPOINTS,
+    resolvedUrl,
+    codeSnippet,
+    selectEndpoint,
+    setParamValue,
+    setSnippetLang,
+    executeRequest,
+  };
+}

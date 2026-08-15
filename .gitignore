@@ -50,3 +50,6 @@ next-env.d.ts
 
 
 !.dev.vars.example
+
+# git worktree
+/master/
