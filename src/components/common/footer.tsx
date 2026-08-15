@@ -39,12 +39,19 @@ export function Footer() {
                         {link.label}
                       </a>
                     ) : (
-                      <Link
-                        href={link.href}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {link.label}
-                      </Link>
+                      (() => {
+                        const isHash = link.href.includes("#");
+                        const className = "text-sm text-muted-foreground transition-colors hover:text-foreground";
+                        return isHash ? (
+                          <a href={link.href} className={className}>
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link href={link.href} className={className}>
+                            {link.label}
+                          </Link>
+                        );
+                      })()
                     )}
                   </li>
                 ))}
