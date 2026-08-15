@@ -4,7 +4,7 @@ import type { NavItem, FooterSection, StatItem, FaqItem, FeatureItem, Contributo
 export const SITE_NAME = "Quran JSON";
 export const SITE_DESCRIPTION =
   "Free, open-source Al-Quran REST API delivering accurate Arabic text, Indonesian translations, and Tafsir Kemenag RI as clean JSON at the edge.";
-export const SITE_URL = "https://quran-json.twinpath.dev";
+export const SITE_URL = "https://quran.dyzulk.com";
 
 /** GitHub repository */
 export const GITHUB_REPO_URL = "https://github.com/twinpath/quran-json";
@@ -70,7 +70,7 @@ export const FOOTER_SECTIONS: FooterSection[] = [
     links: [
       { label: "GitHub Repository", href: GITHUB_REPO_URL, external: true },
       { label: "Kemenag RI", href: DATA_SOURCE_URL, external: true },
-      { label: "License (MIT)", href: `${GITHUB_REPO_URL}/blob/master/LICENSE.md`, external: true },
+      { label: "License (MIT)", href: `${GITHUB_REPO_URL}/blob/data/LICENSE.md`, external: true },
     ],
   },
   {
