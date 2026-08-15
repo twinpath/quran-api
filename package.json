@@ -12,6 +12,11 @@
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
 	},
+	"engines": {
+		"node": ">=24.14.0 < 25.0.0",
+		"pnpm": ">=11.21.0 < 12.0.0"
+	},
+	"packageManager": "pnpm@11.21.0",
 	"dependencies": {
 		"@base-ui/react": "^1.7.0",
 		"@opennextjs/cloudflare": "^1.19.9",
