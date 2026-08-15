@@ -26,7 +26,7 @@ export function ApiPlayground() {
   } = useApiPlayground();
 
   return (
-    <section id="api-playground" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <section id="api-playground" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-8 text-center">
         <h2 className="font-heading text-3xl font-bold tracking-tight">API Playground</h2>
         <p className="mt-2 text-muted-foreground">

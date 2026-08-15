@@ -48,9 +48,9 @@ export const STATS: StatItem[] = [
 
 /** Navigation items */
 export const NAV_ITEMS: NavItem[] = [
-  { label: "API Playground", href: "#api-playground" },
-  { label: "Surah Explorer", href: "#surah-explorer" },
-  { label: "Quickstart", href: "#quickstart" },
+  { label: "API Playground", href: "/#api-playground" },
+  { label: "Surah Explorer", href: "/#surah-explorer" },
+  { label: "Quickstart", href: "/#quickstart" },
   { label: "About", href: "/about" },
 ];
 
@@ -59,9 +59,9 @@ export const FOOTER_SECTIONS: FooterSection[] = [
   {
     title: "Product",
     links: [
-      { label: "API Playground", href: "#api-playground" },
-      { label: "Surah Explorer", href: "#surah-explorer" },
-      { label: "Quickstart", href: "#quickstart" },
+      { label: "API Playground", href: "/#api-playground" },
+      { label: "Surah Explorer", href: "/#surah-explorer" },
+      { label: "Quickstart", href: "/#quickstart" },
       { label: "About", href: "/about" },
     ],
   },

@@ -64,7 +64,7 @@ curl -s ${SITE_URL}/surah/112.json | jq '.["112"].translations.id.text'`,
 
 export function QuickstartSection() {
   return (
-    <section id="quickstart" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <section id="quickstart" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-8 text-center">
         <h2 className="font-heading text-3xl font-bold tracking-tight">Quickstart</h2>
         <p className="mt-2 text-muted-foreground">

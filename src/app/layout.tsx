@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { Header } from "@/components/common/header";
 import { Footer } from "@/components/common/footer";
+import { HashScroll } from "@/components/common/hash-scroll";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/constants";
 
 const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
@@ -50,6 +51,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>
             <div className="relative flex min-h-screen flex-col">
+              <HashScroll />
               <Header />
               <main className="flex-1">{children}</main>
               <Footer />

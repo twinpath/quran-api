@@ -14,7 +14,7 @@ export function SurahExplorer() {
     useSurahSearch();
 
   return (
-    <section id="surah-explorer" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <section id="surah-explorer" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-8 text-center">
         <h2 className="font-heading text-3xl font-bold tracking-tight">Surah Explorer</h2>
         <p className="mt-2 text-muted-foreground">
