@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { PlaygroundState, PlaygroundResponse, CodeSnippetLang } from "@/types/api";
 import { API_ENDPOINTS, buildEndpointUrl, generateCodeSnippet } from "@/lib/api-endpoints";
 import { SITE_URL } from "@/lib/constants";
@@ -18,6 +18,13 @@ const DEFAULT_STATE: PlaygroundState = {
  */
 export function useApiPlayground() {
   const [state, setState] = useState<PlaygroundState>(DEFAULT_STATE);
+  const [origin, setOrigin] = useState<string>(SITE_URL);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   const selectedEndpoint = API_ENDPOINTS.find((e) => e.id === state.selectedEndpointId) ?? API_ENDPOINTS[0];
 
@@ -44,9 +51,7 @@ export function useApiPlayground() {
   const executeRequest = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, response: null }));
 
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : SITE_URL;
-    const url = buildEndpointUrl(selectedEndpoint, state.paramValues, baseUrl);
-
+    const url = buildEndpointUrl(selectedEndpoint, state.paramValues, origin);
     const startTime = performance.now();
 
     try {
@@ -75,19 +80,15 @@ export function useApiPlayground() {
 
       setState((prev) => ({ ...prev, isLoading: false, response }));
     }
-  }, [selectedEndpoint, state.paramValues]);
+  }, [selectedEndpoint, state.paramValues, origin]);
 
-  const resolvedUrl = buildEndpointUrl(
-    selectedEndpoint,
-    state.paramValues,
-    typeof globalThis.window !== "undefined" ? window.location.origin : SITE_URL,
-  );
+  const resolvedUrl = buildEndpointUrl(selectedEndpoint, state.paramValues, origin);
 
   const codeSnippet = generateCodeSnippet(
     selectedEndpoint,
     state.paramValues,
     state.activeSnippetLang,
-    typeof globalThis.window !== "undefined" ? window.location.origin : SITE_URL,
+    origin,
   );
 
   return {

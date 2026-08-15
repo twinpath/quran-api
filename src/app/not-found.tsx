@@ -18,7 +18,7 @@ export default function NotFound() {
 
       {/* Actions */}
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Button size="lg" className="gap-2" render={<Link href="/" />}>
+        <Button size="lg" className="gap-2" nativeButton={false} render={<Link href="/" />}>
           <Home className="h-4 w-4" />
           Back to Home
         </Button>
@@ -26,6 +26,7 @@ export default function NotFound() {
           variant="outline"
           size="lg"
           className="gap-2"
+          nativeButton={false}
           render={<Link href="/about" />}
         >
           <ArrowLeft className="h-4 w-4" />

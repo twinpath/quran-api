@@ -38,6 +38,7 @@ export function Header() {
             variant="outline"
             size="sm"
             className="hidden gap-2 sm:flex"
+            nativeButton={false}
             render={<a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer" />}
           >
             <GitFork className="h-4 w-4" />

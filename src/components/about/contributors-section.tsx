@@ -25,6 +25,7 @@ export function ContributorsSection() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  nativeButton={false}
                   render={<a href={contributor.url} target="_blank" rel="noopener noreferrer" />}
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -45,6 +46,7 @@ export function ContributorsSection() {
           variant="outline"
           size="sm"
           className="mt-4 gap-2"
+          nativeButton={false}
           render={<a href={`${GITHUB_REPO_URL}/pulls`} target="_blank" rel="noopener noreferrer" />}
         >
           <ExternalLink className="h-3.5 w-3.5" />
