@@ -43,7 +43,20 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "quran",
+			"database_id": "5b0ee448-f979-48e6-b7a1-9b171059ed75"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "0a7ea718a0024f47a16a87216a686857"
+		}
+	],
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
