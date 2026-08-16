@@ -40,14 +40,13 @@ export function Header() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
-            size="sm"
-            className="hidden gap-2 sm:flex"
+            variant="ghost"
+            size="icon"
             nativeButton={false}
             render={<a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer" />}
           >
-            <SiGithub className="h-4 w-4" />
-            <span>GitHub</span>
+            <SiGithub className="h-5 w-5" />
+            <span className="sr-only">GitHub</span>
           </Button>
           <ThemeToggle />
           <Button
@@ -89,15 +88,6 @@ export function Header() {
                 </Link>
               );
             })}
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              <SiGithub className="h-4 w-4" />
-              GitHub
-            </a>
           </nav>
         </div>
       )}
