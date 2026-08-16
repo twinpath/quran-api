@@ -55,18 +55,21 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
               style={{ ...style, backgroundColor: "transparent" }}
             >
               {tokens.map((line, i) => {
-                const lineProps = getLineProps({ line, key: i });
+                const { key: _lineKey, ...lineProps } = getLineProps({ line, key: i });
                 return (
-                  <div {...lineProps} key={i} className={cn("flex", lineProps.className)}>
+                  <div key={i} {...lineProps} className={cn("flex", lineProps.className)}>
                     {showLineNumbers && (
                       <span className="mr-4 inline-block w-6 select-none text-right text-muted-foreground/50 shrink-0">
                         {i + 1}
                       </span>
                     )}
                     <span className="flex-1">
-                      {line.map((token, key) => (
-                        <span key={key} {...getTokenProps({ token })} />
-                      ))}
+                      {line.map((token, tokenIdx) => {
+                        const { key: _tokenKey, ...tokenProps } = getTokenProps({ token, key: tokenIdx });
+                        return (
+                          <span key={tokenIdx} {...tokenProps} />
+                        );
+                      })}
                     </span>
                   </div>
                 );

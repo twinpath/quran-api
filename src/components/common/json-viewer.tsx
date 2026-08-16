@@ -42,13 +42,19 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
               className={cn("whitespace-pre-wrap break-words", highlightClass)}
               style={{ ...style, backgroundColor: "transparent" }}
             >
-              {tokens.map((line, i) => (
-                <div {...getLineProps({ line, key: i })} key={i}>
-                  {line.map((token, key) => (
-                    <span {...getTokenProps({ token, key })} key={key} />
-                  ))}
-                </div>
-              ))}
+              {tokens.map((line, i) => {
+                const { key: _lineKey, ...lineProps } = getLineProps({ line, key: i });
+                return (
+                  <div key={i} {...lineProps}>
+                    {line.map((token, tokenIdx) => {
+                      const { key: _tokenKey, ...tokenProps } = getTokenProps({ token, key: tokenIdx });
+                      return (
+                        <span key={tokenIdx} {...tokenProps} />
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </pre>
           )}
         </Highlight>
