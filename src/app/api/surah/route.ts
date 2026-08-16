@@ -6,8 +6,6 @@ import { getFromCache, putInCache } from "@/lib/cache-helper";
 import { logTelemetry } from "@/lib/telemetry";
 import type { ApiResponse, ApiErrorResponse, ApiSurahListItem } from "@/types/api";
 
-export const runtime = "edge";
-
 /**
  * GET /api/surah
  * Returns a list of all 114 surahs with metadata.

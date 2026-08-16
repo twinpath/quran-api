@@ -7,8 +7,6 @@ import { getFromCache, putInCache } from "@/lib/cache-helper";
 import { logTelemetry } from "@/lib/telemetry";
 import type { ApiResponse, ApiErrorResponse, ApiSurahDetail, ApiAyahItem } from "@/types/api";
 
-export const runtime = "edge";
-
 /**
  * GET /api/surah/[number]
  * Returns a single surah with all ayahs, translations, and tafsir.

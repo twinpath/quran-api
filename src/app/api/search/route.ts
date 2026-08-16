@@ -6,8 +6,6 @@ import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
 import type { ApiResponse, ApiErrorResponse, ApiSearchResult, ApiSearchHit } from "@/types/api";
 
-export const runtime = "edge";
-
 /** Maximum number of search results returned */
 const MAX_RESULTS = 50;
 
