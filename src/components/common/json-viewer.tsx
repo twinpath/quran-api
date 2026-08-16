@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Copy, Check } from "lucide-react";
 import { Highlight } from "prism-react-renderer";
 import { Prism } from "@/lib/prism-loader";
@@ -13,6 +14,29 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
   const { hasCopied, copy } = useCopyToClipboard();
   const prismTheme = usePrismTheme();
   const jsonString = JSON.stringify(data, null, 2);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className={cn("group relative rounded-lg border border-border bg-muted/50", className)}>
+        <div className="flex items-center justify-between border-b border-border/60 px-4 py-2">
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            JSON
+          </span>
+          <div className="h-7 w-7" />
+        </div>
+        <div className="overflow-auto p-4 font-mono text-[13px] leading-relaxed text-muted-foreground/80" style={{ maxHeight }}>
+          <pre className="whitespace-pre-wrap break-words">
+            <code>{jsonString}</code>
+          </pre>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("group relative rounded-lg border border-border bg-muted/50", className)}>

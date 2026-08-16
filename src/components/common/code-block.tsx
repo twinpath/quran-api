@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Copy, Check } from "lucide-react";
 import { Highlight } from "prism-react-renderer";
 import { Prism } from "@/lib/prism-loader";
@@ -20,6 +21,31 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
   const { hasCopied, copy } = useCopyToClipboard();
   const prismTheme = usePrismTheme();
   const normalizedLang = normalizeLanguage(language);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className={cn("group relative rounded-lg border border-border bg-muted/50 font-mono text-sm", className)}>
+        <div className="flex items-center justify-between border-b border-border/60 px-4 py-2">
+          {language && (
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {language}
+            </span>
+          )}
+          <div className="h-7 w-7" />
+        </div>
+        <div className="overflow-x-auto p-4">
+          <pre className="text-[13px] leading-relaxed text-muted-foreground/80">
+            <code>{code.trim()}</code>
+          </pre>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("group relative rounded-lg border border-border bg-muted/50 font-mono text-sm", className)}>
