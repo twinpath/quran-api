@@ -5,9 +5,9 @@ export const SITE_DESCRIPTION =
 export const SITE_URL = "https://quran.dyzulk.com";
 
 /** GitHub repository */
-export const GITHUB_REPO_URL = "https://github.com/twinpath/quran-json";
+export const GITHUB_REPO_URL = "https://github.com/twinpath/quran-api";
 export const GITHUB_REPO_OWNER = "twinpath";
-export const GITHUB_REPO_NAME = "quran-json";
+export const GITHUB_REPO_NAME = "quran-api";
 
 /** Data source attribution */
 export const DATA_SOURCE_NAME = "Kementerian Agama Republik Indonesia";

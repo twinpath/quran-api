@@ -106,8 +106,8 @@ Each surah is represented as a structured JSON object:
 
 ```bash
 # Clone the repository
-git clone https://github.com/twinpath/quran-json.git
-cd quran-json
+git clone https://github.com/twinpath/quran-api.git
+cd quran-api
 
 # Ensure you are on the web branch
 git checkout web
@@ -152,7 +152,7 @@ We express our sincere appreciation to the contributors and institutions that ma
 
 - **Source Authority**: [Kementerian Agama Republik Indonesia (Kemenag RI)](https://quran.kemenag.go.id) for the authentic Arabic texts, official Indonesian translations, and Tafsir Al-Qur'an.
 - **Original Dataset Creator**: [Rio Astamal](https://github.com/rioastamal/quran-json) for the foundational curation and extraction script.
-- **Maintenance & Modernization**: [Twinpath](https://github.com/twinpath/quran-json) for building and maintaining the edge-native web application and modern JSON tooling.
+- **Maintenance & Modernization**: [Twinpath](https://github.com/twinpath/quran-api) for building and maintaining the edge-native web application and modern JSON tooling.
 
 ---
 
