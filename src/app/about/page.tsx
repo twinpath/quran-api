@@ -6,13 +6,14 @@ import { ArchitectureOverview } from "@/components/about/architecture-overview";
 import { ContributorsSection } from "@/components/about/contributors-section";
 import { AboutSkeleton } from "@/components/about/about-skeleton";
 import { CtaBanner } from "@/components/home/cta-banner";
-import { SITE_NAME } from "@/constants";
+import { SITE_PAGE_METADATA } from "@/constants";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    `Learn about the ${SITE_NAME} project, its dataset lineage, edge architecture, and how to contribute.`,
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: SITE_PAGE_METADATA.about.title,
+  description: SITE_PAGE_METADATA.about.description,
+  path: SITE_PAGE_METADATA.about.path,
+});
 
 export default function AboutPage() {
   return (

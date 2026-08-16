@@ -14,7 +14,14 @@ import { ThemeProvider } from "@/components/common/theme-provider";
 import { Header } from "@/components/common/header";
 import { Footer } from "@/components/common/footer";
 import { HashScroll } from "@/components/common/hash-scroll";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/constants";
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  SITE_ORGANIZATION_SCHEMA,
+  SITE_WEBSITE_SCHEMA,
+} from "@/constants";
+import { buildPageMetadata } from "@/lib/seo";
 
 const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -42,18 +49,19 @@ const arefRuqaa = Aref_Ruqaa({
 });
 
 export const metadata: Metadata = {
+  ...buildPageMetadata({
+    description: SITE_DESCRIPTION,
+    path: "/",
+  }),
   title: {
-    default: `${SITE_NAME} - Al-Quran REST API`,
+    default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,
   },
-  description: SITE_DESCRIPTION,
-  metadataBase: new URL(SITE_URL),
-  openGraph: {
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    type: "website",
+  applicationName: SITE_NAME,
+  authors: [{ name: "Twinpath" }],
+  category: "technology",
+  alternates: {
+    canonical: SITE_URL,
   },
 };
 
@@ -66,6 +74,18 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={cn("font-sans", dmSans.variable, geistHeading.variable, geistMono.variable, amiriQuran.variable, arefRuqaa.variable)}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(SITE_WEBSITE_SCHEMA),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(SITE_ORGANIZATION_SCHEMA),
+          }}
+        />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

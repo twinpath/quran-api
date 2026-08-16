@@ -2,12 +2,14 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { StatusPageClient } from "@/components/status/status-page-client";
 import { StatusSkeleton } from "@/components/status/status-skeleton";
-import { STATUS_SITE_METADATA } from "@/constants";
+import { SITE_PAGE_METADATA } from "@/constants";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: STATUS_SITE_METADATA.title,
-  description: STATUS_SITE_METADATA.description,
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: SITE_PAGE_METADATA.status.title,
+  description: SITE_PAGE_METADATA.status.description,
+  path: SITE_PAGE_METADATA.status.path,
+});
 
 export default function StatusPage() {
   return (

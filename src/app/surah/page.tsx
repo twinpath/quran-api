@@ -2,12 +2,14 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { SurahCatalog } from "@/components/surah/surah-catalog";
 import { SurahCatalogSkeleton } from "@/components/surah/surah-catalog-skeleton";
-import { SITE_NAME } from "@/constants";
+import { SITE_PAGE_METADATA } from "@/constants";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `Surah Catalog | ${SITE_NAME}`,
-  description: "Browse all 114 surahs of the Holy Quran with Arabic script, Latin transliterations, official Kemenag RI translations, and revelation metadata.",
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: SITE_PAGE_METADATA.surah.title,
+  description: SITE_PAGE_METADATA.surah.description,
+  path: SITE_PAGE_METADATA.surah.path,
+});
 
 export default function SurahPage() {
   return (
