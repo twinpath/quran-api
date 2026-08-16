@@ -12,10 +12,11 @@
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2026-08-15",
 	"compatibility_flags": [
-		"global_fetch_strictly_public"
+		"global_fetch_strictly_public",
+		"nodejs_compat"
 	],
 	"build": {
-		"command": "npm run build:cloudflare",
+		"command": "pnpm run build:cloudflare",
 		"cwd": "."
 	},
 	"minify": true,
