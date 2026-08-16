@@ -60,7 +60,7 @@ export function HomeHero() {
 
           {/* Interactive cURL snippet */}
           <div className="mt-12 w-full max-w-xl">
-            <CodeBlock code={curlSnippet} language="bash" />
+            <CodeBlock code={curlSnippet} language="curl" />
           </div>
         </div>
       </div>

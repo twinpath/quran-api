@@ -12,6 +12,7 @@ require("prismjs/components/prism-bash");
 require("prismjs/components/prism-python");
 require("prismjs/components/prism-markup-templating");
 require("prismjs/components/prism-php");
+require("prismjs/components/prism-json");
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 export { Prism };
