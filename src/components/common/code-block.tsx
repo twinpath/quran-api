@@ -2,6 +2,7 @@
 
 import { Copy, Check } from "lucide-react";
 import { Highlight } from "prism-react-renderer";
+import { Prism } from "@/lib/prism-loader";
 import { usePrismTheme } from "@/hooks/use-prism-theme";
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
@@ -47,6 +48,7 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
       {/* Code content */}
       <div className="overflow-x-auto p-4">
         <Highlight
+          prism={Prism}
           theme={prismTheme}
           code={code.trim()}
           language={normalizedLang}

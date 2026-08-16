@@ -2,6 +2,7 @@
 
 import { Copy, Check } from "lucide-react";
 import { Highlight } from "prism-react-renderer";
+import { Prism } from "@/lib/prism-loader";
 import { usePrismTheme } from "@/hooks/use-prism-theme";
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
@@ -35,6 +36,7 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
       </div>
       <div className="overflow-auto p-4 font-mono text-[13px] leading-relaxed" style={{ maxHeight }}>
         <Highlight
+          prism={Prism}
           theme={prismTheme}
           code={jsonString}
           language="json"
