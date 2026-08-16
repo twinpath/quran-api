@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+
 import { Terminal, BookOpen, ChevronRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +40,8 @@ export function HomeHero() {
 
           {/* CTA buttons */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button size="lg" className="gap-2" nativeButton={false} render={<Link href="/#api-playground" />}>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <Button size="lg" className="gap-2" nativeButton={false} render={<a href="/#api-playground" />}>
               <Terminal className="h-4 w-4" />
               Try the API
             </Button>
