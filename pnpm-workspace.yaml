@@ -7,7 +7,7 @@ packages:
 # ERR_PNPM_IGNORED_BUILDS.
 allowBuilds:
   esbuild: true
-  maplibre-gl: set this to true or false
+  maplibre-gl: true
   sharp: true
   unrs-resolver: true
   workerd: true
