@@ -22,7 +22,10 @@ export function useApiPlayground() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setOrigin(window.location.origin);
+      const handle = requestAnimationFrame(() => {
+        setOrigin(window.location.origin);
+      });
+      return () => cancelAnimationFrame(handle);
     }
   }, []);
 
