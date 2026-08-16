@@ -73,7 +73,7 @@ export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps)
                   {surah.number}
                 </div>
               </div>
-              <p className="mt-3 text-right font-sans text-2xl leading-relaxed text-foreground" dir="rtl">
+              <p className="mt-3 text-right font-arabic-display text-2xl leading-relaxed text-foreground" dir="rtl">
                 {surah.name}
               </p>
               <div className="mt-2 flex items-center justify-between">
