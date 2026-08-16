@@ -136,7 +136,7 @@ pnpm deploy
 
 ### Recommended Cloudflare Managed Transforms
 
-For optimal telemetry accuracy and security posture, configure the following settings in **Cloudflare Dashboard** -> **Rules** -> **Transforms** -> **Managed Transforms**:
+For optimal telemetry accuracy and security posture, configure the following settings in **Cloudflare Dashboard** -> **Rules** -> **Settings** -> **Managed Transforms** tab:
 
 | Managed Transform | Status | Purpose |
 |---|---|---|
