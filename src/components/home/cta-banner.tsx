@@ -20,7 +20,7 @@ export function CtaBanner() {
 
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-            <Button size="lg" className="gap-2" nativeButton={false} render={<a href="/#api-playground" />}>
+            <Button size="lg" className="gap-2" nativeButton={false} render={<a href="/playground" />}>
               <Terminal className="h-4 w-4" />
               Try the API
             </Button>
