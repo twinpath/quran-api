@@ -27,7 +27,7 @@ export const FOOTER_SECTIONS: FooterSection[] = [
     links: [
       { label: "GitHub Repository", href: GITHUB_REPO_URL, external: true },
       { label: "Kemenag RI", href: DATA_SOURCE_URL, external: true },
-      { label: "License (MIT)", href: `${GITHUB_REPO_URL}/blob/LICENSE`, external: true },
+      { label: "License (MIT)", href: `${GITHUB_REPO_URL}/blob/web/LICENSE`, external: true },
     ],
   },
   {
