@@ -29,7 +29,11 @@ export function generateCodeSnippet(
 
   switch (lang) {
     case "curl":
-      return `curl -s "${url}" | jq .`;
+      return `# With jq (formatted):
+curl -s "${url}" | jq .
+
+# Alternative (raw JSON):
+curl -s "${url}"`;
 
     case "javascript":
       return `const response = await fetch("${url}");
@@ -37,11 +41,13 @@ const data = await response.json();
 console.log(data);`;
 
     case "python":
-      return `import requests
+      return `import urllib.request
+import json
 
-response = requests.get("${url}")
-data = response.json()
-print(data)`;
+req = urllib.request.Request("${url}", headers={"User-Agent": "Mozilla/5.0"})
+with urllib.request.urlopen(req) as response:
+    data = json.loads(response.read().decode("utf-8"))
+    print(data)`;
 
     case "php":
       return `<?php

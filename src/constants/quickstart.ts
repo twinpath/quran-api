@@ -28,26 +28,29 @@ console.log(surah.ayahs[0].translationId);
 
 // Tafsir Kemenag of verse 1
 console.log(surah.ayahs[0].tafsirKemenag);`,
-  python: `import requests
+  python: `import urllib.request
+import json
 
-response = requests.get("${SITE_URL}${API_PATHS.surahDetail(1)}")
-result = response.json()
-surah = result["data"]
+url = "${SITE_URL}${API_PATHS.surahDetail(1)}"
+req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
 
-print(surah["nameLatin"])  # "Al-Fatihah"
-print(surah["ayahs"][0]["textArabic"])   # Bismillah...
-
-# Indonesian translation of verse 1
-print(surah["ayahs"][0]["translationId"])
-
-# Tafsir Kemenag of verse 1
-print(surah["ayahs"][0]["tafsirKemenag"])`,
+with urllib.request.urlopen(req) as response:
+    result = json.loads(response.read().decode("utf-8"))
+    surah = result["data"]
+    
+    print(surah["nameLatin"])  # "Al-Fatihah"
+    print(surah["ayahs"][0]["textArabic"])   # Bismillah...
+    print(surah["ayahs"][0]["translationId"])
+    print(surah["ayahs"][0]["tafsirKemenag"])`,
   curl: `# Get Al-Fatihah (Surah 1)
+# With jq (formatted):
 curl -s "${SITE_URL}${API_PATHS.surahDetail(1)}" | jq '.data.nameLatin'
+# Raw JSON alternative (without jq):
+curl -s "${SITE_URL}${API_PATHS.surahDetail(1)}"
 
 # Search verses containing "esa"
-curl -s "${SITE_URL}${API_PATHS.search("esa")}" | jq '.data.results[0].textArabic'
+curl -s "${SITE_URL}${API_PATHS.search("esa")}"
 
 # Get all 114 Surahs list
-curl -s "${SITE_URL}${API_PATHS.surahList}" | jq '.data[0].nameLatin'`,
+curl -s "${SITE_URL}${API_PATHS.surahList}"`,
 };
