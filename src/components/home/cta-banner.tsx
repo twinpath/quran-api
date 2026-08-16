@@ -1,6 +1,6 @@
 import { GitFork, Terminal, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GITHUB_REPO_URL } from "@/lib/constants";
+import { GITHUB_REPO_URL } from "@/constants";
 
 export function CtaBanner() {
   return (

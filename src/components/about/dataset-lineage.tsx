@@ -1,33 +1,5 @@
-import { Database, FileText, ShieldCheck, Languages } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR } from "@/lib/constants";
-
-const LINEAGE_ITEMS = [
-  {
-    icon: Database,
-    title: "Primary Source",
-    description: `Arabic text, Indonesian translations, and Tafsir are sourced from the official application of ${DATA_SOURCE_NAME}.`,
-    link: { label: "quran.kemenag.go.id", href: DATA_SOURCE_URL },
-  },
-  {
-    icon: FileText,
-    title: "Generator Pipeline",
-    description: `The dataset is compiled using a Bash generator script (generator.sh) that processes raw text files from the quran-text project into structured JSON, one file per surah.`,
-    link: null,
-  },
-  {
-    icon: ShieldCheck,
-    title: "Script Integrity",
-    description: `Arabic text includes full diacritical marks (harakat) following the Uthmani script standard. Each ayah preserves the original encoding from ${DATA_SOURCE_NAME}.`,
-    link: null,
-  },
-  {
-    icon: Languages,
-    title: "Translation & Tafsir",
-    description: `Indonesian translations and Tafsir Kemenag RI are included for every ayah, providing comprehensive meaning and scholarly interpretation.`,
-    link: null,
-  },
-];
+import { LINEAGE_ITEMS, DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR } from "@/constants";
 
 export function DatasetLineage() {
   return (

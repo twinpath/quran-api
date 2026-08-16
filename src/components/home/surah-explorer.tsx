@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSurahSearch } from "@/hooks/use-surah-search";
 import type { RevelationFilter } from "@/hooks/use-surah-search";
+import { REVELATION_FILTERS } from "@/constants";
 
-const REVELATION_FILTERS: RevelationFilter[] = ["All", "Makkiyah", "Madaniyah"];
 
 export function SurahExplorer() {
   const { query, setQuery, revelationFilter, setRevelationFilter, filteredSurahs, totalCount } =

@@ -4,8 +4,7 @@ import { Terminal, BookOpen, ChevronRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/common/code-block";
-import { SITE_URL, GITHUB_REPO_URL } from "@/lib/constants";
-import { API_PATHS } from "@/lib/api-endpoints";
+import { SITE_URL, GITHUB_REPO_URL, API_PATHS } from "@/constants";
 
 export function HomeHero() {
   const curlSnippet = `curl -s ${SITE_URL}${API_PATHS.surahDetail(1)} | jq .`;

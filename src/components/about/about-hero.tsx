@@ -1,23 +1,6 @@
-import { Heart, Target, Sparkles } from "lucide-react";
+import { PRINCIPLES } from "@/constants";
 import { Card, CardContent } from "@/components/ui/card";
 
-const PRINCIPLES = [
-  {
-    icon: Target,
-    title: "Accuracy",
-    description: "Sourced directly from the official Kemenag RI application with full diacritical marks and verified translations.",
-  },
-  {
-    icon: Sparkles,
-    title: "Speed",
-    description: "Edge-delivered via Cloudflare Workers across 300+ locations for sub-15ms response times worldwide.",
-  },
-  {
-    icon: Heart,
-    title: "Openness",
-    description: "MIT licensed, no API keys, no rate limits, no tracking. Fork it, self-host it, or use our CDN.",
-  },
-];
 
 export function AboutHero() {
   return (

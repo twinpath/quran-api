@@ -5,7 +5,7 @@ import { BookOpen, GitFork, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/common/theme-toggle";
-import { NAV_ITEMS, GITHUB_REPO_URL, SITE_NAME } from "@/lib/constants";
+import { NAV_ITEMS, GITHUB_REPO_URL, SITE_NAME } from "@/constants";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);

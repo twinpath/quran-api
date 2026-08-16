@@ -2,7 +2,7 @@
 
 import { BookOpen, ScrollText, Layers, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { STATS } from "@/lib/constants";
+import { STATS } from "@/constants";
 import type { ComponentType } from "react";
 import type { LucideProps } from "lucide-react";
 

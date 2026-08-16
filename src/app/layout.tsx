@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/common/theme-provider";
 import { Header } from "@/components/common/header";
 import { Footer } from "@/components/common/footer";
 import { HashScroll } from "@/components/common/hash-scroll";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/constants";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/constants";
 
 const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
 

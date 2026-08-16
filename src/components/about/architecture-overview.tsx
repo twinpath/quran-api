@@ -1,27 +1,5 @@
-import { Server, Globe, Zap, HardDrive } from "lucide-react";
+import { ARCH_LAYERS } from "@/constants";
 
-const ARCH_LAYERS = [
-  {
-    icon: Globe,
-    title: "Client Request",
-    description: "Users and applications send HTTP requests to the Quran JSON domain.",
-  },
-  {
-    icon: Zap,
-    title: "Cloudflare Edge (300+ PoPs)",
-    description: "Requests hit the nearest Cloudflare edge node. Static surah JSON files are served directly from the CDN with immutable caching headers.",
-  },
-  {
-    icon: Server,
-    title: "Cloudflare Workers (OpenNext SSR)",
-    description: "Dynamic pages and API routes are rendered on Cloudflare Workers using the OpenNext adapter for Next.js, running full server-side rendering at the edge.",
-  },
-  {
-    icon: HardDrive,
-    title: "Static Assets",
-    description: "Pre-built surah JSON files (1.json - 114.json and 001.json - 114.json) are served as static assets with Cache-Control: public, max-age=31536000, immutable.",
-  },
-];
 
 export function ArchitectureOverview() {
   return (

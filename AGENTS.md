@@ -9,7 +9,8 @@
 - Use `lucide-react` for Lucide icons; do not add `lucide-vue-next`, `@lucide/vue`, or any other Lucide binding.
 - Skeleton-first loading: every data-driven UI section must have a companion `*-skeleton.tsx` component built with the shadcn `Skeleton` primitive, wrapped in React `Suspense` boundaries at the page level.
 - All TypeScript interfaces and types live in `src/types/`. Never define inline types in components or pages.
-- All pure functions (formatting, data transforms, code generation, constants) live in `src/lib/`. These files must not import React or render JSX.
+- All static constants (site metadata, navigation, API paths, feature lists, FAQ items, UI data arrays) live in `src/constants/`. Modularized by domain (e.g. `site.ts`, `navigation.ts`, `api.ts`) and re-exported via `src/constants/index.ts`. Import as `@/constants`.
+- All pure functions (formatting, data transforms, code generation) live in `src/lib/`. These files must not import React or render JSX.
 - All custom React hooks live in `src/hooks/`.
 - Page-specific components are isolated in `src/components/<page-name>/` (e.g. `src/components/home/`, `src/components/about/`). Shared layout components live in `src/components/common/`.
 - Page files in `src/app/` are strictly declarative: they import and compose types, hooks, and components. No business logic or utility functions in page files.
@@ -33,8 +34,9 @@ src/
     common/               # Shared layout: Header, Footer, ThemeToggle, CodeBlock, JsonViewer
     home/                 # Home page components and skeletons
     about/                # About page components and skeletons
+  constants/              # Static constants, modularized by domain (site, navigation, api, features, faq, about, quickstart)
   hooks/                  # Custom React hooks
-  lib/                    # Pure functions, constants, formatters, data helpers
+  lib/                    # Pure functions, formatters, data helpers (no constants)
   types/                  # TypeScript interfaces and type definitions
 data/                     # Git worktree of data branch (Quran JSON dataset)
   surah/                  # 114 surah JSON files (1.json - 114.json)

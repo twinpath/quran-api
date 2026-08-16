@@ -1,7 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CONTRIBUTORS, GITHUB_REPO_URL } from "@/lib/constants";
+import { CONTRIBUTORS, GITHUB_REPO_URL } from "@/constants";
 
 export function ContributorsSection() {
   return (

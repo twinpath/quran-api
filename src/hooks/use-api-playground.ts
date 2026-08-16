@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import type { PlaygroundState, PlaygroundResponse, CodeSnippetLang } from "@/types/api";
-import { API_ENDPOINTS, buildEndpointUrl, generateCodeSnippet } from "@/lib/api-endpoints";
-import { SITE_URL } from "@/lib/constants";
+import { API_ENDPOINTS, SITE_URL } from "@/constants";
+import { buildEndpointUrl, generateCodeSnippet } from "@/lib/api-endpoints";
 
 const DEFAULT_STATE: PlaygroundState = {
   selectedEndpointId: API_ENDPOINTS[0].id,

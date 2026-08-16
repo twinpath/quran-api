@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BookOpen, Zap } from "lucide-react";
-import { FOOTER_SECTIONS, SITE_NAME, DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR, LICENSE } from "@/lib/constants";
+import { FOOTER_SECTIONS, SITE_NAME, DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR, LICENSE } from "@/constants";
 
 export function Footer() {
   return (

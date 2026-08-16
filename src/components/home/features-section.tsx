@@ -2,7 +2,7 @@
 
 import { Zap, FileJson, ShieldCheck, BookMarked, Hash, Globe } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { FEATURES } from "@/lib/constants";
+import { FEATURES } from "@/constants";
 import type { ComponentType } from "react";
 import type { LucideProps } from "lucide-react";
 
