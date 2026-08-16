@@ -33,15 +33,15 @@ export function PlaygroundPreview() {
             </div>
           </div>
 
-          <div className="lg:col-span-6">
+          <div className="min-w-0 lg:col-span-6">
             <Card className="border-border/80 bg-background/80 shadow-md">
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                  <div className="flex items-center gap-2">
+              <CardContent className="min-w-0 p-5">
+                <div className="flex min-w-0 items-center justify-between gap-3 border-b border-border/60 pb-3">
+                  <div className="flex min-w-0 items-center gap-2">
                     <Badge variant="secondary" className="font-mono text-xs">GET</Badge>
-                    <span className="font-mono text-xs text-muted-foreground">/api/surah/1</span>
+                    <span className="truncate font-mono text-xs text-muted-foreground">/api/surah/1</span>
                   </div>
-                  <Badge variant="outline" className="gap-1 font-mono text-[10px] text-primary">
+                  <Badge variant="outline" className="gap-1 shrink-0 font-mono text-[10px] text-primary">
                     <Play className="h-3 w-3 fill-primary" />
                     200 OK
                   </Badge>
@@ -51,7 +51,7 @@ export function PlaygroundPreview() {
                     <Code2 className="h-4 w-4 text-primary" />
                     <span>Response Payload (Al-Fatihah)</span>
                   </div>
-                  <pre className="mt-2 overflow-x-auto text-[11px] leading-relaxed text-foreground/80">
+                  <pre className="mt-2 max-w-full overflow-x-auto whitespace-pre-wrap break-words text-[11px] leading-relaxed text-foreground/80">
                     {PLAYGROUND_SAMPLE_RESPONSE}
                   </pre>
                 </div>

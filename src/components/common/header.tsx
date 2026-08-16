@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { Logo } from "@/components/common/logo";
 import { NAV_ITEMS, GITHUB_REPO_URL, SITE_NAME } from "@/constants";
 
 export function Header() {
@@ -15,8 +16,8 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 font-heading text-lg font-bold tracking-tight">
-          <BookOpen className="h-5 w-5 text-primary" />
+        <Link href="/" className="flex items-center gap-3 font-heading text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
+          <Logo size={32} variant="icon" />
           <span>{SITE_NAME}</span>
         </Link>
 

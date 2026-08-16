@@ -63,3 +63,40 @@ npx tsc --noEmit                          # TypeScript type check
 - **Telemetry Verification**:
   - Query remote D1 database telemetry logs: `pnpm exec wrangler d1 execute quran --remote --command "SELECT id, endpoint, country, region, city, latitude, longitude FROM telemetry_logs ORDER BY id DESC LIMIT 10;"`
 
+## Logo Component
+
+The reusable, theme-aware `Logo` component is located at `src/components/common/logo.tsx`.
+
+**Features:**
+- Automatic light/dark theme detection via `next-themes`
+- TypeScript support with full type safety
+- Customizable colors, sizes, and variants
+- Hydration-safe (prevents SSR mismatches)
+- Two variants: `"full"` (icon + text) and `"icon"` (icon only)
+- Default colors configured for light and dark themes
+
+**Basic usage:**
+```tsx
+import { Logo } from "@/components/common/logo";
+
+// Theme-aware (auto-adapts to light/dark mode)
+<Logo size={48} />
+
+// Icon variant (compact)
+<Logo size={32} variant="icon" />
+
+// Custom colors (overrides theme)
+<Logo size={48} primaryColor="#0B5F4C" secondaryColor="#292728" />
+
+// With Tailwind styling
+<Logo size={48} className="hover:scale-110 transition-transform" />
+```
+
+**Default colors:**
+- Light: Primary `#0B5F4C` (teal), Secondary `#292728` (dark gray), Accent `#C0A576` (gold)
+- Dark: Primary `#1B7168` (lighter teal), Secondary `#FAFAF8` (off-white), Accent `#D4C5A9` (lighter gold)
+
+**Full documentation:** See `docs/LOGO_COMPONENT.md` for comprehensive guide and 7+ usage examples.
+
+**Examples:** `src/components/common/logo-examples.tsx` contains practical examples for navbar, hero, sidebar, and animations.
+

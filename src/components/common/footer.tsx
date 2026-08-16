@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
+import { Logo } from "@/components/common/logo";
 import { FOOTER_SECTIONS, SITE_NAME, DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR, LICENSE } from "@/constants";
 
 export function Footer() {
@@ -9,8 +10,8 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand column */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2 font-heading text-lg font-bold tracking-tight">
-              <BookOpen className="h-5 w-5 text-primary" />
+            <Link href="/" className="inline-flex items-center gap-3 font-heading text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
+              <Logo size={40} variant="icon" />
               <span>{SITE_NAME}</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
