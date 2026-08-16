@@ -53,3 +53,6 @@ next-env.d.ts
 
 # git worktree
 /data/
+
+# migration seeds
+migrations/seed.sql

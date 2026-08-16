@@ -38,7 +38,10 @@ const REVELATION_TYPES: string[] = [
 /**
  * Escape a string for safe use inside SQL single quotes.
  */
-function escapeSql(value: string): string {
+function escapeSql(value: string | null | undefined): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
   return value.replace(/'/g, "''");
 }
 
