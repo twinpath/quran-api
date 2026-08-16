@@ -14,7 +14,7 @@ export function QuickstartSection() {
         </p>
       </div>
 
-      <Tabs defaultValue="php" className="mx-auto max-w-3xl">
+      <Tabs defaultValue="curl" className="mx-auto max-w-3xl">
         <div className="w-full overflow-x-auto pb-1">
           <TabsList className="inline-flex min-w-full justify-start w-max">
             <TabsTrigger value="curl">cURL</TabsTrigger>
