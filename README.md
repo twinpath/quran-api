@@ -20,12 +20,11 @@ The Quran is the divine, immutable Word of Allah Subhanahu wa Ta'ala. In providi
 
 ## Repository Architecture
 
-This repository adopts a decoupled dual-branch architecture:
+This repository uses a two-branch model:
 
 1. **`data` Branch (Canonical Dataset)**:
    - Contains the pure, static JSON dataset generated from verified sources.
    - Structured per-surah (`surah/1.json` through `surah/114.json`), alongside zero-padded variants (`surah-3digit/001.json` through `114.json`).
-   - Maintained independently as a lightweight submodule or worktree.
 
 2. **`web` Branch (Edge Application)**:
    - The interactive web interface, interactive API playground, and developer documentation portal.
@@ -36,49 +35,72 @@ This repository adopts a decoupled dual-branch architecture:
 
 ## Dataset Schema
 
-Each surah is represented as a structured JSON object:
+Each surah file in the `data/` branch follows this structure (canonical raw format):
 
 ```json
 {
-  "name": "الفاتحة",
-  "name_latin": "Al-Fatihah",
-  "number": "1",
-  "number_of_ayah": "7",
-  "text": {
-    "1": "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
-    "2": "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ",
-    "3": "الرَّحْمٰنِ الرَّحِيْمِۙ",
-    "4": "مٰلِكِ يَوْمِ الدِّيْنِۗ",
-    "5": "اِيَّاكَ نَعْبُدُ وَاِيَّاكَ نَسْتَعِيْنُۗ",
-    "6": "اِهْدِنَا الصِّرَاطَ الْمُسْتَقِيْمَۙ",
-    "7": "صِرَاطَ الَّذِيْنَ اَنْعَمْتَ عَلَيْهِمْ ەۙ غَيْرِ الْمَغْضُوْبِ عَلَيْهِمْ وَلَا الضَّاۤلِّيْنَ"
-  },
-  "translations": {
-    "id": {
-      "name": "Al-Fatihah",
-      "text": {
-        "1": "Dengan nama Allah Yang Maha Pengasih lagi Maha Penyayang.",
-        "2": "Segala puji bagi Allah, Tuhan semesta alam,",
-        "3": "Yang Maha Pengasih lagi Maha Penyayang,",
-        "4": "Pemilik hari pembalasan.",
-        "5": "Hanya kepada Engkaulah kami menyembah dan hanya kepada Engkaulah kami memohon pertolongan.",
-        "6": "Bimbinglah kami ke jalan yang lurus,",
-        "7": "(yaitu) jalan orang-orang yang telah Engkau beri nikmat, bukan (jalan) mereka yang dimurkai dan bukan (pula jalan) orang-orang yang sesat."
-      }
-    }
-  },
-  "tafsir": {
-    "id": {
-      "kemenag": {
-        "name": "Kemenag",
-        "source": "Kementerian Agama Republik Indonesia",
+  "1": {
+    "number": "1",
+    "name": "الفاتحة",
+    "name_latin": "Al-Fatihah",
+    "number_of_ayah": "7",
+    "text": {
+      "1": "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+      "2": "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ"
+    },
+    "translations": {
+      "id": {
+        "name": "Pembukaan",
         "text": {
-          "1": "Surah ini dimulai dengan membaca basmalah...",
-          "2": "...",
-          "3": "..."
+          "1": "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.",
+          "2": "Segala puji bagi Allah, Tuhan seluruh alam,"
+        }
+      }
+    },
+    "tafsir": {
+      "id": {
+        "kemenag": {
+          "name": "Kemenag",
+          "source": "Aplikasi Quran Kementrian Agama Republik Indonesia",
+          "text": {
+            "1": "Surah al-Fatihah dimulai dengan Basmalah...",
+            "2": "..."
+          }
         }
       }
     }
+  }
+}
+```
+
+---
+
+## API Response Schema
+
+The HTTP API endpoints return a normalized JSON envelope. Example response for `GET /api/surah/1`:
+
+```json
+{
+  "success": true,
+  "data": {
+    "number": 1,
+    "name": "الفاتحة",
+    "nameLatin": "Al-Fatihah",
+    "numberOfAyah": 7,
+    "translationName": "Pembukaan",
+    "revelationType": "Makkiyah",
+    "ayahs": [
+      {
+        "number": 1,
+        "textArabic": "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+        "translationId": "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.",
+        "tafsirKemenag": "Surah al-Fatihah dimulai dengan Basmalah..."
+      }
+    ]
+  },
+  "meta": {
+    "cached": true,
+    "responseTimeMs": 15
   }
 }
 ```
@@ -108,9 +130,6 @@ Each surah is represented as a structured JSON object:
 # Clone the repository
 git clone https://github.com/twinpath/quran-api.git
 cd quran-api
-
-# Ensure you are on the web branch
-git checkout web
 
 # Install dependencies
 pnpm install
@@ -171,4 +190,4 @@ If you observe any discrepancy in the Quranic text or translations, please open 
 
 ## License
 
-This project is open-source and distributed under the [MIT License](LICENSE.md). May it serve as a source of benefit and continuous good.
+This project is open-source and distributed under the [MIT License](LICENSE). May it serve as a source of benefit and continuous good.

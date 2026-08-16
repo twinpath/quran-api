@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { PLAYGROUND_SAMPLE_RESPONSE } from "@/constants";
 
 export function PlaygroundPreview() {
   return (
@@ -38,7 +39,7 @@ export function PlaygroundPreview() {
                 <div className="flex items-center justify-between border-b border-border/60 pb-3">
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="font-mono text-xs">GET</Badge>
-                    <span className="font-mono text-xs text-muted-foreground">/api/v1/surah/1</span>
+                    <span className="font-mono text-xs text-muted-foreground">/api/surah/1</span>
                   </div>
                   <Badge variant="outline" className="gap-1 font-mono text-[10px] text-primary">
                     <Play className="h-3 w-3 fill-primary" />
@@ -51,13 +52,7 @@ export function PlaygroundPreview() {
                     <span>Response Payload (Al-Fatihah)</span>
                   </div>
                   <pre className="mt-2 overflow-x-auto text-[11px] leading-relaxed text-foreground/80">
-{`{
-  "number": "1",
-  "name": "الفاتحة",
-  "name_latin": "Al-Fatihah",
-  "number_of_ayah": "7",
-  "translations": { "id": { "1": "Dengan nama Allah..." } }
-}`}
+                    {PLAYGROUND_SAMPLE_RESPONSE}
                   </pre>
                 </div>
               </CardContent>

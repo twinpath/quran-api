@@ -38,6 +38,20 @@ const sampleSurahDetail = {
   })
 };
 
+/** Pre-formatted JSON string for the playground preview card on the home page */
+export const PLAYGROUND_SAMPLE_RESPONSE = JSON.stringify(
+  {
+    success: true,
+    data: {
+      ...sampleSurahDetail,
+      ayahs: sampleSurahDetail.ayahs.slice(0, 1),
+    },
+    meta: { cached: true, responseTimeMs: 15 },
+  },
+  null,
+  2,
+);
+
 const sampleSearchResult = {
   query: "esa",
   total: 1,
