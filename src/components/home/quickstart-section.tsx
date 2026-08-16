@@ -73,12 +73,14 @@ export function QuickstartSection() {
       </div>
 
       <Tabs defaultValue="nextjs" className="mx-auto max-w-3xl">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="nextjs">Next.js</TabsTrigger>
-          <TabsTrigger value="fetch">JavaScript</TabsTrigger>
-          <TabsTrigger value="python">Python</TabsTrigger>
-          <TabsTrigger value="curl">cURL</TabsTrigger>
-        </TabsList>
+        <div className="w-full overflow-x-auto pb-1">
+          <TabsList className="inline-flex min-w-full justify-start w-max">
+            <TabsTrigger value="nextjs">Next.js</TabsTrigger>
+            <TabsTrigger value="fetch">JavaScript</TabsTrigger>
+            <TabsTrigger value="python">Python</TabsTrigger>
+            <TabsTrigger value="curl">cURL</TabsTrigger>
+          </TabsList>
+        </div>
 
         {Object.entries(QUICKSTART_SNIPPETS).map(([key, code]) => (
           <TabsContent key={key} value={key} className="mt-4">
