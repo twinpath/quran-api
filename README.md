@@ -134,6 +134,16 @@ pnpm preview
 pnpm deploy
 ```
 
+### Recommended Cloudflare Managed Transforms
+
+For optimal telemetry accuracy and security posture, configure the following settings in **Cloudflare Dashboard** -> **Rules** -> **Transforms** -> **Managed Transforms**:
+
+| Managed Transform | Status | Purpose |
+|---|---|---|
+| **Add visitor location headers** | **Enabled** | Injects HTTP headers (`cf-ipcountry`, `cf-region`, `cf-ipcity`, `cf-iplatitude`, `cf-iplongitude`) for telemetry geo-analytics. |
+| **Add security headers** | **Enabled** | Injects baseline HTTP security response headers (HSTS, X-Content-Type-Options, X-Frame-Options). |
+| **Remove "X-Powered-By" headers** | **Enabled** | Strips backend runtime technology headers to prevent information disclosure. |
+
 ---
 
 ## Dataset Lineage and Acknowledgments

@@ -3,6 +3,7 @@
  * Records API request metrics to D1 for analytics and monitoring.
  */
 
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/lib/db";
 import { telemetryLogs } from "@/lib/db/schema";
 import { parseUserAgent } from "@/lib/ua";
@@ -31,18 +32,47 @@ export async function logTelemetry(
   endpoint: string,
   statusCode: number,
   responseTimeMs: number,
+  cfParam?: Record<string, unknown>,
 ): Promise<void> {
   try {
     const db = getDb(env);
     const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
     const ipHash = await hashIpForTelemetry(ip);
 
-    // Cloudflare geo headers
-    const country = request.headers.get("cf-ipcountry") ?? null;
-    const region = request.headers.get("cf-region") ?? null;
-    const city = request.headers.get("cf-ipcity") ?? null;
-    const latitude = request.headers.get("cf-iplatitude") ?? null;
-    const longitude = request.headers.get("cf-iplongitude") ?? null;
+    // Retrieve Cloudflare cf object from parameter, request, or OpenNext context
+    let cf = cfParam ?? (request as unknown as { cf?: Record<string, unknown> }).cf;
+    if (!cf) {
+      try {
+        cf = getCloudflareContext()?.cf as Record<string, unknown> | undefined;
+      } catch {
+        // Ignore if getCloudflareContext is not available in local test environment
+      }
+    }
+
+    // Cloudflare geo headers with cf object fallback
+    const country =
+      request.headers.get("cf-ipcountry") ??
+      (cf?.country as string | undefined) ??
+      null;
+
+    const region =
+      request.headers.get("cf-region") ??
+      (cf?.region as string | undefined) ??
+      (cf?.regionCode as string | undefined) ??
+      null;
+
+    const city =
+      request.headers.get("cf-ipcity") ??
+      (cf?.city as string | undefined) ??
+      null;
+
+    const latitude =
+      request.headers.get("cf-iplatitude") ??
+      (cf?.latitude != null ? String(cf.latitude) : null);
+
+    const longitude =
+      request.headers.get("cf-iplongitude") ??
+      (cf?.longitude != null ? String(cf.longitude) : null);
 
     // User-agent parsing
     const userAgentString = request.headers.get("user-agent") ?? null;

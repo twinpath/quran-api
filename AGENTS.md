@@ -57,3 +57,13 @@ pnpm upload                               # OpenNext Cloudflare upload
 pnpm cf-typegen                           # generate Cloudflare env types
 npx tsc --noEmit                          # TypeScript type check
 ```
+
+## Cloudflare Dashboard & Telemetry Setup
+
+- **Managed Transforms (`Cloudflare Dashboard -> Rules -> Transforms -> Managed Transforms`)**:
+  - `Add visitor location headers` (**Required for complete telemetry**): Injects HTTP request headers with visitor location details (`cf-ipcountry`, `cf-region`, `cf-ipcity`, `cf-iplatitude`, `cf-iplongitude`). `logTelemetry` in `src/lib/telemetry.ts` reads these headers with a code-level fallback to `getCloudflareContext().cf`.
+  - `Add security headers` (**Recommended**): Automatically injects security response headers (e.g. HSTS, X-Content-Type-Options).
+  - `Remove "X-Powered-By" headers` (**Recommended**): Strips server/framework technology disclosure headers for security hardening.
+- **Telemetry Verification**:
+  - Query remote D1 database telemetry logs: `pnpm exec wrangler d1 execute quran --remote --command "SELECT id, endpoint, country, region, city, latitude, longitude FROM telemetry_logs ORDER BY id DESC LIMIT 10;"`
+
