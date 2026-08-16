@@ -1,9 +1,9 @@
-# Quran JSON Repository Guide
+# Quran API Repository Guide
 
 ## Non-obvious constraints
 
 - Write all documentation and code comments in English.
-- Use Node.js 22 and pnpm (`package.json` is authoritative). The workspace root is the Next.js app on the `web` branch; the `data` branch (checked out as a git worktree at `./data/`) holds the canonical Quran JSON dataset.
+- Use Node.js 22 and pnpm (`package.json` is authoritative). The workspace root is the Next.js app on the `web` branch; the `data` branch (checked out as a git worktree at `./data/`) holds the canonical Quran API dataset.
 - Do not hand-edit `src/components/ui/**`; it is managed by shadcn and excluded from manual modification.
 - Zero native emoji throughout the entire codebase and UI. Use `lucide-react` for all icons, status indicators, badges, and decorative accents without exception.
 - Use `lucide-react` for Lucide icons; do not add `lucide-vue-next`, `@lucide/vue`, or any other Lucide binding.
@@ -14,7 +14,7 @@
 - All custom React hooks live in `src/hooks/`.
 - Page-specific components are isolated in `src/components/<page-name>/` (e.g. `src/components/home/`, `src/components/about/`). Shared layout components live in `src/components/common/`.
 - Page files in `src/app/` are strictly declarative: they import and compose types, hooks, and components. No business logic or utility functions in page files.
-- The Quran JSON dataset follows the schema defined in `data/surah/{number}.json`. Each file is keyed by surah number as a string. Fields: `number` (string), `name` (Arabic), `name_latin` (Latin transliteration), `number_of_ayah` (string), `text` (Record of ayah number to Arabic text), `translations.id` (Indonesian translation from Kemenag RI), `tafsir.id.kemenag` (Tafsir from Kemenag RI).
+- The Quran API dataset follows the schema defined in `data/surah/{number}.json`. Each file is keyed by surah number as a string. Fields: `number` (string), `name` (Arabic), `name_latin` (Latin transliteration), `number_of_ayah` (string), `text` (Record of ayah number to Arabic text), `translations.id` (Indonesian translation from Kemenag RI), `tafsir.id.kemenag` (Tafsir from Kemenag RI).
 - The `surah-3digit/` folder contains the same data with zero-padded filenames (`001.json` through `114.json`).
 - Data source attribution: Kementerian Agama Republik Indonesia (`https://quran.kemenag.go.id`). Original dataset by Rio Astamal. Distributed under MIT License by Twinpath.
 - Follow nearby code style before adding explicit imports for framework globals. Prefer named exports.
@@ -38,10 +38,6 @@ src/
   hooks/                  # Custom React hooks
   lib/                    # Pure functions, formatters, data helpers (no constants)
   types/                  # TypeScript interfaces and type definitions
-data/                     # Git worktree of data branch (Quran JSON dataset)
-  surah/                  # 114 surah JSON files (1.json - 114.json)
-  surah-3digit/           # Zero-padded copies (001.json - 114.json)
-  generator.sh            # Dataset generator script
 ```
 
 ## Setup and commands

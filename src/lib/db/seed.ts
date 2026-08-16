@@ -46,7 +46,7 @@ function escapeSql(value: string | null | undefined): string {
 }
 
 /**
- * Generate SQL INSERT statements from the Quran JSON dataset.
+ * Generate SQL INSERT statements from the Quran API dataset.
  */
 function generateSeedSql(): string {
   const dataDir = path.resolve(__dirname, "../../../data/surah");

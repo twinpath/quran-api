@@ -1,9 +1,9 @@
-# Quran JSON
+# Quran API
 
 > *Bismillahir Rahmanir Rahim*  
 > *In the name of Allah, the Most Gracious, the Most Merciful.*
 
-A modern, open-source, edge-native web application and developer interface for exploring and integrating the Holy Quran JSON dataset. Engineered with precision, humility, and dedication to serving the global developer community.
+A modern, open-source, edge-native web application and developer interface for exploring and integrating the Holy Quran API dataset. Engineered with precision, humility, and dedication to serving the global developer community.
 
 ---
 
