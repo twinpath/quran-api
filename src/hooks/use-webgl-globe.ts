@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as twgl from "twgl.js";
-import { latLngToXYZ, HEX_ANGLES, parseColor, createArcGeometry } from "@/lib/globe-helpers";
+import { geoPath, geoEquirectangular } from "d3-geo";
+import { feature } from "topojson-client";
 import type { TelemetryLocationPoint } from "@/types/telemetry";
+import type { GeometryObject, Topology } from "topojson-specification";
 
 const m4 = twgl.m4;
 
@@ -69,9 +71,12 @@ void main() {
 interface UseWebGLGlobeOptions {
   locations: TelemetryLocationPoint[];
   autoRotate?: boolean;
+  theme?: string;
 }
 
-export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOptions) {
+let cachedTopoData: Topology | null = null;
+
+export function useWebGLGlobe({ locations, autoRotate = true, theme = "dark" }: UseWebGLGlobeOptions) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -118,12 +123,12 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
     try {
       gl = canvas.getContext("webgl", { alpha: true, antialias: true });
     } catch {
-      setHasError(true);
+      queueMicrotask(() => setHasError(true));
       return;
     }
 
     if (!gl) {
-      setHasError(true);
+      queueMicrotask(() => setHasError(true));
       return;
     }
 
@@ -131,15 +136,22 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
     const rippleProgram = twgl.createProgramInfo(gl, [RIPPLE_VERTEX_SHADER, RIPPLE_FRAGMENT_SHADER]);
 
     if (!earthProgram || !rippleProgram) {
-      setHasError(true);
+      queueMicrotask(() => setHasError(true));
       return;
     }
 
     let earthBufferInfo: twgl.BufferInfo | null = null;
     let countryTexture: WebGLTexture | null = null;
 
-    // Build earth texture
-    const buildTexture = () => {
+    const isDarkTheme =
+      theme === "dark" ||
+      (theme !== "light" &&
+        typeof window !== "undefined" &&
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    // Build earth texture with continent landmasses
+    const buildTexture = (topo: Topology | null) => {
       if (!gl) return null;
       const texCanvas = document.createElement("canvas");
       texCanvas.width = 2048;
@@ -147,32 +159,61 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
       const ctx = texCanvas.getContext("2d");
       if (!ctx) return null;
 
-      // Dark background
-      ctx.fillStyle = "#09090b";
+      // Fill ocean background based on active theme
+      ctx.fillStyle = isDarkTheme ? "#09090b" : "#f8fafc";
       ctx.fillRect(0, 0, texCanvas.width, texCanvas.height);
 
-      // Draw grid of dots / hexes
+      // Render continent landmasses if map data is available
+      if (topo && topo.objects) {
+        try {
+          const targetObj = (topo.objects.countries || topo.objects.units) as GeometryObject;
+          const geojson = feature(topo, targetObj);
+          const projection = geoEquirectangular()
+            .scale(texCanvas.width / (2 * Math.PI))
+            .translate([texCanvas.width / 2, texCanvas.height / 2]);
+          const pathGenerator = geoPath().projection(projection).context(ctx);
+
+          ctx.fillStyle = isDarkTheme ? "#18181b" : "#e2e8f0";
+          ctx.strokeStyle = isDarkTheme ? "#27272a" : "#cbd5e1";
+          ctx.lineWidth = 1.2;
+
+          ctx.beginPath();
+          pathGenerator(geojson as Parameters<typeof pathGenerator>[0]);
+          ctx.fill();
+          ctx.stroke();
+        } catch {
+          // Fallback if topo parsing fails
+        }
+      }
+
+      // Overlay structured land/grid dots
       const colSpacing = 16;
       const rowSpacing = 16;
-      ctx.fillStyle = "#27272a";
+      ctx.fillStyle = isDarkTheme ? "#3f3f46" : "#94a3b8";
 
       for (let x = 0; x < texCanvas.width; x += colSpacing) {
         for (let y = 0; y < texCanvas.height; y += rowSpacing) {
           ctx.beginPath();
-          ctx.arc(x + 4, y + 4, 2, 0, Math.PI * 2);
+          ctx.arc(x + 4, y + 4, 1.5, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
-      // Highlight location points on texture
+      // Highlight location telemetry traffic points on texture
       for (const loc of locations) {
         const px = ((loc.longitude + 180) / 360) * texCanvas.width;
         const py = ((90 - loc.latitude) / 180) * texCanvas.height;
 
         const grad = ctx.createRadialGradient(px, py, 0, px, py, 24);
-        grad.addColorStop(0, "rgba(16, 185, 129, 0.9)");
-        grad.addColorStop(0.5, "rgba(16, 185, 129, 0.4)");
-        grad.addColorStop(1, "rgba(16, 185, 129, 0.0)");
+        if (isDarkTheme) {
+          grad.addColorStop(0, "rgba(16, 185, 129, 0.9)");
+          grad.addColorStop(0.5, "rgba(16, 185, 129, 0.4)");
+          grad.addColorStop(1, "rgba(16, 185, 129, 0.0)");
+        } else {
+          grad.addColorStop(0, "rgba(5, 150, 105, 0.9)");
+          grad.addColorStop(0.5, "rgba(5, 150, 105, 0.4)");
+          grad.addColorStop(1, "rgba(5, 150, 105, 0.0)");
+        }
 
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -189,6 +230,27 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
       return texture;
+    };
+
+    const loadAndBuildTexture = () => {
+      if (cachedTopoData) {
+        countryTexture = buildTexture(cachedTopoData);
+        setIsReady(true);
+      } else {
+        fetch("/world.json")
+          .then((res) => res.json())
+          .then((topo: Topology) => {
+            if (disposed) return;
+            cachedTopoData = topo;
+            countryTexture = buildTexture(topo);
+            setIsReady(true);
+          })
+          .catch(() => {
+            if (disposed) return;
+            countryTexture = buildTexture(null);
+            setIsReady(true);
+          });
+      }
     };
 
     // Load sphere geometry or generate procedural sphere
@@ -213,16 +275,14 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
           indices: { numComponents: 3, data: indices },
         });
 
-        countryTexture = buildTexture();
-        setIsReady(true);
+        loadAndBuildTexture();
       })
       .catch(() => {
         if (disposed || !gl) return;
         // Fallback: procedural sphere
         const sphere = twgl.primitives.createSphereVertices(1.0, 48, 48);
         earthBufferInfo = twgl.createBufferInfoFromArrays(gl, sphere);
-        countryTexture = buildTexture();
-        setIsReady(true);
+        loadAndBuildTexture();
       });
 
     // Resize handler
@@ -289,7 +349,8 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
         const aspect = width / height;
         const fov = (35 * Math.PI) / 180;
         const projection = m4.perspective(fov, aspect, 0.1, 10);
-        const distance = 3.2 * (1 - stateRef.current.zoom * 0.5);
+        // Distance 3.7 ensures complete visibility without top/bottom cropping
+        const distance = 3.7 * (1 - stateRef.current.zoom * 0.4);
 
         let camera = m4.identity();
         camera = m4.rotateY(camera, ((stateRef.current.longitude + 180) * Math.PI) / 180);
@@ -325,7 +386,7 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
       window.removeEventListener("mouseup", onMouseUp);
       if (gl && countryTexture) gl.deleteTexture(countryTexture);
     };
-  }, [locations]);
+  }, [locations, theme]);
 
   return {
     canvasRef,
@@ -337,3 +398,5 @@ export function useWebGLGlobe({ locations, autoRotate = true }: UseWebGLGlobeOpt
     resetView,
   };
 }
+
+

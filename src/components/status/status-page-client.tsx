@@ -45,18 +45,19 @@ export function StatusPageClient() {
 
   const fetchStatusData = useCallback(async (selectedDays: string, showRefreshing = true) => {
     if (showRefreshing) setIsRefreshing(true);
-    setError(null);
     try {
       const res = await fetch(`/api/status?days=${selectedDays}`);
       if (!res.ok) throw new Error("Failed to fetch status telemetry data");
-      const json: any = await res.json();
+      const json = (await res.json()) as { success?: boolean; data?: TelemetryStatusResponse; error?: { message?: string } };
       if (json.success && json.data) {
         setData(json.data);
+        setError(null);
       } else {
         throw new Error(json.error?.message || "Unknown error");
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to load telemetry data.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to load telemetry data.";
+      setError(message);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);

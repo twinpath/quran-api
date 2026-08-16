@@ -1,9 +1,10 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import { RotateCcw, ZoomIn, ZoomOut, Globe as GlobeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useWebGLGlobe } from "@/hooks/useWebGLGlobe";
+import { useWebGLGlobe } from "@/hooks/use-webgl-globe";
 import type { TelemetryLocationPoint } from "@/types/telemetry";
 
 interface GlobeProps {
@@ -12,13 +13,16 @@ interface GlobeProps {
 }
 
 export function Globe({ locations, autoRotate = true }: GlobeProps) {
+  const { resolvedTheme, theme } = useTheme();
+  const activeTheme = resolvedTheme || theme || "dark";
+
   const { canvasRef, containerRef, isReady, hasError, zoomLevel, setZoom, resetView } =
-    useWebGLGlobe({ locations, autoRotate });
+    useWebGLGlobe({ locations, autoRotate, theme: activeTheme });
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full min-h-[340px] flex items-center justify-center overflow-hidden bg-muted/20 rounded-lg border border-border/50"
+      className="relative size-full min-h-[320px] flex items-center justify-center rounded-lg bg-background/50 border border-border/40 overflow-hidden"
     >
       <canvas
         ref={canvasRef}
@@ -81,3 +85,4 @@ export function Globe({ locations, autoRotate = true }: GlobeProps) {
     </div>
   );
 }
+

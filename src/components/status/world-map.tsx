@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { geoPath, geoEquirectangular } from "d3-geo";
 import { feature } from "topojson-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { TelemetryDistributionItem } from "@/types/telemetry";
 
 interface WorldMapProps {
@@ -15,16 +14,25 @@ interface WorldMapProps {
 
 interface GeoFeature {
   type: string;
-  id: string;
-  properties: {
+  id?: string | number;
+  properties?: {
     name?: string;
   };
-  geometry: any;
+  geometry: unknown;
+}
+
+interface HoveredInfo {
+  name: string;
+  count: number;
+  x: number;
+  y: number;
 }
 
 export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
-  const [topoData, setTopoData] = useState<any>(null);
+  const [topoData, setTopoData] = useState<Record<string, unknown> | null>(null);
   const [hasError, setHasError] = useState(false);
+  const [hoveredInfo, setHoveredInfo] = useState<HoveredInfo | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetch("/world.json")
@@ -32,7 +40,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
         if (!res.ok) throw new Error("Failed to load map");
         return res.json();
       })
-      .then((data) => setTopoData(data))
+      .then((data) => setTopoData(data as Record<string, unknown>))
       .catch(() => setHasError(true));
   }, []);
 
@@ -51,29 +59,58 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
   const mapFeatures = useMemo(() => {
     if (!topoData || !topoData.objects) return [];
     try {
-      const geojson: any = feature(topoData, topoData.objects.countries || topoData.objects.units);
-      return (geojson.features || []) as GeoFeature[];
+      const objects = topoData.objects as Record<string, unknown>;
+      const targetObj = (objects.countries || objects.units) as Parameters<typeof feature>[1];
+      const geojson = feature(topoData as Parameters<typeof feature>[0], targetObj) as unknown as {
+        features?: GeoFeature[];
+      };
+      return geojson.features || [];
     } catch {
       return [];
     }
   }, [topoData]);
+
 
   const svgWidth = 960;
   const svgHeight = 480;
 
   const pathGenerator = useMemo(() => {
     const projection = geoEquirectangular()
-      .scale(150)
+      .scale(152)
       .translate([svgWidth / 2, svgHeight / 2]);
     return geoPath().projection(projection);
   }, []);
 
-  const getCountryColor = (countryCode: string, count: number) => {
-    if (count <= 0) return "var(--muted)";
+  const getCountryColor = (count: number) => {
+    if (count <= 0) return "color-mix(in srgb, var(--muted) 70%, transparent)";
     const ratio = count / maxVisits;
     if (ratio > 0.66) return "var(--primary)";
     if (ratio > 0.33) return "color-mix(in srgb, var(--primary) 70%, var(--muted))";
-    return "color-mix(in srgb, var(--primary) 40%, var(--muted))";
+    return "color-mix(in srgb, var(--primary) 45%, var(--muted))";
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent<SVGPathElement>, name: string, count: number) => {
+    const parent = containerRef.current?.getBoundingClientRect();
+    if (parent) {
+      setHoveredInfo({
+        name,
+        count,
+        x: e.clientX - parent.left,
+        y: e.clientY - parent.top,
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<SVGPathElement>, name: string, count: number) => {
+    const parent = containerRef.current?.getBoundingClientRect();
+    if (parent) {
+      setHoveredInfo({
+        name,
+        count,
+        x: e.clientX - parent.left,
+        y: e.clientY - parent.top,
+      });
+    }
   };
 
   return (
@@ -85,7 +122,10 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
         </span>
       </CardHeader>
 
-      <CardContent className="flex-1 min-h-[300px] relative p-4 flex items-center justify-center">
+      <CardContent
+        ref={containerRef}
+        className="flex-1 min-h-[300px] relative p-4 flex items-center justify-center overflow-hidden"
+      >
         {isLoading || !topoData ? (
           <div className="w-full h-full min-h-[280px] flex items-center justify-center">
             <Skeleton className="w-full h-full min-h-[280px] rounded-md" />
@@ -95,7 +135,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
             Unable to load map data.
           </div>
         ) : (
-          <div className="w-full h-full overflow-hidden flex items-center justify-center">
+          <div className="w-full h-full overflow-hidden flex items-center justify-center relative">
             <svg
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
               className="w-full h-auto max-h-[400px] select-none"
@@ -106,36 +146,48 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
                   const countryCode = String(feat.id || "").toUpperCase();
                   const name = feat.properties?.name || countryCode || "Unknown";
                   const count = countryStatsMap.get(countryCode) || 0;
-                  const color = getCountryColor(countryCode, count);
-                  const pathD = pathGenerator(feat as any);
+                  const color = getCountryColor(count);
+                  const pathD = pathGenerator(feat);
 
                   if (!pathD) return null;
 
                   return (
-                    <Tooltip key={`${countryCode}-${idx}`}>
-                      <TooltipTrigger>
-                        <path
-                          d={pathD}
-                          fill={color}
-                          stroke="var(--background)"
-                          strokeWidth="0.5"
-                          className="transition-colors duration-200 hover:opacity-85 focus:outline-none cursor-pointer"
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="text-xs font-sans">
-                        <p className="font-semibold">{name}</p>
-                        <p className="text-muted-foreground">
-                          Requests: {count.toLocaleString()}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <path
+                      key={`${countryCode}-${idx}`}
+                      d={pathD}
+                      fill={color}
+                      stroke="var(--border)"
+                      strokeWidth="0.5"
+                      className="transition-colors duration-150 hover:opacity-80 focus:outline-none cursor-pointer"
+                      onMouseEnter={(e) => handleMouseEnter(e, name, count)}
+                      onMouseMove={(e) => handleMouseMove(e, name, count)}
+                      onMouseLeave={() => setHoveredInfo(null)}
+                    />
                   );
                 })}
               </g>
             </svg>
+
+            {/* Hover Tooltip Overlay */}
+            {hoveredInfo && (
+              <div
+                className="absolute z-30 pointer-events-none px-3 py-1.5 rounded-md bg-popover text-popover-foreground border border-border/80 shadow-md text-xs font-sans -translate-x-1/2 -translate-y-full transition-all duration-75"
+                style={{
+                  left: `${hoveredInfo.x}px`,
+                  top: `${hoveredInfo.y - 8}px`,
+                }}
+              >
+                <p className="font-semibold text-foreground">{hoveredInfo.name}</p>
+                <p className="text-muted-foreground">
+                  Requests: {hoveredInfo.count.toLocaleString()}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
     </Card>
   );
 }
+
+
