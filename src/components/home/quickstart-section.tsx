@@ -5,27 +5,20 @@ import { CodeBlock } from "@/components/common/code-block";
 import { SITE_URL } from "@/lib/constants";
 
 const QUICKSTART_SNIPPETS = {
-  nextjs: `// app/surah/[id]/page.tsx
-export default async function SurahPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const res = await fetch("${SITE_URL}/surah/\${id}.json");
-  const data = await res.json();
-  const surah = data[id];
+  php: `<?php
+// Get Al-Fatihah (Surah 1)
+$response = file_get_contents("${SITE_URL}/surah/1.json");
+$data = json_decode($response, true);
+$surah = $data["1"];
 
-  return (
-    <div>
-      <h1>{surah.name_latin}</h1>
-      <h2 dir="rtl">{surah.name}</h2>
-      {Object.entries(surah.text).map(([num, text]) => (
-        <p key={num} dir="rtl">{text as string}</p>
-      ))}
-    </div>
-  );
-}`,
+echo $surah["name_latin"] . "\\n"; // "Al-Fatihah"
+echo $surah["text"]["1"] . "\\n"; // Bismillah...
+
+// Indonesian translation
+echo $surah["translations"]["id"]["text"]["1"] . "\\n";
+
+// Tafsir Kemenag
+echo $surah["tafsir"]["id"]["kemenag"]["text"]["1"] . "\\n";`,
   fetch: `const response = await fetch("${SITE_URL}/surah/1.json");
 const data = await response.json();
 const surah = data["1"];
@@ -72,10 +65,10 @@ export function QuickstartSection() {
         </p>
       </div>
 
-      <Tabs defaultValue="nextjs" className="mx-auto max-w-3xl">
+      <Tabs defaultValue="php" className="mx-auto max-w-3xl">
         <div className="w-full overflow-x-auto pb-1">
           <TabsList className="inline-flex min-w-full justify-start w-max">
-            <TabsTrigger value="nextjs">Next.js</TabsTrigger>
+            <TabsTrigger value="php">PHP</TabsTrigger>
             <TabsTrigger value="fetch">JavaScript</TabsTrigger>
             <TabsTrigger value="python">Python</TabsTrigger>
             <TabsTrigger value="curl">cURL</TabsTrigger>
