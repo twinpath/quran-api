@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { geoPath, geoEquirectangular } from "d3-geo";
 import { feature } from "topojson-client";
+import { Topology } from "topojson-specification";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { TelemetryDistributionItem } from "@/types/telemetry";
@@ -29,7 +30,7 @@ interface HoveredInfo {
 }
 
 export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
-  const [topoData, setTopoData] = useState<Record<string, unknown> | null>(null);
+  const [topoData, setTopoData] = useState<Topology | null>(null);
   const [hasError, setHasError] = useState(false);
   const [hoveredInfo, setHoveredInfo] = useState<HoveredInfo | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -38,9 +39,9 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
     fetch("/world.json")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load map");
-        return res.json();
+        return res.json() as Promise<Topology>;
       })
-      .then((data) => setTopoData(data as Record<string, unknown>))
+      .then((data) => setTopoData(data))
       .catch(() => setHasError(true));
   }, []);
 
@@ -61,7 +62,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
     try {
       const objects = topoData.objects as Record<string, unknown>;
       const targetObj = (objects.countries || objects.units) as Parameters<typeof feature>[1];
-      const geojson = feature(topoData as Parameters<typeof feature>[0], targetObj) as unknown as {
+      const geojson = feature(topoData, targetObj) as unknown as {
         features?: GeoFeature[];
       };
       return geojson.features || [];
@@ -147,7 +148,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
                   const name = feat.properties?.name || countryCode || "Unknown";
                   const count = countryStatsMap.get(countryCode) || 0;
                   const color = getCountryColor(count);
-                  const pathD = pathGenerator(feat);
+                  const pathD = pathGenerator(feat as unknown as Parameters<typeof pathGenerator>[0]);
 
                   if (!pathD) return null;
 

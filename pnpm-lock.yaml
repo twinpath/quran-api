@@ -102,6 +102,9 @@ importers:
       '@types/topojson-client':
         specifier: ^3.1.5
         version: 3.1.5
+      '@types/topojson-specification':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@unovis/ts':
         specifier: ^1.6.7
         version: 1.6.7(supports-color@10.2.2)

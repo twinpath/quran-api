@@ -238,8 +238,8 @@ export function useWebGLGlobe({ locations, autoRotate = true, theme = "dark" }: 
         setIsReady(true);
       } else {
         fetch("/world.json")
-          .then((res) => res.json())
-          .then((topo: Topology) => {
+          .then((res) => res.json() as Promise<Topology>)
+          .then((topo) => {
             if (disposed) return;
             cachedTopoData = topo;
             countryTexture = buildTexture(topo);
