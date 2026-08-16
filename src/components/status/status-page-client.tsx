@@ -49,7 +49,7 @@ export function StatusPageClient() {
     try {
       const res = await fetch(`/api/status?days=${selectedDays}`);
       if (!res.ok) throw new Error("Failed to fetch status telemetry data");
-      const json = await res.json();
+      const json: any = await res.json();
       if (json.success && json.data) {
         setData(json.data);
       } else {

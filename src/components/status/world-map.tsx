@@ -113,7 +113,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
 
                   return (
                     <Tooltip key={`${countryCode}-${idx}`}>
-                      <TooltipTrigger asChild>
+                      <TooltipTrigger>
                         <path
                           d={pathD}
                           fill={color}

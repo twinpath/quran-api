@@ -90,7 +90,7 @@ export async function GET(request: Request) {
 
   // Distribution helper
   async function getDistribution(
-    column: typeof telemetryLogs.country,
+    column: any,
     limit = 20,
   ): Promise<TelemetryDistributionItem[]> {
     const rows = await db

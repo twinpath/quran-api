@@ -11,6 +11,7 @@ const eslintConfig = [
 			".wrangler/**",
 			"node_modules/**",
 			"migrations/**",
+			"references/**",
 			"cloudflare-env.d.ts",
 		],
 	},
