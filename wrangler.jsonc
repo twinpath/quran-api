@@ -14,13 +14,17 @@
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
 	],
+	"build": {
+		"command": "npm run build:cloudflare",
+		"cwd": "."
+	},
 	"minify": true,
 	"keep_names": false,
 	"workers_dev": true,
 	"routes": [
 		{
 			"pattern": "quran.dyzulk.com",
-			"custom_domain": true
+			"custom_domain": false
 		}
 	],
 	"assets": {
