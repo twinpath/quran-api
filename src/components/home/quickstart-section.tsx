@@ -68,10 +68,10 @@ export function QuickstartSection() {
       <Tabs defaultValue="php" className="mx-auto max-w-3xl">
         <div className="w-full overflow-x-auto pb-1">
           <TabsList className="inline-flex min-w-full justify-start w-max">
-            <TabsTrigger value="php">PHP</TabsTrigger>
+            <TabsTrigger value="curl">cURL</TabsTrigger>
             <TabsTrigger value="fetch">JavaScript</TabsTrigger>
             <TabsTrigger value="python">Python</TabsTrigger>
-            <TabsTrigger value="curl">cURL</TabsTrigger>
+            <TabsTrigger value="php">PHP</TabsTrigger>
           </TabsList>
         </div>
 
