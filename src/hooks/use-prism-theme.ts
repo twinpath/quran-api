@@ -1,0 +1,12 @@
+import { useTheme } from "next-themes";
+import { prismLightTheme, prismDarkTheme } from "@/lib/prism-themes";
+
+/**
+ * Returns the appropriate PrismTheme based on the currently resolved
+ * next-themes theme (dark or light). Defaults to the light theme when
+ * resolvedTheme is not yet available (SSR / first render).
+ */
+export function usePrismTheme() {
+  const { resolvedTheme } = useTheme();
+  return resolvedTheme === "dark" ? prismDarkTheme : prismLightTheme;
+}

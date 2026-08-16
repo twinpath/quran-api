@@ -1,7 +1,8 @@
 "use client";
 
 import { Copy, Check } from "lucide-react";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight } from "prism-react-renderer";
+import { usePrismTheme } from "@/hooks/use-prism-theme";
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,7 @@ import { JsonViewerProps } from "@/types/components";
 
 export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerProps) {
   const { hasCopied, copy } = useCopyToClipboard();
+  const prismTheme = usePrismTheme();
   const jsonString = JSON.stringify(data, null, 2);
 
   return (
@@ -33,7 +35,7 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
       </div>
       <div className="overflow-auto p-4 font-mono text-[13px] leading-relaxed" style={{ maxHeight }}>
         <Highlight
-          theme={themes.vsDark}
+          theme={prismTheme}
           code={jsonString}
           language="json"
         >

@@ -1,7 +1,8 @@
 "use client";
 
 import { Copy, Check } from "lucide-react";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight } from "prism-react-renderer";
+import { usePrismTheme } from "@/hooks/use-prism-theme";
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ const normalizeLanguage = (lang?: string): string => {
 
 export function CodeBlock({ code, language, className, showLineNumbers = false }: CodeBlockProps) {
   const { hasCopied, copy } = useCopyToClipboard();
+  const prismTheme = usePrismTheme();
   const normalizedLang = normalizeLanguage(language);
 
   return (
@@ -45,7 +47,7 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
       {/* Code content */}
       <div className="overflow-x-auto p-4">
         <Highlight
-          theme={themes.vsDark}
+          theme={prismTheme}
           code={code.trim()}
           language={normalizedLang}
         >
