@@ -56,7 +56,7 @@ const sampleSearchResult = {
 export const API_ENDPOINTS: ApiEndpoint[] = [
   {
     id: "get-surah-list",
-    name: "Get Surah List (Edge)",
+    name: "Get Surah List",
     path: API_PATHS.surahList,
     method: "GET",
     description: "Retrieve a list of all 114 surahs from the D1 database. Edge-cached using KV.",
@@ -65,7 +65,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
   },
   {
     id: "get-surah-detail",
-    name: "Get Surah Detail (Edge)",
+    name: "Get Surah Detail",
     path: API_PATHS.surahDetail("{number}"),
     method: "GET",
     description: "Retrieve detailed surah data (with all ayahs, translations, and Tafsir) from D1. Edge-cached using KV.",
@@ -82,7 +82,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
   },
   {
     id: "search-ayahs",
-    name: "Search Ayahs (Edge)",
+    name: "Search Ayahs",
     path: API_PATHS.search("{query}"),
     method: "GET",
     description: "Search ayahs by translation text or surah name using SQL LIKE query on D1.",
