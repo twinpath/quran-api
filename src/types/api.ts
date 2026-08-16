@@ -40,3 +40,71 @@ export interface PlaygroundResponse {
   latencyMs: number;
   data: Record<string, unknown>;
 }
+
+/** Standard envelope for all API JSON responses */
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  meta?: ApiResponseMeta;
+}
+
+/** Standard error envelope for API error responses */
+export interface ApiErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+  };
+}
+
+/** Optional metadata attached to successful API responses */
+export interface ApiResponseMeta {
+  cached: boolean;
+  responseTimeMs: number;
+}
+
+/** Shape of a single surah in /api/surah list */
+export interface ApiSurahListItem {
+  number: number;
+  name: string;
+  nameLatin: string;
+  numberOfAyah: number;
+  translationName: string;
+  revelationType: string;
+}
+
+/** Shape of a single ayah in /api/surah/[number] detail */
+export interface ApiAyahItem {
+  number: number;
+  textArabic: string;
+  translationId: string;
+  tafsirKemenag: string | null;
+}
+
+/** Shape of /api/surah/[number] response data */
+export interface ApiSurahDetail {
+  number: number;
+  name: string;
+  nameLatin: string;
+  numberOfAyah: number;
+  translationName: string;
+  revelationType: string;
+  ayahs: ApiAyahItem[];
+}
+
+/** Shape of /api/search response data */
+export interface ApiSearchResult {
+  query: string;
+  total: number;
+  results: ApiSearchHit[];
+}
+
+/** Single search hit */
+export interface ApiSearchHit {
+  surahNumber: number;
+  surahNameLatin: string;
+  ayahNumber: number;
+  textArabic: string;
+  translationId: string;
+}
+
