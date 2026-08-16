@@ -1,5 +1,5 @@
 /**
- * Seed script: reads JSON files from data/surah/ and inserts them into D1.
+ * Seed script: reads JSON files from data branch and inserts them into D1.
  *
  * Usage (local D1):
  *   npx tsx src/lib/db/seed.ts

@@ -35,7 +35,7 @@ This repository uses a two-branch model:
 
 ## Dataset Schema
 
-Each surah file in the `data/` branch follows this structure (canonical raw format):
+Each surah file in the `data` branch follows this structure (canonical raw format):
 
 ```json
 {

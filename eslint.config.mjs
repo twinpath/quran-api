@@ -4,7 +4,6 @@ import nextConfigTypescript from "eslint-config-next/typescript";
 const eslintConfig = [
 	{
 		ignores: [
-			"data/**",
 			".next/**",
 			".open-next/**",
 			".vscode/**",
