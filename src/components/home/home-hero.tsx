@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/common/code-block";
 import { SITE_URL, GITHUB_REPO_URL } from "@/lib/constants";
+import { API_PATHS } from "@/lib/api-endpoints";
 
 export function HomeHero() {
-  const curlSnippet = `curl -s ${SITE_URL}/surah/1.json | jq .`;
+  const curlSnippet = `curl -s ${SITE_URL}${API_PATHS.surahDetail(1)} | jq .`;
 
   return (
     <section className="relative overflow-hidden border-b border-border/40">

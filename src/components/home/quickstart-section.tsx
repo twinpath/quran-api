@@ -3,56 +3,57 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeBlock } from "@/components/common/code-block";
 import { SITE_URL } from "@/lib/constants";
+import { API_PATHS } from "@/lib/api-endpoints";
 
 const QUICKSTART_SNIPPETS = {
   php: `<?php
 // Get Al-Fatihah (Surah 1)
-$response = file_get_contents("${SITE_URL}/surah/1.json");
-$data = json_decode($response, true);
-$surah = $data["1"];
+$response = file_get_contents("${SITE_URL}${API_PATHS.surahDetail(1)}");
+$result = json_decode($response, true);
+$surah = $result["data"];
 
-echo $surah["name_latin"] . "\\n"; // "Al-Fatihah"
-echo $surah["text"]["1"] . "\\n"; // Bismillah...
+echo $surah["nameLatin"] . "\\n"; // "Al-Fatihah"
+echo $surah["ayahs"][0]["textArabic"] . "\\n"; // Bismillah...
 
-// Indonesian translation
-echo $surah["translations"]["id"]["text"]["1"] . "\\n";
+// Indonesian translation of verse 1
+echo $surah["ayahs"][0]["translationId"] . "\\n";
 
-// Tafsir Kemenag
-echo $surah["tafsir"]["id"]["kemenag"]["text"]["1"] . "\\n";`,
-  fetch: `const response = await fetch("${SITE_URL}/surah/1.json");
-const data = await response.json();
-const surah = data["1"];
+// Tafsir Kemenag of verse 1
+echo $surah["ayahs"][0]["tafsirKemenag"] . "\\n";`,
+  fetch: `const response = await fetch("${SITE_URL}${API_PATHS.surahDetail(1)}");
+const result = await response.json();
+const surah = result.data;
 
-console.log(surah.name_latin);  // "Al-Fatihah"
-console.log(surah.text["1"]);   // Bismillah...
+console.log(surah.nameLatin);  // "Al-Fatihah"
+console.log(surah.ayahs[0].textArabic);   // Bismillah...
 
-// Indonesian translation
-console.log(surah.translations.id.text["1"]);
+// Indonesian translation of verse 1
+console.log(surah.ayahs[0].translationId);
 
-// Tafsir Kemenag
-console.log(surah.tafsir.id.kemenag.text["1"]);`,
+// Tafsir Kemenag of verse 1
+console.log(surah.ayahs[0].tafsirKemenag);`,
   python: `import requests
 
-response = requests.get("${SITE_URL}/surah/1.json")
-data = response.json()
-surah = data["1"]
+response = requests.get("${SITE_URL}${API_PATHS.surahDetail(1)}")
+result = response.json()
+surah = result["data"]
 
-print(surah["name_latin"])  # "Al-Fatihah"
-print(surah["text"]["1"])   # Bismillah...
+print(surah["nameLatin"])  # "Al-Fatihah"
+print(surah["ayahs"][0]["textArabic"])   # Bismillah...
 
-# Indonesian translation
-print(surah["translations"]["id"]["text"]["1"])
+# Indonesian translation of verse 1
+print(surah["ayahs"][0]["translationId"])
 
-# Tafsir Kemenag
-print(surah["tafsir"]["id"]["kemenag"]["text"]["1"])`,
+# Tafsir Kemenag of verse 1
+print(surah["ayahs"][0]["tafsirKemenag"])`,
   curl: `# Get Al-Fatihah (Surah 1)
-curl -s ${SITE_URL}/surah/1.json | jq '.["1"].name_latin'
+curl -s "${SITE_URL}${API_PATHS.surahDetail(1)}" | jq '.data.nameLatin'
 
-# Get An-Nas (Surah 114) using 3-digit format
-curl -s ${SITE_URL}/surah-3digit/114.json | jq '.["114"].text'
+# Search verses containing "esa"
+curl -s "${SITE_URL}${API_PATHS.search("esa")}" | jq '.data.results[0].textArabic'
 
-# Get all ayahs with translations
-curl -s ${SITE_URL}/surah/112.json | jq '.["112"].translations.id.text'`,
+# Get all 114 Surahs list
+curl -s "${SITE_URL}${API_PATHS.surahList}" | jq '.data[0].nameLatin'`,
 };
 
 export function QuickstartSection() {
