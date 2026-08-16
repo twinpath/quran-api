@@ -2,11 +2,10 @@ import { Suspense } from "react";
 import { HomeHero } from "@/components/home/home-hero";
 import { StatsOverview } from "@/components/home/stats-overview";
 import { StatsSkeleton } from "@/components/home/stats-skeleton";
-import { ApiPlayground } from "@/components/home/api-playground";
-import { ApiPlaygroundSkeleton } from "@/components/home/api-playground-skeleton";
-import { SurahExplorer } from "@/components/home/surah-explorer";
-import { SurahExplorerSkeleton } from "@/components/home/surah-explorer-skeleton";
+import { PlaygroundPreview } from "@/components/home/playground-preview";
 import { FeaturesSection } from "@/components/home/features-section";
+import { SurahPreview } from "@/components/home/surah-preview";
+import { SurahPreviewSkeleton } from "@/components/home/surah-preview-skeleton";
 import { QuickstartSection } from "@/components/home/quickstart-section";
 import { FaqSection } from "@/components/home/faq-section";
 import { CtaBanner } from "@/components/home/cta-banner";
@@ -20,14 +19,12 @@ export default function Home() {
         <StatsOverview />
       </Suspense>
 
-      <Suspense fallback={<ApiPlaygroundSkeleton />}>
-        <ApiPlayground />
-      </Suspense>
+      <PlaygroundPreview />
 
       <FeaturesSection />
 
-      <Suspense fallback={<SurahExplorerSkeleton />}>
-        <SurahExplorer />
+      <Suspense fallback={<SurahPreviewSkeleton />}>
+        <SurahPreview />
       </Suspense>
 
       <QuickstartSection />

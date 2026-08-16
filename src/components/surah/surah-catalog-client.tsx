@@ -25,13 +25,13 @@ import {
 } from "@/components/ui/combobox";
 import { useSurahSearch } from "@/hooks/use-surah-search";
 import { REVELATION_FILTERS, SURAH_SORT_OPTIONS, AYAH_COUNT_FILTERS } from "@/constants";
-import type { ApiSurahListItem } from "@/types/api";
+import type { ApiSurahListItem, AyahCountRangeKey, SurahSortKey } from "@/types/api";
 
-interface SurahExplorerClientProps {
+interface SurahCatalogClientProps {
   initialSurahs: ApiSurahListItem[];
 }
 
-export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps) {
+export function SurahCatalogClient({ initialSurahs }: SurahCatalogClientProps) {
   const {
     query,
     setQuery,
@@ -66,11 +66,11 @@ export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps)
   };
 
   return (
-    <section id="surah-explorer" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <section id="surah-catalog" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <div className="mb-8 text-center">
-        <h2 className="font-heading text-3xl font-bold tracking-tight">Surah Explorer</h2>
+        <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">Surah Catalog</h1>
         <p className="mt-2 text-muted-foreground">
-          Browse all {totalCount} surahs of the Holy Quran with Arabic names, translations, and metadata.
+          Browse all {totalCount} surahs of the Holy Quran with Arabic script, Latin transliterations, official Kemenag RI translations, and metadata.
         </p>
       </div>
 
@@ -142,7 +142,7 @@ export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps)
             {/* Ayah Count Selector */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-muted-foreground">Length:</span>
-              <Select value={ayahRange} onValueChange={(val) => setAyahRange(val as any)}>
+              <Select value={ayahRange} onValueChange={(val) => setAyahRange(val as AyahCountRangeKey)}>
                 <SelectTrigger className="w-[140px] h-9 text-xs">
                   <SelectValue placeholder="Any Length" />
                 </SelectTrigger>
@@ -166,7 +166,7 @@ export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps)
                 <ArrowUpDown className="h-3.5 w-3.5" />
                 Sort:
               </span>
-              <Select value={sortKey} onValueChange={(val) => setSortKey(val as any)}>
+              <Select value={sortKey} onValueChange={(val) => setSortKey(val as SurahSortKey)}>
                 <SelectTrigger className="w-[170px] h-9 text-xs">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -205,7 +205,7 @@ export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps)
 
       {/* Surah grid */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredSurahs.slice(0, 18).map((surah) => (
+        {filteredSurahs.map((surah) => (
           <Card
             key={surah.number}
             id={`surah-${surah.number}`}
@@ -237,12 +237,6 @@ export function SurahExplorerClient({ initialSurahs }: SurahExplorerClientProps)
           </Card>
         ))}
       </div>
-
-      {filteredSurahs.length > 18 && (
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Showing first 18 results. Refine your search to see more.
-        </p>
-      )}
     </section>
   );
 }

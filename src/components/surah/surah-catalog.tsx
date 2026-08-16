@@ -1,10 +1,10 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { fetchSurahList } from "@/lib/db";
-import { SurahExplorerClient } from "./surah-explorer-client";
+import { SurahCatalogClient } from "./surah-catalog-client";
 
-export async function SurahExplorer() {
+export async function SurahCatalog() {
   const { env } = getCloudflareContext();
   const surahList = await fetchSurahList(env);
 
-  return <SurahExplorerClient initialSurahs={surahList} />;
+  return <SurahCatalogClient initialSurahs={surahList} />;
 }

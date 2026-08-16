@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeBlock } from "@/components/common/code-block";
-import { SITE_URL, API_PATHS, QUICKSTART_SNIPPETS, SITE_NAME } from "@/constants";
+import { QUICKSTART_SNIPPETS, SITE_NAME } from "@/constants";
 
 export function QuickstartSection() {
   return (

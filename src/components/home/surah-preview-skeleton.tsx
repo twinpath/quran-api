@@ -1,18 +1,15 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function SurahExplorerSkeleton() {
+export function SurahPreviewSkeleton() {
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Skeleton className="h-10 flex-1 rounded-md" />
-        <div className="flex gap-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-24 rounded-md" />
-          ))}
-        </div>
+    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <div className="flex flex-col items-center text-center">
+        <Skeleton className="mb-3 h-5 w-36 rounded-full" />
+        <Skeleton className="h-9 w-80 rounded-md" />
+        <Skeleton className="mt-3 h-4 w-96 max-w-full" />
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
+      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="rounded-lg border border-border p-5">
             <div className="flex items-start justify-between">
               <div className="space-y-2">

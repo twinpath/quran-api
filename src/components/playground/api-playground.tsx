@@ -27,11 +27,11 @@ export function ApiPlayground() {
   } = useApiPlayground();
 
   return (
-    <section id="api-playground" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <section id="api-playground" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <div className="mb-8 text-center">
-        <h2 className="font-heading text-3xl font-bold tracking-tight">API Playground</h2>
+        <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">API Playground</h1>
         <p className="mt-2 text-muted-foreground">
-          Explore the {SITE_NAME} interactively. Select an endpoint, adjust parameters, and see live responses.
+          Explore the {SITE_NAME} interactively. Select an endpoint, adjust parameters, and view live responses.
         </p>
       </div>
 

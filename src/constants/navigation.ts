@@ -3,8 +3,8 @@ import { GITHUB_REPO_URL, DATA_SOURCE_URL } from "./site";
 
 /** Navigation items */
 export const NAV_ITEMS: NavItem[] = [
-  { label: "API Playground", href: "/#api-playground" },
-  { label: "Surah Explorer", href: "/#surah-explorer" },
+  { label: "API Playground", href: "/playground" },
+  { label: "Surah Catalog", href: "/surah" },
   { label: "Quickstart", href: "/#quickstart" },
   { label: "Status", href: "/status" },
   { label: "About", href: "/about" },
@@ -15,8 +15,8 @@ export const FOOTER_SECTIONS: FooterSection[] = [
   {
     title: "Product",
     links: [
-      { label: "API Playground", href: "/#api-playground" },
-      { label: "Surah Explorer", href: "/#surah-explorer" },
+      { label: "API Playground", href: "/playground" },
+      { label: "Surah Catalog", href: "/surah" },
       { label: "Quickstart", href: "/#quickstart" },
       { label: "Status", href: "/status" },
       { label: "About", href: "/about" },
