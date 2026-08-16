@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { GitFork, Terminal, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GITHUB_REPO_URL, SITE_NAME } from "@/constants";
@@ -18,7 +19,7 @@ export function CtaBanner() {
           </p>
 
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button size="lg" className="gap-2" nativeButton={false} render={<a href="/#api-playground" />}>
+            <Button size="lg" className="gap-2" nativeButton={false} render={<Link href="/#api-playground" />}>
               <Terminal className="h-4 w-4" />
               Try the API
             </Button>
