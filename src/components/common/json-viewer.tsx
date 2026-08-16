@@ -1,15 +1,11 @@
 "use client";
 
 import { Copy, Check } from "lucide-react";
+import { Highlight, themes } from "prism-react-renderer";
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
-
-interface JsonViewerProps {
-  data: Record<string, unknown>;
-  className?: string;
-  maxHeight?: string;
-}
+import { JsonViewerProps } from "@/types/components";
 
 export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerProps) {
   const { hasCopied, copy } = useCopyToClipboard();
@@ -36,7 +32,26 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
         </Button>
       </div>
       <div className="overflow-auto p-4 font-mono text-[13px] leading-relaxed" style={{ maxHeight }}>
-        <pre className="whitespace-pre-wrap break-words">{jsonString}</pre>
+        <Highlight
+          theme={themes.vsDark}
+          code={jsonString}
+          language="json"
+        >
+          {({ className: highlightClass, style, tokens, getLineProps, getTokenProps }) => (
+            <pre
+              className={cn("whitespace-pre-wrap break-words", highlightClass)}
+              style={{ ...style, backgroundColor: "transparent" }}
+            >
+              {tokens.map((line, i) => (
+                <div {...getLineProps({ line, key: i })} key={i}>
+                  {line.map((token, key) => (
+                    <span {...getTokenProps({ token, key })} key={key} />
+                  ))}
+                </div>
+              ))}
+            </pre>
+          )}
+        </Highlight>
       </div>
     </div>
   );

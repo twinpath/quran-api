@@ -1,21 +1,22 @@
 "use client";
 
 import { Copy, Check } from "lucide-react";
+import { Highlight, themes } from "prism-react-renderer";
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
+import { CodeBlockProps } from "@/types/components";
 
-interface CodeBlockProps {
-  code: string;
-  language?: string;
-  className?: string;
-  showLineNumbers?: boolean;
-}
+const normalizeLanguage = (lang?: string): string => {
+  if (!lang) return "javascript";
+  const lower = lang.toLowerCase();
+  if (lower === "curl") return "bash";
+  return lower;
+};
 
 export function CodeBlock({ code, language, className, showLineNumbers = false }: CodeBlockProps) {
   const { hasCopied, copy } = useCopyToClipboard();
-
-  const lines = code.split("\n");
+  const normalizedLang = normalizeLanguage(language);
 
   return (
     <div className={cn("group relative rounded-lg border border-border bg-muted/50 font-mono text-sm", className)}>
@@ -43,18 +44,36 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
 
       {/* Code content */}
       <div className="overflow-x-auto p-4">
-        <pre className="text-[13px] leading-relaxed">
-          {showLineNumbers
-            ? lines.map((line, i) => (
-                <div key={i} className="flex">
-                  <span className="mr-4 inline-block w-6 select-none text-right text-muted-foreground/50">
-                    {i + 1}
-                  </span>
-                  <span>{line}</span>
-                </div>
-              ))
-            : code}
-        </pre>
+        <Highlight
+          theme={themes.vsDark}
+          code={code.trim()}
+          language={normalizedLang}
+        >
+          {({ className: highlightClass, style, tokens, getLineProps, getTokenProps }) => (
+            <pre
+              className={cn("text-[13px] leading-relaxed", highlightClass)}
+              style={{ ...style, backgroundColor: "transparent" }}
+            >
+              {tokens.map((line, i) => {
+                const lineProps = getLineProps({ line, key: i });
+                return (
+                  <div {...lineProps} key={i} className={cn("flex", lineProps.className)}>
+                    {showLineNumbers && (
+                      <span className="mr-4 inline-block w-6 select-none text-right text-muted-foreground/50 shrink-0">
+                        {i + 1}
+                      </span>
+                    )}
+                    <span className="flex-1">
+                      {line.map((token, key) => (
+                        <span key={key} {...getTokenProps({ token })} />
+                      ))}
+                    </span>
+                  </div>
+                );
+              })}
+            </pre>
+          )}
+        </Highlight>
       </div>
     </div>
   );
