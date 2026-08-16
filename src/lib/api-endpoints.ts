@@ -87,21 +87,12 @@ response = requests.get("${url}")
 data = response.json()
 print(data)`;
 
-    case "nextjs":
-      return `// app/surah/[id]/page.tsx
-export default async function SurahPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const res = await fetch("${baseUrl}/surah/\${id}.json");
-  const data = await res.json();
-
-  return (
-    <pre>{JSON.stringify(data, null, 2)}</pre>
-  );
-}`;
+    case "php":
+      return `<?php
+$url = "${url}";
+$response = file_get_contents($url);
+$data = json_decode($response, true);
+print_r($data);`;
 
     default:
       return "";
@@ -113,5 +104,5 @@ export const SNIPPET_LANG_LABELS: Record<CodeSnippetLang, string> = {
   curl: "cURL",
   javascript: "JavaScript",
   python: "Python",
-  nextjs: "Next.js",
+  php: "PHP",
 };

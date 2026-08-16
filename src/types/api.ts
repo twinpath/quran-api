@@ -2,7 +2,7 @@
 export type ApiMethod = "GET";
 
 /** Supported code snippet languages */
-export type CodeSnippetLang = "curl" | "javascript" | "python" | "nextjs";
+export type CodeSnippetLang = "curl" | "javascript" | "python" | "php";
 
 /** API endpoint definition */
 export interface ApiEndpoint {
