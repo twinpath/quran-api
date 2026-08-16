@@ -1,4 +1,5 @@
-import { GitFork, Terminal, ChevronRight } from "lucide-react";
+import { Terminal, ChevronRight } from "lucide-react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Button } from "@/components/ui/button";
 import { GITHUB_REPO_URL, SITE_NAME } from "@/constants";
 
@@ -30,7 +31,7 @@ export function CtaBanner() {
               nativeButton={false}
               render={<a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer" />}
             >
-              <GitFork className="h-4 w-4" />
+              <SiGithub className="h-4 w-4" />
               Star on GitHub
               <ChevronRight className="h-4 w-4" />
             </Button>

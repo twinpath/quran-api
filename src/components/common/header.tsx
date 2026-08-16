@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, GitFork, Menu, X } from "lucide-react";
+import { BookOpen, Menu, X } from "lucide-react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -45,7 +46,7 @@ export function Header() {
             nativeButton={false}
             render={<a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer" />}
           >
-            <GitFork className="h-4 w-4" />
+            <SiGithub className="h-4 w-4" />
             <span>GitHub</span>
           </Button>
           <ThemeToggle />
@@ -94,7 +95,7 @@ export function Header() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
-              <GitFork className="h-4 w-4" />
+              <SiGithub className="h-4 w-4" />
               GitHub
             </a>
           </nav>
