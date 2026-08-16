@@ -20,11 +20,11 @@
 	},
 	"minify": true,
 	"keep_names": false,
-	"workers_dev": true,
+	"workers_dev": false,
 	"routes": [
 		{
 			"pattern": "quran.dyzulk.com",
-			"custom_domain": false
+			"custom_domain": true
 		}
 	],
 	"assets": {
