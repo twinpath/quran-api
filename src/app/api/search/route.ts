@@ -81,7 +81,7 @@ export async function GET(request: Request) {
   };
 
   const responseTimeMs = Date.now() - startTime;
-  await logTelemetry(env, "/api/search", ip, 200, responseTimeMs);
+  await logTelemetry(env, request, "/api/search", 200, responseTimeMs);
 
   const body: ApiResponse<ApiSearchResult> = {
     success: true,

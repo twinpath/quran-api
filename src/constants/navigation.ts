@@ -6,6 +6,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "API Playground", href: "/#api-playground" },
   { label: "Surah Explorer", href: "/#surah-explorer" },
   { label: "Quickstart", href: "/#quickstart" },
+  { label: "Status", href: "/status" },
   { label: "About", href: "/about" },
 ];
 
@@ -17,6 +18,7 @@ export const FOOTER_SECTIONS: FooterSection[] = [
       { label: "API Playground", href: "/#api-playground" },
       { label: "Surah Explorer", href: "/#surah-explorer" },
       { label: "Quickstart", href: "/#quickstart" },
+      { label: "Status", href: "/status" },
       { label: "About", href: "/about" },
     ],
   },

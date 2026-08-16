@@ -49,7 +49,7 @@ export async function GET(
   const cached = await getFromCache<ApiSurahDetail>(kv, cachePath);
   if (cached.hit && cached.data) {
     const responseTimeMs = Date.now() - startTime;
-    await logTelemetry(env, `/api/surah/${surahNumber}`, ip, 200, responseTimeMs);
+    await logTelemetry(env, request, `/api/surah/${surahNumber}`, 200, responseTimeMs);
 
     const body: ApiResponse<ApiSurahDetail> = {
       success: true,
@@ -105,7 +105,7 @@ export async function GET(
   await putInCache(kv, cachePath, data);
 
   const responseTimeMs = Date.now() - startTime;
-  await logTelemetry(env, `/api/surah/${surahNumber}`, ip, 200, responseTimeMs);
+  await logTelemetry(env, request, `/api/surah/${surahNumber}`, 200, responseTimeMs);
 
   const body: ApiResponse<ApiSurahDetail> = {
     success: true,

@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db";
 import { telemetryLogs } from "@/lib/db/schema";
+import { parseUserAgent } from "@/lib/ua";
 
 /**
  * Hash an IP address for privacy-safe storage.
@@ -26,20 +27,41 @@ async function hashIpForTelemetry(ip: string): Promise<string> {
  */
 export async function logTelemetry(
   env: CloudflareEnv,
+  request: Request,
   endpoint: string,
-  ip: string,
   statusCode: number,
   responseTimeMs: number,
 ): Promise<void> {
   try {
     const db = getDb(env);
+    const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
     const ipHash = await hashIpForTelemetry(ip);
+
+    // Cloudflare geo headers
+    const country = request.headers.get("cf-ipcountry") ?? null;
+    const region = request.headers.get("cf-region") ?? null;
+    const city = request.headers.get("cf-ipcity") ?? null;
+    const latitude = request.headers.get("cf-iplatitude") ?? null;
+    const longitude = request.headers.get("cf-iplongitude") ?? null;
+
+    // User-agent parsing
+    const userAgentString = request.headers.get("user-agent") ?? null;
+    const parsed = parseUserAgent(userAgentString);
 
     await db.insert(telemetryLogs).values({
       endpoint,
       ipHash,
       statusCode,
       responseTimeMs,
+      country,
+      region,
+      city,
+      latitude,
+      longitude,
+      userAgent: userAgentString,
+      deviceType: parsed.deviceType,
+      osType: parsed.osType,
+      browserType: parsed.browserType,
       createdAt: new Date(),
     });
   } catch {
