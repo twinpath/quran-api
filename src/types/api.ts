@@ -108,3 +108,14 @@ export interface ApiSearchHit {
   translationId: string;
 }
 
+/** Sorting options keys for Surah Explorer */
+export type SurahSortKey =
+  | "number-asc"
+  | "number-desc"
+  | "ayahs-asc"
+  | "ayahs-desc"
+  | "name-asc"
+  | "name-desc";
+
+/** Ayah count range filter options */
+export type AyahCountRangeKey = "all" | "short" | "medium" | "long";

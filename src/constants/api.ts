@@ -1,4 +1,4 @@
-import type { ApiEndpoint, CodeSnippetLang } from "@/types/api";
+import type { ApiEndpoint, CodeSnippetLang, SurahSortKey, AyahCountRangeKey } from "@/types/api";
 import { SAMPLE_ALFATIHAH, SURAH_CATALOG } from "@/lib/quran-data";
 import type { RevelationFilter } from "@/hooks/use-surah-search";
 
@@ -109,3 +109,21 @@ export const SNIPPET_LANG_LABELS: Record<CodeSnippetLang, string> = {
 
 /** Revelation filters for exploration */
 export const REVELATION_FILTERS: RevelationFilter[] = ["All", "Makkiyah", "Madaniyah"];
+
+/** Sorting options keys for Surah Explorer */
+export const SURAH_SORT_OPTIONS: { value: SurahSortKey; label: string }[] = [
+  { value: "number-asc", label: "Surah Number (Asc)" },
+  { value: "number-desc", label: "Surah Number (Desc)" },
+  { value: "ayahs-asc", label: "Ayah Count (Min)" },
+  { value: "ayahs-desc", label: "Ayah Count (Max)" },
+  { value: "name-asc", label: "Name (A-Z)" },
+  { value: "name-desc", label: "Name (Z-A)" },
+];
+
+/** Ayah count range filters */
+export const AYAH_COUNT_FILTERS: { value: AyahCountRangeKey; label: string; min?: number; max?: number }[] = [
+  { value: "all", label: "Any Length" },
+  { value: "short", label: "Short (< 50 ayahs)", max: 49 },
+  { value: "medium", label: "Medium (50 - 100 ayahs)", min: 50, max: 100 },
+  { value: "long", label: "Long (> 100 ayahs)", min: 101 },
+];
