@@ -108,10 +108,10 @@ export function ApiPlayground() {
           )}
 
           <Tabs defaultValue="response" className="w-full">
-            <TabsList>
+            <TabsList className="flex w-full flex-wrap justify-start h-auto gap-1">
               <TabsTrigger value="response">Response</TabsTrigger>
               {(Object.keys(SNIPPET_LANG_LABELS) as CodeSnippetLang[]).map((lang) => (
-                <TabsTrigger key={lang} value={lang} onClick={() => setSnippetLang(lang)}>
+                <TabsTrigger key={lang} value={lang} onClick={() => setSnippetLang(lang)} className="flex-initial">
                   {SNIPPET_LANG_LABELS[lang]}
                 </TabsTrigger>
               ))}
