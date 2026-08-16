@@ -11,6 +11,7 @@ import { useApiPlayground } from "@/hooks/use-api-playground";
 import { SNIPPET_LANG_LABELS } from "@/lib/api-endpoints";
 import { formatLatency } from "@/lib/formatters";
 import type { CodeSnippetLang } from "@/types/api";
+import { SITE_NAME } from "@/constants";
 
 export function ApiPlayground() {
   const {
@@ -30,7 +31,7 @@ export function ApiPlayground() {
       <div className="mb-8 text-center">
         <h2 className="font-heading text-3xl font-bold tracking-tight">API Playground</h2>
         <p className="mt-2 text-muted-foreground">
-          Explore the Quran JSON API interactively. Select an endpoint, adjust parameters, and see live responses.
+          Explore the {SITE_NAME} interactively. Select an endpoint, adjust parameters, and see live responses.
         </p>
       </div>
 

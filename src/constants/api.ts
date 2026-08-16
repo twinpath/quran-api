@@ -2,16 +2,12 @@ import type { ApiEndpoint, CodeSnippetLang } from "@/types/api";
 import { SAMPLE_ALFATIHAH, SURAH_CATALOG } from "@/lib/quran-data";
 import type { RevelationFilter } from "@/hooks/use-surah-search";
 
-/** Centralized API paths for both static files and edge-native routes */
+/** Centralized API paths for edge-native routes */
 export const API_PATHS = {
   // Edge-native dynamic routes (D1 + KV)
   surahList: "/api/surah",
   surahDetail: (num: string | number) => `/api/surah/${num}`,
   search: (query: string) => `/api/search?q=${query}`,
-
-  // Legacy static files
-  staticSurah: (num: string | number) => `/surah/${num}.json`,
-  staticSurahPadded: (num: string | number) => `/surah-3digit/${num}.json`,
 } as const;
 
 // Programmatic sample data for dynamic Edge APIs

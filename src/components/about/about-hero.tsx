@@ -1,4 +1,4 @@
-import { PRINCIPLES } from "@/constants";
+import { PRINCIPLES, SITE_NAME } from "@/constants";
 import { Card, CardContent } from "@/components/ui/card";
 
 
@@ -12,11 +12,11 @@ export function AboutHero() {
           <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">
             About{" "}
             <span className="bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
-              Quran JSON
+              {SITE_NAME}
             </span>
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-            Quran JSON was born from a simple need: lightweight, accurate, and fast access to the Holy Quran in a developer-friendly format. What started as a personal project by Rio Astamal to create a static Quran reader for his Blackberry Passport has grown into a modern edge-delivered API serving developers worldwide.
+            {SITE_NAME} was born from a simple need: lightweight, accurate, and fast access to the Holy Quran in a developer-friendly format. What started as a personal project by Rio Astamal to create a static Quran reader for his Blackberry Passport has grown into a modern edge-delivered API serving developers worldwide.
           </p>
         </div>
 

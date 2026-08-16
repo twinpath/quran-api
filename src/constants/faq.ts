@@ -10,17 +10,17 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Is this API free to use?",
     answer:
-      "Yes, completely free with no API keys, no authentication, and no rate limits. The project is MIT licensed and open source.",
+      "Yes, completely free with no API keys and no authentication. It is rate limited to 60 requests per minute to ensure stability and prevent abuse. The project is MIT licensed and open source.",
   },
   {
     question: "What is the response format?",
     answer:
-      'All responses are JSON. Each surah file is keyed by surah number as a string (e.g. "1") and contains Arabic text, Indonesian translation, and Kemenag Tafsir.',
+      "All responses are returned as clean JSON. The edge routes return structured payloads containing surah metadata and an array of ayahs, each with translation and Tafsir.",
   },
   {
     question: "Can I self-host this?",
     answer:
-      "Absolutely. Clone the repository, run the Next.js build with OpenNext, and deploy to Cloudflare Workers or any compatible runtime.",
+      "Absolutely. Clone the repository, configure Cloudflare D1 and KV, build with OpenNext, and deploy directly to Cloudflare Workers.",
   },
   {
     question: "What translations are available?",

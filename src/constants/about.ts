@@ -12,7 +12,7 @@ import {
   Languages
 } from "lucide-react";
 import type { StatItem, Contributor } from "@/types/navigation";
-import { DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR } from "./site";
+import { DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR, SITE_NAME } from "./site";
 
 /** Global statistics */
 export const STATS: StatItem[] = [
@@ -71,7 +71,7 @@ export const PRINCIPLES = [
   {
     icon: Heart,
     title: "Openness",
-    description: "MIT licensed, no API keys, no rate limits, no tracking. Fork it, self-host it, or use our CDN.",
+    description: "MIT licensed, no API keys, rate limited to 60 requests/min, no tracking. Fork it, self-host it, or use our CDN.",
   },
 ];
 
@@ -80,12 +80,12 @@ export const ARCH_LAYERS = [
   {
     icon: Globe,
     title: "Client Request",
-    description: "Users and applications send HTTP requests to the Quran JSON domain.",
+    description: `Users and applications send HTTP requests to the ${SITE_NAME} domain.`,
   },
   {
     icon: Zap,
     title: "Cloudflare Edge (300+ PoPs)",
-    description: "Requests hit the nearest Cloudflare edge node. Static surah JSON files are served directly from the CDN with immutable caching headers.",
+    description: "Requests hit the nearest Cloudflare edge node. Edge-cached API responses are served directly from Cloudflare KV caching namespace.",
   },
   {
     icon: Server,
@@ -93,9 +93,9 @@ export const ARCH_LAYERS = [
     description: "Dynamic pages and API routes are rendered on Cloudflare Workers using the OpenNext adapter for Next.js, running full server-side rendering at the edge.",
   },
   {
-    icon: HardDrive,
-    title: "Static Assets",
-    description: "Pre-built surah JSON files (1.json - 114.json and 001.json - 114.json) are served as static assets with Cache-Control: public, max-age=31536000, immutable.",
+    icon: Database,
+    title: "Cloudflare D1 Database",
+    description: "If cached KV is a miss, requests are dynamically queried against the serverless D1 (SQLite) SQL database at the edge, and results are cached.",
   },
 ];
 
@@ -108,9 +108,9 @@ export const LINEAGE_ITEMS = [
     link: { label: "quran.kemenag.go.id", href: DATA_SOURCE_URL },
   },
   {
-    icon: FileText,
-    title: "Generator Pipeline",
-    description: `The dataset is compiled using a Bash generator script (generator.sh) that processes raw text files from the quran-text project into structured JSON, one file per surah.`,
+    icon: Database,
+    title: "D1 Database Seed",
+    description: `The dataset is loaded and indexed inside a Cloudflare D1 SQL database using Drizzle ORM schemas and seeders, optimizing direct querying and search.`,
     link: null,
   },
   {

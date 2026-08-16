@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { FAQ_ITEMS } from "@/constants";
+import { FAQ_ITEMS, SITE_NAME } from "@/constants";
 
 export function FaqSection() {
   return (
@@ -14,7 +14,7 @@ export function FaqSection() {
           Frequently Asked Questions
         </h2>
         <p className="mt-2 text-muted-foreground">
-          Common questions about the Quran JSON API and dataset.
+          Common questions about the {SITE_NAME} and dataset.
         </p>
       </div>
 

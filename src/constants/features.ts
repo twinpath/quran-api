@@ -23,13 +23,13 @@ export const FEATURES: FeatureItem[] = [
     iconName: "BookMarked",
   },
   {
-    title: "3-Digit Padded Indexing",
-    description: "Surah files available in both standard (1.json) and zero-padded (001.json) naming for flexible integration.",
-    iconName: "Hash",
+    title: "D1 & KV Edge Infrastructure",
+    description: "Queries are powered by Cloudflare D1 serverless database, with KV namespaces for optimized cache retrieval.",
+    iconName: "Database",
   },
   {
     title: "100% Free & Open Source",
-    description: "MIT licensed. No API keys required. No rate limits. Fork it, self-host it, or use our edge CDN.",
+    description: "MIT licensed. No API keys required. Rate limited to 60 requests/minute to prevent abuse. Fork it or self-host it.",
     iconName: "Globe",
   },
 ];

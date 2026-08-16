@@ -1,8 +1,8 @@
 "use client";
 
-import { Zap, FileJson, ShieldCheck, BookMarked, Hash, Globe } from "lucide-react";
+import { Zap, FileJson, ShieldCheck, BookMarked, Hash, Globe, Database } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { FEATURES } from "@/constants";
+import { FEATURES, SITE_NAME } from "@/constants";
 import type { ComponentType } from "react";
 import type { LucideProps } from "lucide-react";
 
@@ -13,13 +13,14 @@ const ICON_MAP: Record<string, ComponentType<LucideProps>> = {
   BookMarked,
   Hash,
   Globe,
+  Database,
 };
 
 export function FeaturesSection() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-10 text-center">
-        <h2 className="font-heading text-3xl font-bold tracking-tight">Why Quran JSON?</h2>
+        <h2 className="font-heading text-3xl font-bold tracking-tight">Why {SITE_NAME}?</h2>
         <p className="mt-2 text-muted-foreground">
           Built for developers who need reliable, fast, and accurate Quran data.
         </p>

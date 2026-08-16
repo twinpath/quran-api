@@ -1,6 +1,6 @@
 import { GitFork, Terminal, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GITHUB_REPO_URL } from "@/constants";
+import { GITHUB_REPO_URL, SITE_NAME } from "@/constants";
 
 export function CtaBanner() {
   return (
@@ -11,7 +11,7 @@ export function CtaBanner() {
           <div className="pointer-events-none absolute -top-20 right-0 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
 
           <h2 className="relative font-heading text-2xl font-bold tracking-tight sm:text-3xl">
-            Ready to build with Quran JSON?
+            Ready to build with {SITE_NAME}?
           </h2>
           <p className="relative mt-3 text-muted-foreground">
             Start integrating accurate Quran data into your application today. Free forever, no API key required.

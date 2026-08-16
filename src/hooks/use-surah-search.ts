@@ -1,20 +1,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { SurahSummary, RevelationType } from "@/types/quran";
-import { SURAH_CATALOG } from "@/lib/quran-data";
+import type { ApiSurahListItem } from "@/types/api";
 
-type RevelationFilter = "All" | RevelationType;
+type RevelationFilter = "All" | string;
 
 /**
  * Hook for searching and filtering the surah catalog.
  */
-export function useSurahSearch() {
+export function useSurahSearch(initialSurahs: ApiSurahListItem[]) {
   const [query, setQuery] = useState("");
   const [revelationFilter, setRevelationFilter] = useState<RevelationFilter>("All");
 
-  const filteredSurahs = useMemo<SurahSummary[]>(() => {
-    let results = SURAH_CATALOG;
+  const filteredSurahs = useMemo<ApiSurahListItem[]>(() => {
+    let results = initialSurahs;
 
     if (revelationFilter !== "All") {
       results = results.filter((s) => s.revelationType === revelationFilter);
@@ -25,14 +24,14 @@ export function useSurahSearch() {
       results = results.filter(
         (s) =>
           s.nameLatin.toLowerCase().includes(q) ||
-          s.translationIdName.toLowerCase().includes(q) ||
+          s.translationName.toLowerCase().includes(q) ||
           s.name.includes(q) ||
           String(s.number) === q,
       );
     }
 
     return results;
-  }, [query, revelationFilter]);
+  }, [initialSurahs, query, revelationFilter]);
 
   return {
     query,
@@ -40,7 +39,7 @@ export function useSurahSearch() {
     revelationFilter,
     setRevelationFilter,
     filteredSurahs,
-    totalCount: SURAH_CATALOG.length,
+    totalCount: initialSurahs.length,
   };
 }
 

@@ -1,5 +1,5 @@
 /** Site-wide metadata */
-export const SITE_NAME = "Quran JSON";
+export const SITE_NAME = "Quran Edge API";
 export const SITE_DESCRIPTION =
   "Free, open-source Al-Quran REST API delivering accurate Arabic text, Indonesian translations, and Tafsir Kemenag RI as clean JSON at the edge.";
 export const SITE_URL = "https://quran.dyzulk.com";

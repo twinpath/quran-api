@@ -1,7 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CONTRIBUTORS, GITHUB_REPO_URL } from "@/constants";
+import { CONTRIBUTORS, GITHUB_REPO_URL, SITE_NAME } from "@/constants";
 
 export function ContributorsSection() {
   return (
@@ -9,7 +9,7 @@ export function ContributorsSection() {
       <div className="mb-8">
         <h2 className="font-heading text-3xl font-bold tracking-tight">Contributors</h2>
         <p className="mt-2 text-muted-foreground">
-          The people and organizations behind Quran JSON.
+          The people and organizations behind {SITE_NAME}.
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-import { ARCH_LAYERS } from "@/constants";
+import { ARCH_LAYERS, SITE_NAME } from "@/constants";
 
 
 export function ArchitectureOverview() {
@@ -7,7 +7,7 @@ export function ArchitectureOverview() {
       <div className="mb-8">
         <h2 className="font-heading text-3xl font-bold tracking-tight">Architecture</h2>
         <p className="mt-2 text-muted-foreground">
-          How Quran JSON delivers sub-15ms responses worldwide through edge infrastructure.
+          How {SITE_NAME} delivers sub-15ms responses worldwide through edge infrastructure.
         </p>
       </div>
 

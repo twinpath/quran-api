@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LINEAGE_ITEMS, DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR } from "@/constants";
+import { LINEAGE_ITEMS, DATA_SOURCE_NAME, DATA_SOURCE_URL, ORIGINAL_AUTHOR, SITE_NAME } from "@/constants";
 
 export function DatasetLineage() {
   return (
@@ -7,7 +7,7 @@ export function DatasetLineage() {
       <div className="mb-8">
         <h2 className="font-heading text-3xl font-bold tracking-tight">Dataset Lineage</h2>
         <p className="mt-2 text-muted-foreground">
-          Tracing the provenance and accuracy of the Quran JSON dataset. Original dataset authored by {ORIGINAL_AUTHOR}.
+          Tracing the provenance and accuracy of the {SITE_NAME} dataset. Original dataset authored by {ORIGINAL_AUTHOR}.
         </p>
       </div>
 

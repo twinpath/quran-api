@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeBlock } from "@/components/common/code-block";
-import { SITE_URL, API_PATHS, QUICKSTART_SNIPPETS } from "@/constants";
+import { SITE_URL, API_PATHS, QUICKSTART_SNIPPETS, SITE_NAME } from "@/constants";
 
 export function QuickstartSection() {
   return (
@@ -10,7 +10,7 @@ export function QuickstartSection() {
       <div className="mb-8 text-center">
         <h2 className="font-heading text-3xl font-bold tracking-tight">Quickstart</h2>
         <p className="mt-2 text-muted-foreground">
-          Get started with Quran JSON in under a minute. Pick your language and copy the snippet.
+          Get started with {SITE_NAME} in under a minute. Pick your language and copy the snippet.
         </p>
       </div>
 
