@@ -16,9 +16,9 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 font-heading text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
-          <Logo size={32} variant="icon" />
-          <span>{SITE_NAME}</span>
+        <Link href="/" className="flex items-center gap-3 align-middle font-heading text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
+          <Logo size={32} variant="icon" className="shrink-0" />
+          <span className="leading-none">{SITE_NAME}</span>
         </Link>
 
         {/* Desktop nav */}

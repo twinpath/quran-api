@@ -10,9 +10,9 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand column */}
           <div className="space-y-4">
-            <Link href="/" className="inline-flex items-center gap-3 font-heading text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
-              <Logo size={40} variant="icon" />
-              <span>{SITE_NAME}</span>
+            <Link href="/" className="inline-flex items-center gap-3 align-middle font-heading text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
+              <Logo size={40} variant="icon" className="shrink-0" />
+              <span className="leading-none">{SITE_NAME}</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Free, open-source Al-Quran API delivering accurate Arabic text, Indonesian translations, and Tafsir Kemenag RI at the edge.

@@ -109,13 +109,20 @@ export const Logo: FC<LogoProps> = ({
     : accentColor ?? defaultAccentLight;
 
   // Prevent hydration mismatch
+  const svgStyle = {
+    display: "block",
+    verticalAlign: "middle",
+  } as const;
+
   if (!mounted) {
     return (
       <svg
         width={size}
         height={size}
         viewBox="0 0 1024 1024"
+        preserveAspectRatio="xMidYMid meet"
         className={className}
+        style={svgStyle}
         {...props}
       />
     );
@@ -127,7 +134,9 @@ export const Logo: FC<LogoProps> = ({
         width={size}
         height={size}
         viewBox="0 0 1024 1024"
+        preserveAspectRatio="xMidYMid meet"
         className={className}
+        style={svgStyle}
         xmlns="http://www.w3.org/2000/svg"
         {...props}
       >
@@ -145,7 +154,9 @@ export const Logo: FC<LogoProps> = ({
       width={size}
       height={size}
       viewBox="0 0 1024 1024"
+      preserveAspectRatio="xMidYMid meet"
       className={className}
+      style={svgStyle}
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
