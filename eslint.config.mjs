@@ -1,14 +1,21 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import nextConfigCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextConfigTypescript from "eslint-config-next/typescript";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-});
-
-const eslintConfig = [...compat.extends("next/core-web-vitals", "next/typescript")];
+const eslintConfig = [
+	{
+		ignores: [
+			"data/**",
+			".next/**",
+			".open-next/**",
+			".vscode/**",
+			".wrangler/**",
+			"node_modules/**",
+			"migrations/**",
+			"cloudflare-env.d.ts",
+		],
+	},
+	...nextConfigCoreWebVitals,
+	...nextConfigTypescript,
+];
 
 export default eslintConfig;

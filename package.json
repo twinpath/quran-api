@@ -7,7 +7,7 @@
 		"build": "next build",
 		"build:cloudflare": "opennextjs-cloudflare build",
 		"start": "next start",
-		"lint": "next lint",
+		"lint": "eslint .",
 		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 		"upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
