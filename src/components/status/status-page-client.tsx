@@ -21,7 +21,21 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WorldMap } from "@/components/status/world-map";
-import { Globe } from "@/components/status/globe";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const Globe = dynamic(() => import("@/components/status/globe").then((m) => m.Globe), {
+  ssr: false,
+  loading: () => (
+    <div className="relative size-full min-h-[320px] flex items-center justify-center rounded-lg bg-background/50 border border-border/40 overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center p-8">
+        <div className="relative aspect-square w-3/4 max-w-[280px]">
+          <Skeleton className="size-full rounded-full" />
+        </div>
+      </div>
+    </div>
+  ),
+});
 import { StatusSkeleton } from "@/components/status/status-skeleton";
 import type { TelemetryStatusResponse, TelemetryDistributionItem } from "@/types/telemetry";
 
