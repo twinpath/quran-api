@@ -24,7 +24,17 @@ CREATE TABLE `telemetry_logs` (
 	`ip_hash` text NOT NULL,
 	`status_code` integer NOT NULL,
 	`response_time_ms` integer NOT NULL,
+	`country` text,
+	`region` text,
+	`city` text,
+	`latitude` text,
+	`longitude` text,
+	`user_agent` text,
+	`device_type` text,
+	`os_type` text,
+	`browser_type` text,
 	`created_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `idx_telemetry_created` ON `telemetry_logs` (`created_at`);
+CREATE INDEX `idx_telemetry_created` ON `telemetry_logs` (`created_at`);--> statement-breakpoint
+CREATE INDEX `idx_telemetry_country` ON `telemetry_logs` (`country`);
