@@ -69,11 +69,11 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
               style={{ ...style, backgroundColor: "transparent" }}
             >
               {tokens.map((line, i) => {
-                const lineProps = getLineProps({ line, key: i });
+                const { key: _lineKey, ...lineProps } = getLineProps({ line, key: i });
                 return (
                   <div key={i} {...lineProps}>
                     {line.map((token, tokenIdx) => {
-                      const tokenProps = getTokenProps({ token, key: tokenIdx });
+                      const { key: _tokenKey, ...tokenProps } = getTokenProps({ token, key: tokenIdx });
                       return (
                         <span key={tokenIdx} {...tokenProps} />
                       );
