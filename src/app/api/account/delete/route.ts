@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getAuth, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
+import { SESSION_COOKIE_NAME } from "@/constants";
 import { getDb } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 import { eq } from "drizzle-orm";

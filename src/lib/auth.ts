@@ -3,8 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
-
-export const SESSION_COOKIE_NAME = "quran_api.session_token";
+import { SESSION_COOKIE_NAME } from "@/constants";
+export { SESSION_COOKIE_NAME };
 
 /**
  * Resolves a required environment variable from Cloudflare context or process.env.

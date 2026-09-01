@@ -81,4 +81,5 @@ export const AUTH_ERROR_MESSAGES: Record<string, string> = {
     "New account registration is currently disabled.",
 };
 
-
+/** Session cookie name constant */
+export const SESSION_COOKIE_NAME = "quran_api.session_token";
