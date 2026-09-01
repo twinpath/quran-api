@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { SESSION_COOKIE_NAME } from "@/lib/auth";
 
 /**
  * Next.js Edge Middleware for route protection using Better Auth session token.
@@ -7,8 +8,8 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionToken =
-    request.cookies.get("better-auth.session_token")?.value ||
-    request.cookies.get("__Secure-better-auth.session_token")?.value;
+    request.cookies.get(SESSION_COOKIE_NAME)?.value ||
+    request.cookies.get(`__Secure-${SESSION_COOKIE_NAME}`)?.value;
 
   // Protect /account and /auth/create-password routes (requires active session)
   if (pathname.startsWith("/account") || pathname === "/auth/create-password") {
@@ -37,3 +38,4 @@ export const config = {
     "/auth/create-password",
   ],
 };
+

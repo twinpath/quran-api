@@ -6,6 +6,9 @@ import { createAuthClient } from "better-auth/react";
  */
 export const authClient = createAuthClient({
   baseURL: typeof window !== "undefined" ? window.location.origin : "",
+  advanced: {
+    cookiePrefix: "quran_api",
+  },
 });
 
 export const { useSession, signIn, signUp, signOut, linkSocial, unlinkAccount } =
