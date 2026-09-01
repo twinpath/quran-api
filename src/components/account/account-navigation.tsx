@@ -27,14 +27,14 @@ export function AccountNavigation() {
   return (
     <div className="w-full mb-6">
       <Tabs value={activeValue} onValueChange={handleTabChange}>
-        <TabsList className="inline-flex w-full sm:w-auto h-auto p-1 bg-muted/80 dark:bg-muted/60 border border-border justify-start gap-1">
+        <TabsList className="inline-flex w-full sm:w-auto h-auto p-1 bg-muted/80 dark:bg-muted border border-border justify-start gap-1">
           {ACCOUNT_TABS.map((tab) => {
             const Icon = ICON_MAP[tab.iconName as keyof typeof ICON_MAP] || User;
             return (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="py-2 px-4 text-sm font-medium transition-all rounded-none border border-transparent data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-border data-[state=active]:shadow-xs hover:text-foreground text-muted-foreground"
+                className="py-2.5 px-4 text-sm font-semibold transition-all rounded-none border border-transparent text-muted-foreground hover:text-foreground data-active:bg-card data-active:text-card-foreground data-active:border-border dark:data-active:bg-card dark:data-active:text-card-foreground dark:data-active:border-border shadow-xs"
               >
                 <Icon className="h-4 w-4 mr-2 text-primary" />
                 {tab.label}
