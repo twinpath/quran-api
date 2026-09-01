@@ -1,6 +1,7 @@
 "use client";
 
-import { Play, Loader2, CircleCheck, Clock } from "lucide-react";
+import Link from "next/link";
+import { Play, Loader2, CircleCheck, Clock, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +25,7 @@ export function ApiPlayground({ isLoading }: LoadingProps = {}) {
     codeSnippet,
     selectEndpoint,
     setParamValue,
+    setApiKey,
     setSnippetLang,
     executeRequest,
   } = useApiPlayground();
@@ -95,26 +97,42 @@ export function ApiPlayground({ isLoading }: LoadingProps = {}) {
                 </Button>
               </div>
 
-              {/* Path params */}
-              {selectedEndpoint.pathParams.length > 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  {selectedEndpoint.pathParams.map((param) => (
-                    <div key={param.name} className="flex items-center gap-2">
-                      <label className="text-xs font-semibold text-foreground font-mono">{param.name}:</label>
-                      <Input
-                        className={
-                          param.name === "query"
-                            ? "h-8.5 w-48 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all shadow-inner"
-                            : "h-8.5 w-28 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all shadow-inner"
-                        }
-                        placeholder={param.defaultValue}
-                        value={state.paramValues[param.name] ?? param.defaultValue}
-                        onChange={(e) => setParamValue(param.name, e.target.value)}
-                      />
-                    </div>
-                  ))}
+              {/* Path params & Optional API Key */}
+              <div className="mt-3 flex flex-wrap items-center gap-4">
+                {selectedEndpoint.pathParams.map((param) => (
+                  <div key={param.name} className="flex items-center gap-2">
+                    <label className="text-xs font-semibold text-foreground font-mono">{param.name}:</label>
+                    <Input
+                      className={
+                        param.name === "query"
+                          ? "h-8.5 w-48 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all shadow-inner"
+                          : "h-8.5 w-28 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all shadow-inner"
+                      }
+                      placeholder={param.defaultValue}
+                      value={state.paramValues[param.name] ?? param.defaultValue}
+                      onChange={(e) => setParamValue(param.name, e.target.value)}
+                    />
+                  </div>
+                ))}
+
+                {/* API Key (Optional) */}
+                <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-1 text-xs font-semibold text-foreground font-mono">
+                    <Key className="h-3.5 w-3.5 text-primary" />
+                    API Key (optional):
+                  </label>
+                  <Input
+                    type="password"
+                    className="h-8.5 w-56 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all shadow-inner"
+                    placeholder="qr_live_..."
+                    value={state.apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                  <Link href="/account" className="text-xs text-muted-foreground underline hover:text-primary transition-colors">
+                    Get Key
+                  </Link>
                 </div>
-              )}
+              </div>
             </>
           )}
         </div>

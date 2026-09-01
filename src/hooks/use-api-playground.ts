@@ -23,6 +23,7 @@ function getInitialParamValues(endpointId: string): Record<string, string> {
 const DEFAULT_STATE: PlaygroundState = {
   selectedEndpointId: API_ENDPOINTS[0].id,
   paramValues: getInitialParamValues(API_ENDPOINTS[0].id),
+  apiKey: "",
   response: null,
   isLoading: false,
   activeSnippetLang: "curl",
@@ -62,6 +63,10 @@ export function useApiPlayground() {
     }));
   }, []);
 
+  const setApiKey = useCallback((apiKey: string) => {
+    setState((prev) => ({ ...prev, apiKey }));
+  }, []);
+
   const setSnippetLang = useCallback((lang: CodeSnippetLang) => {
     setState((prev) => ({ ...prev, activeSnippetLang: lang }));
   }, []);
@@ -73,7 +78,13 @@ export function useApiPlayground() {
     const start = getLatencyTimestamp();
 
     try {
-      const res = await fetch(url);
+      const requestHeaders: Record<string, string> = {};
+      const trimmedKey = state.apiKey.trim();
+      if (trimmedKey) {
+        requestHeaders["X-API-Key"] = trimmedKey;
+      }
+
+      const res = await fetch(url, { headers: requestHeaders });
       const data = (await res.json()) as Record<string, unknown>;
       const fallbackMs = calculateElapsedMs(start);
 
@@ -106,7 +117,7 @@ export function useApiPlayground() {
 
       setState((prev) => ({ ...prev, isLoading: false, response }));
     }
-  }, [selectedEndpoint, state.paramValues, origin]);
+  }, [selectedEndpoint, state.paramValues, state.apiKey, origin]);
 
   const resolvedUrl = buildEndpointUrl(selectedEndpoint, state.paramValues, origin);
 
@@ -115,6 +126,7 @@ export function useApiPlayground() {
     state.paramValues,
     state.activeSnippetLang,
     origin,
+    state.apiKey,
   );
 
   return {
@@ -125,6 +137,7 @@ export function useApiPlayground() {
     codeSnippet,
     selectEndpoint,
     setParamValue,
+    setApiKey,
     setSnippetLang,
     executeRequest,
   };

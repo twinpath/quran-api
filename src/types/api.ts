@@ -28,6 +28,7 @@ export interface ApiParam {
 export interface PlaygroundState {
   selectedEndpointId: string;
   paramValues: Record<string, string>;
+  apiKey: string;
   response: PlaygroundResponse | null;
   isLoading: boolean;
   activeSnippetLang: CodeSnippetLang;
