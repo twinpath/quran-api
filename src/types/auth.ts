@@ -40,7 +40,7 @@ export interface ForgotPasswordFormData {
 export interface AuthCardWrapperProps {
   title: string;
   description: string;
-  children: ReactNode;
+  children?: ReactNode;
   footerText?: string;
   footerLinkText?: string;
   footerLinkHref?: string;

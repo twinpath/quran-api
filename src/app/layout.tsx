@@ -23,8 +23,6 @@ import {
 } from "@/constants";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-
 const frauncesHeading = Fraunces({
   subsets: ["latin"],
   variable: "--font-heading",

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SignInForm } from "@/components/auth/signin-form";
+import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
 import { SITE_PAGE_METADATA } from "@/constants";
+import { AUTH_MESSAGES } from "@/constants/auth";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -12,7 +14,15 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<SignInForm isLoading />}>
+    <Suspense
+      fallback={
+        <AuthCardWrapper
+          title={AUTH_MESSAGES.signInTitle}
+          description={AUTH_MESSAGES.signInSubtitle}
+          isLoading
+        />
+      }
+    >
       <SignInForm />
     </Suspense>
   );
