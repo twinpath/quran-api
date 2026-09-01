@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { DEFAULT_TELEGRAM_BOT_USERNAME } from "@/constants";
 import type { NotificationPreferencesSectionProps } from "@/types/account";
 
@@ -51,7 +52,7 @@ export function NotificationPreferencesSection({
           Notifications & Alerts
         </h3>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Configure real-time Telegram quota alerts and multi-provider email security notifications.
+          Configure real-time Telegram quota alerts and email security notifications.
         </p>
       </div>
 
@@ -102,27 +103,36 @@ export function NotificationPreferencesSection({
                   Telegram Chat ID
                 </label>
                 <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={isConnectingTelegram}
-                    onClick={onConnectTelegram}
-                    className="h-7 text-xs gap-1.5 cursor-pointer font-medium"
-                  >
-                    {isConnectingTelegram ? (
-                      <>
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        Generating Link...
-                      </>
-                    ) : (
-                      <>
-                        <Bot className="h-3.5 w-3.5 text-sky-500" />
-                        Connect Bot (@{telegramBotUsername})
-                        <ExternalLink className="h-3 w-3 opacity-60" />
-                      </>
-                    )}
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          disabled={isConnectingTelegram}
+                          onClick={onConnectTelegram}
+                          className="h-7 text-xs gap-1.5 cursor-pointer font-medium"
+                        >
+                          {isConnectingTelegram ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              Generating Link...
+                            </>
+                          ) : (
+                            <>
+                              <Bot className="h-3.5 w-3.5 text-sky-500" />
+                              Connect Bot
+                              <ExternalLink className="h-3 w-3 opacity-60" />
+                            </>
+                          )}
+                        </Button>
+                      }
+                    />
+                    <TooltipContent>
+                      Connect with @{telegramBotUsername}
+                    </TooltipContent>
+                  </Tooltip>
                   {isTelegramConnected && (
                     <Button
                       type="button"
@@ -169,24 +179,24 @@ export function NotificationPreferencesSection({
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Click <strong>Connect Telegram Bot</strong> to launch the bot with your unique one-click link, or paste your Chat ID manually.
+                Click <strong>Connect Bot</strong> to launch the bot with your unique one-click link, or paste your Chat ID manually.
               </p>
             </div>
           )}
         </div>
 
-        {/* Card 2: System & Security Notifications (via Email Multi-Provider) */}
+        {/* Card 2: System & Security Notifications */}
         <div className="p-4 border border-border bg-card hover:bg-muted/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 text-emerald-500" />
               <span className="text-sm font-medium text-foreground">System & Security Notifications</span>
               <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                Email Multi-Provider
+                Email
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Receive security alerts, password changes, and platform announcements via Email (Resend, Brevo, Cloudflare).
+              Receive security alerts, password changes, and platform announcements via email.
             </p>
           </div>
           <div className="flex items-center gap-2.5 shrink-0">
