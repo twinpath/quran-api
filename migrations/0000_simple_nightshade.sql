@@ -27,6 +27,7 @@ CREATE TABLE `api_keys` (
 	`status` text DEFAULT 'active' NOT NULL,
 	`rate_limit` integer DEFAULT 5000 NOT NULL,
 	`last_used_at` integer,
+	`expires_at` integer,
 	`created_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
