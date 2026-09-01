@@ -61,3 +61,27 @@ export interface AccountSettingsFormProps {
   isLoading?: boolean;
 }
 
+/** Component props for OauthIntegrationsSection */
+export interface OauthIntegrationsSectionProps {
+  googleConnected?: boolean;
+  googleEmail?: string;
+  onToggleConnect: () => void;
+  isLoading?: boolean;
+}
+
+/** Component props for PasswordManagementSection */
+export interface PasswordManagementSectionProps {
+  onUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => void;
+  isLoading?: boolean;
+}
+
+/** Component props for NotificationPreferencesSection */
+export interface NotificationPreferencesSectionProps {
+  usageAlerts: boolean;
+  emailNotifications: boolean;
+  onTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
+  onSavePreferences: (e: React.FormEvent) => void;
+  isLoading?: boolean;
+}
+
+
