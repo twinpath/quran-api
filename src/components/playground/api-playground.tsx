@@ -84,8 +84,8 @@ export function ApiPlayground() {
                   <Input
                     className={
                       param.name === "query"
-                        ? "h-8 w-44 font-mono text-sm font-medium border-2 border-input bg-background dark:bg-zinc-900 text-foreground shadow-sm hover:border-primary/60 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
-                        : "h-8 w-24 font-mono text-sm font-medium border-2 border-input bg-background dark:bg-zinc-900 text-foreground shadow-sm hover:border-primary/60 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        ? "h-8.5 w-48 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 rounded-md transition-all shadow-inner"
+                        : "h-8.5 w-28 px-3 font-mono text-sm border border-border bg-muted/60 dark:bg-muted/80 text-foreground hover:bg-muted/90 focus:bg-background focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 rounded-md transition-all shadow-inner"
                     }
                     placeholder={param.defaultValue}
                     value={state.paramValues[param.name] ?? param.defaultValue}
