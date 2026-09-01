@@ -61,4 +61,6 @@ export const DEFAULT_ACCOUNT_SETTINGS: AccountSettings = {
   usageAlerts: true,
   security2FA: false,
   themePreference: "system",
+  googleConnected: true,
+  googleEmail: "developer@gmail.com",
 };

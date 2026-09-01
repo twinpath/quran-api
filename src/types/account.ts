@@ -39,6 +39,11 @@ export interface AccountSettings {
   usageAlerts: boolean;
   security2FA: boolean;
   themePreference: "system" | "light" | "dark";
+  googleConnected?: boolean;
+  googleEmail?: string;
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
 }
 
 /** Component props for ProfileOverview */
