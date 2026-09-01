@@ -4,6 +4,12 @@ import { useState, useCallback, useEffect } from "react";
 import type { PlaygroundState, PlaygroundResponse, CodeSnippetLang } from "@/types/api";
 import { API_ENDPOINTS, SITE_URL } from "@/constants";
 import { buildEndpointUrl, generateCodeSnippet } from "@/lib/api-endpoints";
+import {
+  getLatencyTimestamp,
+  calculateElapsedMs,
+  extractNetworkLatencyMs,
+  extractServerLatencyMs,
+} from "@/lib/latency";
 
 const DEFAULT_STATE: PlaygroundState = {
   selectedEndpointId: API_ENDPOINTS[0].id,
@@ -55,47 +61,37 @@ export function useApiPlayground() {
     setState((prev) => ({ ...prev, isLoading: true, response: null }));
 
     const url = buildEndpointUrl(selectedEndpoint, state.paramValues, origin);
-    const startTime = performance.now();
+    const start = getLatencyTimestamp();
 
     try {
       const res = await fetch(url);
       const data = (await res.json()) as Record<string, unknown>;
-      const clientLatencyMs = performance.now() - startTime;
+      const fallbackMs = calculateElapsedMs(start);
 
-      // Measure true physical HTTP network latency via W3C Resource Timing API (responseEnd - requestStart)
-      let realHttpJourneyMs: number | undefined;
-      if (typeof window !== "undefined" && typeof performance !== "undefined") {
-        const entries = performance.getEntriesByName(url);
-        if (entries.length > 0) {
-          const lastEntry = entries[entries.length - 1] as PerformanceResourceTiming;
-          if (lastEntry.responseEnd > 0 && lastEntry.requestStart > 0) {
-            realHttpJourneyMs = Math.round(lastEntry.responseEnd - lastEntry.requestStart);
-          }
-        }
-      }
-
-      const meta = data?.meta as { responseTimeMs?: number } | undefined;
-      const latencyMs = realHttpJourneyMs ?? meta?.responseTimeMs ?? clientLatencyMs;
+      // Network RTT via W3C Resource Timing API
+      const networkLatencyMs = extractNetworkLatencyMs(url) ?? fallbackMs;
+      // Server execution time from JSON response meta
+      const serverTimeMs = extractServerLatencyMs(data);
 
       const response: PlaygroundResponse = {
         status: res.status,
         statusText: res.statusText,
-        latencyMs,
+        latencyMs: networkLatencyMs,
+        serverTimeMs,
         data,
       };
 
       setState((prev) => ({ ...prev, isLoading: false, response }));
     } catch {
-      const clientLatencyMs = performance.now() - startTime;
-
-      const sampleMeta = selectedEndpoint.sampleResponse?.meta as { responseTimeMs?: number } | undefined;
-      const latencyMs = typeof sampleMeta?.responseTimeMs === "number" ? sampleMeta.responseTimeMs : clientLatencyMs;
+      const fallbackMs = calculateElapsedMs(start);
+      const serverTimeMs = extractServerLatencyMs(selectedEndpoint.sampleResponse);
 
       // Fallback to sample response on error (e.g. CORS in dev)
       const response: PlaygroundResponse = {
         status: 200,
         statusText: "OK (Sample)",
-        latencyMs,
+        latencyMs: fallbackMs,
+        serverTimeMs,
         data: selectedEndpoint.sampleResponse,
       };
 

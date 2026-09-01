@@ -38,6 +38,7 @@ export interface PlaygroundResponse {
   status: number;
   statusText: string;
   latencyMs: number;
+  serverTimeMs?: number;
   data: Record<string, unknown>;
 }
 

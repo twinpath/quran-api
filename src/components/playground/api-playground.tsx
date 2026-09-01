@@ -96,15 +96,21 @@ export function ApiPlayground() {
         {/* Response area */}
         <div className="p-4">
           {state.response && (
-            <div className="mb-4 flex items-center gap-3">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
               <Badge variant="outline" className="gap-1.5 font-mono text-xs">
                 <CircleCheck className="h-3 w-3 text-primary" />
                 {state.response.status} {state.response.statusText}
               </Badge>
-              <Badge variant="secondary" className="gap-1.5 font-mono text-xs">
+              <Badge variant="secondary" className="gap-1.5 font-mono text-xs" title="Physical HTTP network round-trip time from browser">
                 <Clock className="h-3 w-3" />
-                {formatLatency(state.response.latencyMs)}
+                Network: {formatLatency(state.response.latencyMs)}
               </Badge>
+              {typeof state.response.serverTimeMs === "number" && (
+                <Badge variant="secondary" className="gap-1.5 font-mono text-xs" title="Internal server execution time from JSON response meta">
+                  <Clock className="h-3 w-3 text-primary" />
+                  Server: {formatLatency(state.response.serverTimeMs)}
+                </Badge>
+              )}
             </div>
           )}
 

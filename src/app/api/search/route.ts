@@ -3,6 +3,7 @@ import { getKv } from "@/lib/db";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
 import { searchAyahs } from "@/lib/search.service";
+import { formatServerTimingHeader } from "@/lib/latency";
 import type { ApiResponse, ApiErrorResponse, ApiSearchResult } from "@/types/api";
 
 /**
@@ -62,7 +63,7 @@ export async function GET(request: Request) {
   return Response.json(body, {
     headers: {
       ...rateLimitHeaders(rateResult),
-      "Server-Timing": `total;dur=${responseTimeMs}`,
+      "Server-Timing": formatServerTimingHeader(responseTimeMs),
     },
   });
 }

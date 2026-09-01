@@ -3,6 +3,7 @@ import { getKv } from "@/lib/db";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
 import { getAyahDetail } from "@/lib/surah.service";
+import { formatServerTimingHeader } from "@/lib/latency";
 import type { ApiResponse, ApiErrorResponse, ApiAyahDetail } from "@/types/api";
 
 /**
@@ -75,7 +76,7 @@ export async function GET(
     headers: {
       ...rateLimitHeaders(rateResult),
       "X-Cache": result.cached ? "HIT" : "MISS",
-      "Server-Timing": `total;dur=${responseTimeMs}`,
+      "Server-Timing": formatServerTimingHeader(responseTimeMs),
     },
   });
 }
