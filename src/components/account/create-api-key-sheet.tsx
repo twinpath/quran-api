@@ -69,19 +69,19 @@ export function CreateApiKeySheet({
   const parsedCustomDays = matchedDigits ? parseInt(matchedDigits, 10) : null;
 
   // Build items array
-  const baseItems = EXPIRATION_OPTIONS.filter((o) => o.value !== "custom").map((o) => o.value);
-  const dynamicItems = parsedCustomDays && parsedCustomDays > 0 ? [`custom_${parsedCustomDays}`, ...baseItems] : baseItems;
+  const baseItems: string[] = EXPIRATION_OPTIONS.filter((o) => o.value !== "custom").map((o) => o.value as string);
+  const dynamicItems = parsedCustomDays && parsedCustomDays > 0 ? [`${parsedCustomDays}d`, ...baseItems] : baseItems;
 
   const currentDisplayValue =
     expirationOption === "custom"
-      ? `custom_${customDays}`
+      ? `${customDays}d`
       : expirationOption;
 
   const handleSelectValue = (val: string | null) => {
     if (!val) return;
 
-    if (val.startsWith("custom_")) {
-      const days = parseInt(val.replace("custom_", ""), 10);
+    if (val.endsWith("d") && !baseItems.includes(val)) {
+      const days = parseInt(val.replace("d", ""), 10);
       if (days > 0) {
         onExpirationOptionChange("custom");
         onCustomDaysChange(days);
@@ -179,7 +179,7 @@ export function CreateApiKeySheet({
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                   Expiration Option
                 </label>
-                
+
                 <Combobox
                   items={dynamicItems}
                   value={currentDisplayValue}
@@ -196,12 +196,14 @@ export function CreateApiKeySheet({
                     <ComboboxList>
                       {parsedCustomDays && parsedCustomDays > 0 && (
                         <ComboboxItem
-                          key={`custom_${parsedCustomDays}`}
-                          value={`custom_${parsedCustomDays}`}
+                          key={`${parsedCustomDays}d`}
+                          value={`${parsedCustomDays}d`}
                           className="text-xs py-2 bg-primary/10 font-medium"
                         >
                           <div className="flex items-center justify-between w-full pr-1">
-                            <span className="font-semibold text-primary">Use {parsedCustomDays} Days (Custom)</span>
+                            <span className="font-semibold text-primary">
+                              Use {parsedCustomDays} {parsedCustomDays === 1 ? "day" : "days"} (Custom)
+                            </span>
                           </div>
                         </ComboboxItem>
                       )}
@@ -226,7 +228,9 @@ export function CreateApiKeySheet({
               {expirationOption === "custom" && (
                 <div className="p-3 bg-primary/5 border border-primary/20 flex items-center justify-between text-xs text-foreground">
                   <span className="font-medium">Selected Custom Expiration:</span>
-                  <span className="font-semibold text-primary">{customDays} Days</span>
+                  <span className="font-semibold text-primary">
+                    {customDays} {customDays === 1 ? "day" : "days"}
+                  </span>
                 </div>
               )}
 
