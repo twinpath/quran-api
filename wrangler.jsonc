@@ -15,10 +15,6 @@
 		"global_fetch_strictly_public",
 		"nodejs_compat"
 	],
-	"build": {
-		"command": "pnpm run build:cloudflare",
-		"cwd": "."
-	},
 	"minify": true,
 	"keep_names": false,
 	"workers_dev": false,
