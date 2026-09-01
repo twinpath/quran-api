@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
@@ -7,15 +8,44 @@ export const SESSION_COOKIE_NAME = "better-auth.session_token";
 
 /**
  * Initializes Better Auth server configuration for Cloudflare D1 environment.
+ * Safely resolves environment secrets from Cloudflare Context (including .dev.vars) or process.env.
  */
 export function getAuth(env?: CloudflareEnv) {
-  const db = getDb(env);
+  let cfEnv = env;
+  if (!cfEnv) {
+    try {
+      cfEnv = getCloudflareContext().env;
+    } catch {
+      // Ignore if outside Cloudflare context (e.g. static analysis)
+    }
+  }
+
+  const db = getDb(cfEnv);
+
+  const googleClientId =
+    (cfEnv as unknown as Record<string, string>)?.GOOGLE_CLIENT_ID ||
+    process.env.GOOGLE_CLIENT_ID ||
+    "mock-google-client-id";
+
+  const googleClientSecret =
+    (cfEnv as unknown as Record<string, string>)?.GOOGLE_CLIENT_SECRET ||
+    process.env.GOOGLE_CLIENT_SECRET ||
+    "mock-google-client-secret";
+
+  const secret =
+    (cfEnv as unknown as Record<string, string>)?.BETTER_AUTH_SECRET ||
+    process.env.BETTER_AUTH_SECRET ||
+    "quran-api-better-auth-secret-key-32-chars";
+
+  const baseURL =
+    (cfEnv as unknown as Record<string, string>)?.BETTER_AUTH_URL ||
+    process.env.BETTER_AUTH_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "http://localhost:3000";
 
   return betterAuth({
-    baseURL:
-      process.env.BETTER_AUTH_URL ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      "http://localhost:3000",
+    baseURL,
+    secret,
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema: {
@@ -31,13 +61,10 @@ export function getAuth(env?: CloudflareEnv) {
     },
     socialProviders: {
       google: {
-        clientId: process.env.GOOGLE_CLIENT_ID || "mock-google-client-id",
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET || "mock-google-client-secret",
+        clientId: googleClientId,
+        clientSecret: googleClientSecret,
       },
     },
-    secret:
-      process.env.BETTER_AUTH_SECRET ||
-      "quran-api-better-auth-secret-key-32-chars",
   });
 }
 
