@@ -29,7 +29,7 @@ export function SignInForm({ isLoading = false }: SignInFormProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
       toast.error("Please fill in both email and password");
@@ -37,12 +37,28 @@ export function SignInForm({ isLoading = false }: SignInFormProps) {
     }
 
     setIsSubmitting(true);
-    toast.success("Signed in successfully!");
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const json = (await res.json()) as { success: boolean; error?: string; message?: string };
+      if (json.success) {
+        toast.success(json.message || "Signed in successfully!");
+        router.push("/account");
+      } else {
+        toast.error(json.error || "Invalid email or password");
+      }
+    } catch (err) {
+      console.error("Sign in error:", err);
+      toast.error("An unexpected error occurred");
+    } finally {
       setIsSubmitting(false);
-      router.push("/account");
-    }, 1000);
+    }
   };
+
 
   const handleGoogleAuth = () => {
     toast.info("Google OAuth initiated. Redirecting to Google Auth...");

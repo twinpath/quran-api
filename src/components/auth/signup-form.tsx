@@ -30,7 +30,7 @@ export function SignUpForm({ isLoading = false }: SignUpFormProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.password) {
       toast.error("Please fill in all required fields");
@@ -48,12 +48,28 @@ export function SignUpForm({ isLoading = false }: SignUpFormProps) {
     }
 
     setIsSubmitting(true);
-    toast.success("Account created! Verification code sent to your email.");
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const json = (await res.json()) as { success: boolean; error?: string; message?: string };
+      if (json.success) {
+        toast.success(json.message || "Account created successfully!");
+        router.push("/account");
+      } else {
+        toast.error(json.error || "Failed to create account");
+      }
+    } catch (err) {
+      console.error("Sign up error:", err);
+      toast.error("An unexpected error occurred during registration");
+    } finally {
       setIsSubmitting(false);
-      router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`);
-    }, 1200);
+    }
   };
+
 
   const handleGoogleAuth = () => {
     toast.info("Signing up with Google OAuth. Redirecting to password onboarding...");

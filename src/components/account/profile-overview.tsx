@@ -8,16 +8,48 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { DEFAULT_USER_PROFILE } from "@/constants/account";
 import type { ApiResponse } from "@/types/api";
-import type { ProfileOverviewProps } from "@/types/account";
+import type { ProfileOverviewProps, UserProfile } from "@/types/account";
 import type { RateLimitStatusResponse } from "@/types/rate-limit";
 
 export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
+  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
   const [rateLimitData, setRateLimitData] = useState<{ used: number; limit: number } | null>(null);
 
   useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const json = (await res.json()) as {
+            success: boolean;
+            user?: {
+              id?: string;
+              name?: string;
+              email?: string;
+              tier?: string;
+              createdAt?: string;
+            };
+          };
+          if (json.success && json.user) {
+            setProfile((prev) => ({
+              ...prev,
+              id: json.user?.id || prev.id,
+              name: json.user?.name || prev.name,
+              email: json.user?.email || prev.email,
+              tier: (json.user?.tier as "Free" | "Developer" | "Enterprise") || prev.tier,
+              memberSince: json.user?.createdAt || prev.memberSince,
+            }));
+          }
+        }
+      } catch (err) {
+
+        console.error("Failed to load user profile:", err);
+      }
+    }
+
     async function fetchQuota() {
       try {
-        const res = await fetch("/api/rate_limit?api_key=quran_live_8f01a4b2");
+        const res = await fetch("/api/rate_limit?api_key=qr_live_8f01a4b2");
         if (res.ok) {
           const json = (await res.json()) as ApiResponse<RateLimitStatusResponse>;
           if (json.success && json.data) {
@@ -32,11 +64,13 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
         // Fallback to static profile defaults if fetch fails
       }
     }
+
+    fetchUserData();
     fetchQuota();
   }, []);
 
-  const used = rateLimitData?.used ?? DEFAULT_USER_PROFILE.apiUsageToday;
-  const limit = rateLimitData?.limit ?? DEFAULT_USER_PROFILE.apiUsageLimit;
+  const used = rateLimitData?.used ?? profile.apiUsageToday;
+  const limit = rateLimitData?.limit ?? profile.apiUsageLimit;
   const usagePercentage = Math.round((used / limit) * 100);
 
   return (
@@ -77,27 +111,27 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
                 <div className="space-y-1">
                   <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Full Name</span>
                   <p className="font-medium text-foreground flex items-center gap-2">
-                    {DEFAULT_USER_PROFILE.name}
+                    {profile.name}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Email Address</span>
                   <p className="font-medium text-foreground flex items-center gap-2">
                     <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                    {DEFAULT_USER_PROFILE.email}
+                    {profile.email}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Account ID</span>
                   <p className="font-mono text-xs text-muted-foreground">
-                    {DEFAULT_USER_PROFILE.id}
+                    {profile.id}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Member Since</span>
                   <p className="font-medium text-foreground flex items-center gap-2">
                     <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                    {DEFAULT_USER_PROFILE.memberSince}
+                    {profile.memberSince}
                   </p>
                 </div>
               </div>
@@ -124,7 +158,7 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
             ) : (
               <>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-bold text-primary">{DEFAULT_USER_PROFILE.tier} Tier</span>
+                  <span className="text-2xl font-bold text-primary">{profile.tier} Tier</span>
                   <span className="text-xs text-muted-foreground">Active</span>
                 </div>
 
