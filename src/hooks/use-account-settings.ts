@@ -78,13 +78,23 @@ export function useAccountSettings(): UseAccountSettingsReturn {
   };
 
   const handleUnlinkGoogle = async () => {
+    const googleAccount = linkedAccounts.find((a) => a.providerId === "google");
+    if (!googleAccount) {
+      toast.error("Google OAuth account not found");
+      return;
+    }
+
+    // Single Auth Provider Lockout Guard
+    const hasOtherAccounts = linkedAccounts.some((a) => a.providerId !== "google");
+    if (!hasOtherAccounts && linkedAccounts.length <= 1) {
+      toast.error(
+        "Cannot disconnect Google OAuth because it is your only authentication method. Please set up a password first in Password Management."
+      );
+      return;
+    }
+
     setIsUnlinkingGoogle(true);
     try {
-      const googleAccount = linkedAccounts.find((a) => a.providerId === "google");
-      if (!googleAccount) {
-        toast.error("Google OAuth account not found");
-        return;
-      }
       const { error } = await authClient.unlinkAccount({ accountId: googleAccount.id });
       if (error) {
         toast.error(error.message || "Failed to disconnect Google OAuth account");

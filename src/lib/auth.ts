@@ -86,6 +86,7 @@ export function getAuth(env?: CloudflareEnv) {
       google: {
         clientId: googleClientId,
         clientSecret: googleClientSecret,
+        prompt: "select_account consent",
       },
     },
   });

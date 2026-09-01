@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useSession } from "@/lib/auth-client";
 import { getAccountQuotaAction } from "@/lib/account-quota";
 import type { UserProfile, UseAccountProfileReturn } from "@/types/account";
+
+const emptySubscribe = () => () => {};
+function useIsMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 
 /**
  * Custom hook managing profile state with reactive Better Auth session data
@@ -11,11 +20,7 @@ import type { UserProfile, UseAccountProfileReturn } from "@/types/account";
 export function useAccountProfile(): UseAccountProfileReturn {
   const { data: session, isPending } = useSession();
   const [rateLimitData, setRateLimitData] = useState<{ used: number; limit: number } | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useIsMounted();
 
   useEffect(() => {
     async function fetchQuota() {

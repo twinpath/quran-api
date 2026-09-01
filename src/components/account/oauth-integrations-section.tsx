@@ -4,6 +4,17 @@ import { KeyRound, Unlink, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { OauthIntegrationsSectionProps } from "@/types/account";
 
 export function OauthIntegrationsSection({
@@ -79,26 +90,52 @@ export function OauthIntegrationsSection({
             </div>
           </div>
 
-          <Button
-            type="button"
-            variant={googleConnected ? "outline" : "default"}
-            size="sm"
-            disabled={isProcessing}
-            onClick={googleConnected ? onUnlinkGoogle : onLinkGoogle}
-            className="gap-1.5 text-xs shrink-0 cursor-pointer"
-          >
-            {googleConnected ? (
-              <>
-                <Unlink className="h-3.5 w-3.5 text-destructive" />
-                {isUnlinking ? "Disconnecting..." : "Disconnect"}
-              </>
-            ) : (
-              <>
-                <Link2 className="h-3.5 w-3.5" />
-                {isLinking ? "Connecting..." : "Connect Google"}
-              </>
-            )}
-          </Button>
+          {googleConnected ? (
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isProcessing}
+                    className="gap-1.5 text-xs shrink-0 cursor-pointer"
+                  >
+                    <Unlink className="h-3.5 w-3.5 text-destructive" />
+                    {isUnlinking ? "Disconnecting..." : "Disconnect"}
+                  </Button>
+                }
+              />
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Disconnect Google OAuth?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to disconnect Google OAuth account{" "}
+                    <span className="font-semibold text-foreground">{googleEmail || "linked to your profile"}</span>?
+                    You can reconnect it at any time.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive" onClick={onUnlinkGoogle}>
+                    Disconnect Account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ) : (
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              disabled={isProcessing}
+              onClick={onLinkGoogle}
+              className="gap-1.5 text-xs shrink-0 cursor-pointer"
+            >
+              <Link2 className="h-3.5 w-3.5" />
+              {isLinking ? "Connecting..." : "Connect Google"}
+            </Button>
+          )}
         </div>
       </div>
     </div>
