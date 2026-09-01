@@ -95,6 +95,13 @@ export interface NotificationPreferencesSectionProps {
   isLoading?: boolean;
 }
 
+/** Component props for DeleteAccountSection */
+export interface DeleteAccountSectionProps {
+  onDeleteAccount: (password: string) => Promise<boolean>;
+  isDeleting?: boolean;
+  isLoading?: boolean;
+}
+
 /** Return type for useAccountProfile hook */
 export interface UseAccountProfileReturn {
   profile: UserProfile;
@@ -129,9 +136,11 @@ export interface UseAccountSettingsReturn {
   isLoadingAccounts: boolean;
   isLinkingGoogle: boolean;
   isUnlinkingGoogle: boolean;
+  isDeletingAccount: boolean;
   handleTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
   handleLinkGoogle: () => void;
   handleUnlinkGoogle: () => void;
   handleUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<void>;
   handleSavePreferences: (e: React.FormEvent) => void;
+  handleDeleteAccount: (password: string) => Promise<boolean>;
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient, useSession } from "@/lib/auth-client";
 import type {
@@ -9,9 +10,10 @@ import type {
 
 /**
  * Custom hook managing account settings state with real Better Auth backend
- * for OAuth linking/unlinking and password updates.
+ * for OAuth linking/unlinking, password updates, and account deletion.
  */
 export function useAccountSettings(): UseAccountSettingsReturn {
+  const router = useRouter();
   const { data: session } = useSession();
   const [settings, setSettings] = useState<AccountSettings>({
     emailNotifications: true,
@@ -25,6 +27,7 @@ export function useAccountSettings(): UseAccountSettingsReturn {
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
   const [isUnlinkingGoogle, setIsUnlinkingGoogle] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   // Fetch real linked accounts on mount
   useEffect(() => {
@@ -149,16 +152,51 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     toast.success("Developer preferences saved successfully!");
   };
 
+  const handleDeleteAccount = async (password: string): Promise<boolean> => {
+    if (!password) {
+      toast.error("Please enter your password to confirm deletion");
+      return false;
+    }
+
+    setIsDeletingAccount(true);
+    try {
+      const res = await fetch("/api/account/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      const result = (await res.json()) as { error?: string; success?: boolean };
+      if (!res.ok || result.error) {
+        toast.error(result.error || "Failed to delete account");
+        return false;
+      }
+
+      toast.success("Your developer account has been permanently deleted.");
+      await authClient.signOut();
+      router.push("/auth/signin");
+      return true;
+    } catch (err) {
+      console.error("Delete account error:", err);
+      toast.error("An unexpected error occurred while deleting account");
+      return false;
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
+
   return {
     settings,
     linkedAccounts,
     isLoadingAccounts,
     isLinkingGoogle,
     isUnlinkingGoogle,
+    isDeletingAccount,
     handleTogglePreference,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,
     handleSavePreferences,
+    handleDeleteAccount,
   };
 }

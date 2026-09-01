@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { OauthIntegrationsSection } from "./oauth-integrations-section";
 import { PasswordManagementSection } from "./password-management-section";
 import { NotificationPreferencesSection } from "./notification-preferences-section";
+import { DeleteAccountSection } from "./delete-account-section";
 import { useAccountSettings } from "@/hooks/use-account-settings";
 import type { AccountSettingsFormProps } from "@/types/account";
 
@@ -14,11 +15,13 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
     isLoadingAccounts,
     isLinkingGoogle,
     isUnlinkingGoogle,
+    isDeletingAccount,
     handleTogglePreference,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,
     handleSavePreferences,
+    handleDeleteAccount,
   } = useAccountSettings();
 
   const showSkeleton = isLoading || isLoadingAccounts;
@@ -31,7 +34,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
           Developer Account Settings
         </CardTitle>
         <CardDescription>
-          Manage your connected OAuth accounts, password security credentials, and developer notifications
+          Manage your connected OAuth accounts, password security credentials, developer notifications, and account deletion
         </CardDescription>
       </CardHeader>
 
@@ -63,6 +66,15 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
           emailNotifications={settings.emailNotifications}
           onTogglePreference={handleTogglePreference}
           onSavePreferences={handleSavePreferences}
+          isLoading={showSkeleton}
+        />
+
+        <div className="border-t border-border" />
+
+        {/* Section 4: Danger Zone - Delete Account */}
+        <DeleteAccountSection
+          onDeleteAccount={handleDeleteAccount}
+          isDeleting={isDeletingAccount}
           isLoading={showSkeleton}
         />
       </CardContent>
