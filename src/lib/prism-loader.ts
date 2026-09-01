@@ -3,7 +3,8 @@ import { Prism } from "prism-react-renderer";
 // Assign the vendored Prism instance to the global scope so that
 // prismjs language component files register themselves on the same
 // instance used by prism-react-renderer.
-(typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : global).Prism = Prism;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : global as any).Prism = Prism;
 
 // Use require() instead of import to avoid ESM hoisting — the global
 // assignment above MUST execute before these modules run.
