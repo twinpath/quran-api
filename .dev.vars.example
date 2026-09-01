@@ -1,5 +1,6 @@
 NEXTJS_ENV=development
 BETTER_AUTH_SECRET=your-32-char-random-secret-key
 BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-google-client-secret
