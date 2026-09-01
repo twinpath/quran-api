@@ -7,46 +7,33 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { DEFAULT_USER_PROFILE } from "@/constants/account";
+import { useSession } from "@/lib/auth-client";
 import type { ApiResponse } from "@/types/api";
 import type { ProfileOverviewProps, UserProfile } from "@/types/account";
 import type { RateLimitStatusResponse } from "@/types/rate-limit";
 
 export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
+  const { data: session, isPending: isSessionPending } = useSession();
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
   const [rateLimitData, setRateLimitData] = useState<{ used: number; limit: number } | null>(null);
 
   useEffect(() => {
-    async function fetchUserData() {
-      try {
-        const res = await fetch("/api/auth/me");
-        if (res.ok) {
-          const json = (await res.json()) as {
-            success: boolean;
-            user?: {
-              id?: string;
-              name?: string;
-              email?: string;
-              tier?: string;
-              createdAt?: string;
-            };
-          };
-          if (json.success && json.user) {
-            setProfile((prev) => ({
-              ...prev,
-              id: json.user?.id || prev.id,
-              name: json.user?.name || prev.name,
-              email: json.user?.email || prev.email,
-              tier: (json.user?.tier as "Free" | "Developer" | "Enterprise") || prev.tier,
-              memberSince: json.user?.createdAt || prev.memberSince,
-            }));
-          }
-        }
-      } catch (err) {
-
-        console.error("Failed to load user profile:", err);
-      }
+    if (session?.user) {
+      setProfile((prev) => ({
+        ...prev,
+        id: session.user.id || prev.id,
+        name: session.user.name || prev.name,
+        email: session.user.email || prev.email,
+        avatarUrl: session.user.image || undefined,
+        tier: (session.user as unknown as { tier?: string }).tier === "enterprise" ? "Enterprise" : "Developer",
+        memberSince: session.user.createdAt
+          ? new Date(session.user.createdAt).toISOString().split("T")[0]
+          : prev.memberSince,
+      }));
     }
+  }, [session]);
 
+  useEffect(() => {
     async function fetchQuota() {
       try {
         const res = await fetch("/api/rate_limit?api_key=qr_live_8f01a4b2");
@@ -64,11 +51,10 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
         // Fallback to static profile defaults if fetch fails
       }
     }
-
-    fetchUserData();
     fetchQuota();
   }, []);
 
+  const showSkeleton = isLoading || isSessionPending;
   const used = rateLimitData?.used ?? profile.apiUsageToday;
   const limit = rateLimitData?.limit ?? profile.apiUsageLimit;
   const usagePercentage = Math.round((used / limit) * 100);
@@ -89,7 +75,7 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
                   Your personal identity and developer account details
                 </CardDescription>
               </div>
-              {isLoading ? (
+              {showSkeleton ? (
                 <Skeleton className="h-6 w-16" />
               ) : (
                 <Badge variant="secondary" className="gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -100,7 +86,7 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {isLoading ? (
+            {showSkeleton ? (
               <div className="space-y-3">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
@@ -149,7 +135,7 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
             <CardDescription>Your API access tier and quota limit</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {isLoading ? (
+            {showSkeleton ? (
               <div className="space-y-3">
                 <Skeleton className="h-6 w-24" />
                 <Skeleton className="h-3 w-full" />

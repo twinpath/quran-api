@@ -1,23 +1,18 @@
-import { NextResponse } from "next/server";
+import { getAuth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
 
 /**
- * Auth catch-all API route handler (/api/auth/*).
- * Handles authentication callbacks, session management, and auth actions.
+ * Next.js App Router catch-all route handler for Better Auth (/api/auth/*).
+ * Automatically handles sign-in, sign-up, social OAuth callbacks, session inspection, and sign-out.
+ *
+ * toNextJsHandler returns { GET, POST, PATCH, PUT, DELETE } handlers that are
+ * exported directly for Next.js App Router consumption.
  */
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  return NextResponse.json({
-    success: true,
-    message: "Auth endpoint active",
-    path: url.pathname,
-  });
+function getHandlers() {
+  const env = process.env as unknown as CloudflareEnv;
+  const auth = getAuth(env);
+  return toNextJsHandler(auth);
 }
 
-export async function POST(request: Request) {
-  const url = new URL(request.url);
-  return NextResponse.json({
-    success: true,
-    message: "Auth action processed",
-    path: url.pathname,
-  });
-}
+export const GET = (request: Request) => getHandlers().GET(request);
+export const POST = (request: Request) => getHandlers().POST(request);

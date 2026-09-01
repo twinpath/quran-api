@@ -63,46 +63,86 @@ export const telemetryLogs = sqliteTable(
 );
 
 /**
- * User accounts table.
- * Stores core user profile, password hash, and OAuth linking status.
+ * Better Auth User table.
  */
-export const users = sqliteTable(
-  "users",
+export const user = sqliteTable(
+  "user",
   {
     id: text("id").primaryKey(),
-    email: text("email").notNull().unique(),
     name: text("name").notNull(),
-    passwordHash: text("password_hash").notNull(),
-    emailVerifiedAt: integer("email_verified_at", { mode: "timestamp" }),
-    googleId: text("google_id"),
-    googleEmail: text("google_email"),
-    avatarUrl: text("avatar_url"),
+    email: text("email").notNull().unique(),
+    emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
+    image: text("image"),
+    password: text("password"),
     tier: text("tier").notNull().default("developer"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   },
-  (table) => [index("idx_users_email").on(table.email)],
+  (table) => [index("idx_user_email").on(table.email)],
 );
 
 /**
- * Authentication sessions table.
- * Tracks user sessions for session-based authentication.
+ * Better Auth Session table.
  */
-export const sessions = sqliteTable(
-  "sessions",
+export const session = sqliteTable(
+  "session",
   {
     id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
     token: text("token").notNull().unique(),
     expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   },
   (table) => [
-    index("idx_sessions_token").on(table.token),
-    index("idx_sessions_user").on(table.userId),
+    index("idx_session_token").on(table.token),
+    index("idx_session_user").on(table.userId),
   ],
 );
+
+/**
+ * Better Auth OAuth & Linked Account table.
+ */
+export const account = sqliteTable(
+  "account",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: integer("access_token_expires_at", { mode: "timestamp" }),
+    refreshTokenExpiresAt: integer("refresh_token_expires_at", { mode: "timestamp" }),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    index("idx_account_user").on(table.userId),
+    index("idx_account_provider").on(table.providerId),
+  ],
+);
+
+/**
+ * Better Auth Verification token table.
+ */
+export const verification = sqliteTable("verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }),
+  updatedAt: integer("updated_at", { mode: "timestamp" }),
+});
 
 /**
  * User API Keys table.
@@ -114,7 +154,7 @@ export const apiKeys = sqliteTable(
     id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     keyPrefix: text("key_prefix").notNull(),
     keyHash: text("key_hash").notNull().unique(),
@@ -128,4 +168,3 @@ export const apiKeys = sqliteTable(
     index("idx_api_keys_user").on(table.userId),
   ],
 );
-

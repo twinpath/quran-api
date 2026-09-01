@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
+import { authClient } from "@/lib/auth-client";
 import type { SignInFormProps, SignInFormData } from "@/types/auth";
 
 export function SignInForm({ isLoading = false }: SignInFormProps) {
@@ -38,33 +39,36 @@ export function SignInForm({ isLoading = false }: SignInFormProps) {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const { error } = await authClient.signIn.email({
+        email: formData.email.trim(),
+        password: formData.password,
       });
 
-      const json = (await res.json()) as { success: boolean; error?: string; message?: string };
-      if (json.success) {
-        toast.success(json.message || "Signed in successfully!");
-        router.push("/account");
+      if (error) {
+        toast.error(error.message || "Invalid email or password");
       } else {
-        toast.error(json.error || "Invalid email or password");
+        toast.success("Signed in successfully!");
+        router.push("/account");
       }
     } catch (err) {
       console.error("Sign in error:", err);
-      toast.error("An unexpected error occurred");
+      toast.error("An unexpected error occurred during authentication");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-
-  const handleGoogleAuth = () => {
-    toast.info("Google OAuth initiated. Redirecting to Google Auth...");
-    setTimeout(() => {
-      router.push("/auth/create-password");
-    }, 1200);
+  const handleGoogleAuth = async () => {
+    try {
+      toast.info("Redirecting to Google OAuth...");
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/account",
+      });
+    } catch (err) {
+      console.error("Google OAuth error:", err);
+      toast.error("Failed to initiate Google authentication");
+    }
   };
 
   return (

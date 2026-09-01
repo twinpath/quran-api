@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
+import { authClient } from "@/lib/auth-client";
 import type { SignUpFormProps, SignUpFormData } from "@/types/auth";
 
 export function SignUpForm({ isLoading = false }: SignUpFormProps) {
@@ -49,18 +50,17 @@ export function SignUpForm({ isLoading = false }: SignUpFormProps) {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const { error } = await authClient.signUp.email({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
       });
 
-      const json = (await res.json()) as { success: boolean; error?: string; message?: string };
-      if (json.success) {
-        toast.success(json.message || "Account created successfully!");
-        router.push("/account");
+      if (error) {
+        toast.error(error.message || "Failed to create account");
       } else {
-        toast.error(json.error || "Failed to create account");
+        toast.success("Account created successfully!");
+        router.push("/account");
       }
     } catch (err) {
       console.error("Sign up error:", err);
@@ -70,12 +70,17 @@ export function SignUpForm({ isLoading = false }: SignUpFormProps) {
     }
   };
 
-
-  const handleGoogleAuth = () => {
-    toast.info("Signing up with Google OAuth. Redirecting to password onboarding...");
-    setTimeout(() => {
-      router.push("/auth/create-password");
-    }, 1200);
+  const handleGoogleAuth = async () => {
+    try {
+      toast.info("Redirecting to Google OAuth...");
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/account",
+      });
+    } catch (err) {
+      console.error("Google OAuth error:", err);
+      toast.error("Failed to initiate Google authentication");
+    }
   };
 
   return (
