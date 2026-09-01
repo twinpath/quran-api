@@ -24,9 +24,12 @@ export interface CacheResult<T> {
  * Returns { hit: true, data } on cache hit, or { hit: false, data: null } on miss.
  */
 export async function getFromCache<T>(
-  kv: KVNamespace,
+  kv: KVNamespace | undefined | null,
   path: string,
 ): Promise<CacheResult<T>> {
+  if (!kv) {
+    return { hit: false, data: null };
+  }
   const key = buildCacheKey(path);
   const raw = await kv.get(key);
 
@@ -41,11 +44,12 @@ export async function getFromCache<T>(
  * Store data in KV cache with TTL.
  */
 export async function putInCache<T>(
-  kv: KVNamespace,
+  kv: KVNamespace | undefined | null,
   path: string,
   data: T,
   ttlSeconds: number = DEFAULT_CACHE_TTL_SECONDS,
 ): Promise<void> {
+  if (!kv) return;
   const key = buildCacheKey(path);
   await kv.put(key, JSON.stringify(data), { expirationTtl: ttlSeconds });
 }
@@ -54,9 +58,10 @@ export async function putInCache<T>(
  * Invalidate a cached entry.
  */
 export async function invalidateCache(
-  kv: KVNamespace,
+  kv: KVNamespace | undefined | null,
   path: string,
 ): Promise<void> {
+  if (!kv) return;
   const key = buildCacheKey(path);
   await kv.delete(key);
 }

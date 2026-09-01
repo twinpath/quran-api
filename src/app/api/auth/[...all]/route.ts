@@ -1,4 +1,5 @@
 import { getAuth } from "@/lib/auth";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { toNextJsHandler } from "better-auth/next-js";
 
 /**
@@ -9,7 +10,13 @@ import { toNextJsHandler } from "better-auth/next-js";
  * exported directly for Next.js App Router consumption.
  */
 function getHandlers() {
-  const env = process.env as unknown as CloudflareEnv;
+  let env: CloudflareEnv | undefined;
+  try {
+    const cf = getCloudflareContext();
+    env = cf.env;
+  } catch {
+    env = process.env as unknown as CloudflareEnv;
+  }
   const auth = getAuth(env);
   return toNextJsHandler(auth);
 }

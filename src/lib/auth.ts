@@ -8,10 +8,14 @@ export const SESSION_COOKIE_NAME = "better-auth.session_token";
 /**
  * Initializes Better Auth server configuration for Cloudflare D1 environment.
  */
-export function getAuth(env: CloudflareEnv) {
+export function getAuth(env?: CloudflareEnv) {
   const db = getDb(env);
 
   return betterAuth({
+    baseURL:
+      process.env.BETTER_AUTH_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      "http://localhost:3000",
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema: {
@@ -31,7 +35,9 @@ export function getAuth(env: CloudflareEnv) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || "mock-google-client-secret",
       },
     },
-    secret: process.env.BETTER_AUTH_SECRET || "quran-api-better-auth-secret-key-32-chars",
+    secret:
+      process.env.BETTER_AUTH_SECRET ||
+      "quran-api-better-auth-secret-key-32-chars",
   });
 }
 
