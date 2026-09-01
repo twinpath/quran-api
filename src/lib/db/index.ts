@@ -3,7 +3,6 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import * as schema from "./schema";
 import { surahs } from "./schema";
 import type { ApiSurahListItem } from "@/types/api";
-import { SURAH_CATALOG } from "@/lib/quran-data";
 
 /**
  * Safely resolves the Cloudflare D1 database binding from passed env or Cloudflare runtime context.
@@ -29,7 +28,7 @@ export function getDb(env?: CloudflareEnv) {
 }
 
 /**
- * Fetch surah list from D1 database, or fall back to static catalog.
+ * Fetch surah list strictly from D1 database.
  */
 export async function fetchSurahList(env?: CloudflareEnv): Promise<ApiSurahListItem[]> {
   try {
@@ -44,14 +43,8 @@ export async function fetchSurahList(env?: CloudflareEnv): Promise<ApiSurahListI
       revelationType: row.revelationType,
     }));
   } catch (err) {
-    console.warn("Error querying surah list from D1, falling back to static catalog:", err);
-    return SURAH_CATALOG.map((s) => ({
-      number: s.number,
-      name: s.name,
-      nameLatin: s.nameLatin,
-      numberOfAyah: s.numberOfAyah,
-      translationName: s.translationIdName,
-      revelationType: s.revelationType,
-    }));
+    console.error("Error querying surah list from D1 database:", err);
+    return [];
   }
 }
+

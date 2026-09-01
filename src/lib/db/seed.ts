@@ -14,8 +14,7 @@ import * as path from "node:path";
 import type { QuranSurahFile } from "@/types/quran";
 
 /**
- * Revelation type lookup (indexed by surah number, 1-based).
- * Matches the REVELATION_TYPES array in quran-data.ts.
+ * Revelation type lookup for all 114 surahs (indexed by surah number, 1-based).
  */
 const REVELATION_TYPES: string[] = [
   "Makkiyah", "Madaniyah", "Madaniyah", "Madaniyah", "Madaniyah", "Makkiyah", "Makkiyah",

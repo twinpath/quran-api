@@ -1,5 +1,4 @@
 import type { ApiEndpoint, CodeSnippetLang, SurahSortKey, AyahCountRangeKey } from "@/types/api";
-import { SAMPLE_ALFATIHAH, SURAH_CATALOG } from "@/lib/quran-data";
 import type { RevelationFilter } from "@/hooks/use-surah-search";
 
 /** Centralized API paths for edge-native routes */
@@ -11,71 +10,31 @@ export const API_PATHS = {
   search: (query: string) => `/api/search?q=${query}`,
 } as const;
 
-// Programmatic sample data for dynamic Edge APIs
-const sampleSurahList = SURAH_CATALOG.slice(0, 3).map((s) => ({
-  number: s.number,
-  name: s.name,
-  nameLatin: s.nameLatin,
-  numberOfAyah: s.numberOfAyah,
-  translationName: s.translationIdName,
-  revelationType: s.revelationType,
-}));
-
-const sampleSurahDetail = {
-  number: 1,
-  name: SAMPLE_ALFATIHAH.name,
-  nameLatin: SAMPLE_ALFATIHAH.name_latin,
-  numberOfAyah: 7,
-  translationName: SAMPLE_ALFATIHAH.translations.id.name,
-  revelationType: "Makkiyah",
-  ayahs: Object.keys(SAMPLE_ALFATIHAH.text).map((key) => {
-    const idx = key as keyof typeof SAMPLE_ALFATIHAH.text;
-    return {
-      number: parseInt(key, 10),
-      textArabic: SAMPLE_ALFATIHAH.text[idx],
-      translationId: SAMPLE_ALFATIHAH.translations.id.text[idx as keyof typeof SAMPLE_ALFATIHAH.translations.id.text],
-      tafsirKemenag: "Surah ini dimulai dengan membaca basmalah..."
-    };
-  })
-};
-
-const sampleAyahDetail = {
-  surahNumber: 1,
-  surahName: SAMPLE_ALFATIHAH.name,
-  surahNameLatin: SAMPLE_ALFATIHAH.name_latin,
-  number: 1,
-  textArabic: SAMPLE_ALFATIHAH.text["1"],
-  translationId: SAMPLE_ALFATIHAH.translations.id.text["1"],
-  tafsirKemenag: "Surah ini dimulai dengan membaca basmalah...",
-};
-
 /** Pre-formatted JSON string for the playground preview card on the home page */
 export const PLAYGROUND_SAMPLE_RESPONSE = JSON.stringify(
   {
     success: true,
     data: {
-      ...sampleSurahDetail,
-      ayahs: sampleSurahDetail.ayahs.slice(0, 1),
+      number: 1,
+      name: "الفاتحة",
+      nameLatin: "Al-Fatihah",
+      numberOfAyah: 7,
+      translationName: "Pembukaan",
+      revelationType: "Makkiyah",
+      ayahs: [
+        {
+          number: 1,
+          textArabic: "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+          translationId: "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.",
+          tafsirKemenag: "Surah ini dimulai dengan membaca basmalah...",
+        },
+      ],
     },
     meta: { cached: true, responseTimeMs: 15 },
   },
   null,
   2,
 );
-
-const sampleSearchResult = {
-  query: "esa",
-  total: 1,
-  results: [
-    {
-      surahNumber: 112,
-      surahNameLatin: "Al-Ikhlas",
-      ayahNumber: 1,
-      textArabic: "قُلْ هُوَ اللّٰهُ أَحَدٌ",
-      translationId: "Katakanlah (Muhammad), \"Dialah Allah, Yang Maha Esa.\""
-    }
-  ]
-};
 
 /** Registry of available API endpoints */
 export const API_ENDPOINTS: ApiEndpoint[] = [
@@ -86,7 +45,15 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
     method: "GET",
     description: "Retrieve a list of all 114 surahs with basic metadata including Arabic names, transliterations, and revelation types.",
     pathParams: [],
-    sampleResponse: { success: true, data: sampleSurahList, meta: { cached: true, responseTimeMs: 12 } } as unknown as Record<string, unknown>,
+    sampleResponse: {
+      success: true,
+      data: [
+        { number: 1, name: "الفاتحة", nameLatin: "Al-Fatihah", numberOfAyah: 7, translationName: "Pembukaan", revelationType: "Makkiyah" },
+        { number: 2, name: "البقرة", nameLatin: "Al-Baqarah", numberOfAyah: 286, translationName: "Sapi", revelationType: "Madaniyah" },
+        { number: 3, name: "اٰل عمران", nameLatin: "Ali 'Imran", numberOfAyah: 200, translationName: "Keluarga Imran", revelationType: "Madaniyah" },
+      ],
+      meta: { cached: true, responseTimeMs: 12 },
+    } as unknown as Record<string, unknown>,
   },
   {
     id: "get-surah-detail",
@@ -103,7 +70,26 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
         defaultValue: "1",
       },
     ],
-    sampleResponse: { success: true, data: sampleSurahDetail, meta: { cached: true, responseTimeMs: 18 } } as unknown as Record<string, unknown>,
+    sampleResponse: {
+      success: true,
+      data: {
+        number: 1,
+        name: "الفاتحة",
+        nameLatin: "Al-Fatihah",
+        numberOfAyah: 7,
+        translationName: "Pembukaan",
+        revelationType: "Makkiyah",
+        ayahs: [
+          {
+            number: 1,
+            textArabic: "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+            translationId: "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.",
+            tafsirKemenag: "Surah ini dimulai dengan membaca basmalah...",
+          },
+        ],
+      },
+      meta: { cached: true, responseTimeMs: 18 },
+    } as unknown as Record<string, unknown>,
   },
   {
     id: "get-ayah-detail",
@@ -127,7 +113,19 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
         defaultValue: "1",
       },
     ],
-    sampleResponse: { success: true, data: sampleAyahDetail, meta: { cached: true, responseTimeMs: 15 } } as unknown as Record<string, unknown>,
+    sampleResponse: {
+      success: true,
+      data: {
+        surahNumber: 1,
+        surahName: "الفاتحة",
+        surahNameLatin: "Al-Fatihah",
+        number: 1,
+        textArabic: "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+        translationId: "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.",
+        tafsirKemenag: "Surah ini dimulai dengan membaca basmalah...",
+      },
+      meta: { cached: true, responseTimeMs: 15 },
+    } as unknown as Record<string, unknown>,
   },
   {
     id: "search-ayahs",
@@ -144,7 +142,23 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
         defaultValue: "esa",
       },
     ],
-    sampleResponse: { success: true, data: sampleSearchResult, meta: { cached: false, responseTimeMs: 22 } } as unknown as Record<string, unknown>,
+    sampleResponse: {
+      success: true,
+      data: {
+        query: "esa",
+        total: 1,
+        results: [
+          {
+            surahNumber: 112,
+            surahNameLatin: "Al-Ikhlas",
+            ayahNumber: 1,
+            textArabic: "قُلْ هُوَ اللّٰهُ أَحَدٌ",
+            translationId: "Katakanlah (Muhammad), \"Dialah Allah, Yang Maha Esa.\"",
+          },
+        ],
+      },
+      meta: { cached: false, responseTimeMs: 22 },
+    } as unknown as Record<string, unknown>,
   },
 ];
 
