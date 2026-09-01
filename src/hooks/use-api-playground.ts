@@ -62,8 +62,20 @@ export function useApiPlayground() {
       const data = (await res.json()) as Record<string, unknown>;
       const clientLatencyMs = performance.now() - startTime;
 
+      // Measure true physical HTTP network latency via W3C Resource Timing API (responseEnd - requestStart)
+      let realHttpJourneyMs: number | undefined;
+      if (typeof window !== "undefined" && typeof performance !== "undefined") {
+        const entries = performance.getEntriesByName(url);
+        if (entries.length > 0) {
+          const lastEntry = entries[entries.length - 1] as PerformanceResourceTiming;
+          if (lastEntry.responseEnd > 0 && lastEntry.requestStart > 0) {
+            realHttpJourneyMs = Math.round(lastEntry.responseEnd - lastEntry.requestStart);
+          }
+        }
+      }
+
       const meta = data?.meta as { responseTimeMs?: number } | undefined;
-      const latencyMs = typeof meta?.responseTimeMs === "number" ? meta.responseTimeMs : clientLatencyMs;
+      const latencyMs = realHttpJourneyMs ?? meta?.responseTimeMs ?? clientLatencyMs;
 
       const response: PlaygroundResponse = {
         status: res.status,

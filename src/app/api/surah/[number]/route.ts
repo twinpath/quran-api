@@ -62,6 +62,10 @@ export async function GET(
   };
 
   return Response.json(body, {
-    headers: { ...rateLimitHeaders(rateResult), "X-Cache": result.cached ? "HIT" : "MISS" },
+    headers: {
+      ...rateLimitHeaders(rateResult),
+      "X-Cache": result.cached ? "HIT" : "MISS",
+      "Server-Timing": `total;dur=${responseTimeMs}`,
+    },
   });
 }

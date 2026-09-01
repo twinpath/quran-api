@@ -60,6 +60,9 @@ export async function GET(request: Request) {
   };
 
   return Response.json(body, {
-    headers: rateLimitHeaders(rateResult),
+    headers: {
+      ...rateLimitHeaders(rateResult),
+      "Server-Timing": `total;dur=${responseTimeMs}`,
+    },
   });
 }
