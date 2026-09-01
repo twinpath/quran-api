@@ -57,6 +57,10 @@
 		{
 			"binding": "KV",
 			"id": "0a7ea718a0024f47a16a87216a686857"
+		},
+		{
+			"binding": "NEXT_INC_CACHE_KV",
+			"id": "0a7ea718a0024f47a16a87216a686857"
 		}
 	],
 	/**
