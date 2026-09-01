@@ -21,7 +21,7 @@ export function useAccountProfile(): UseAccountProfileReturn {
   useEffect(() => {
     async function fetchQuota() {
       try {
-        const res = await fetch("/api/rate_limit");
+        const res = await fetch("/api/account/rate_limit");
         if (res.ok) {
           const json = (await res.json()) as ApiResponse<RateLimitStatusResponse>;
           if (json.success && json.data) {

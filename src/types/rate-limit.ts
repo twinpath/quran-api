@@ -14,9 +14,10 @@ export interface RateLimitResult {
 
 /** Caller identity resolved from request */
 export interface RateLimitIdentity {
-  type: "ip" | "api_key";
+  type: "ip" | "api_key" | "user";
   identifier: string;
   keyId?: string;
+  userId?: string;
   authenticated: boolean;
 }
 

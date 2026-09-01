@@ -86,12 +86,13 @@ export function Header() {
 
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="icon"
                   onClick={handleSignOut}
-                  className="gap-1.5 text-xs font-semibold cursor-pointer text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
+                  title="Sign Out"
+                  className="cursor-pointer text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
                 >
-                  <LogOut className="h-3.5 w-3.5" />
-                  Log Out
+                  <LogOut className="h-4 w-4" />
+                  <span className="sr-only">Sign Out</span>
                 </Button>
               </>
             ) : (
@@ -149,7 +150,7 @@ export function Header() {
               );
             })}
 
-            <div className="pt-2 border-t border-border flex flex-col gap-2">
+            <div className="pt-2 border-t border-border flex items-center gap-2">
               {session?.user ? (
                 <>
                   <Button
@@ -158,7 +159,7 @@ export function Header() {
                     nativeButton={false}
                     render={<Link href="/account" />}
                     onClick={() => setMobileOpen(false)}
-                    className="w-full gap-2 text-xs font-semibold justify-start cursor-pointer"
+                    className="flex-1 gap-2 text-xs font-semibold justify-start cursor-pointer"
                   >
                     <User className="h-4 w-4 text-primary" />
                     Account
@@ -166,15 +167,16 @@ export function Header() {
 
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="icon"
                     onClick={() => {
                       setMobileOpen(false);
                       handleSignOut();
                     }}
-                    className="w-full gap-2 text-xs font-semibold justify-start cursor-pointer text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
+                    title="Sign Out"
+                    className="shrink-0 cursor-pointer text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
                   >
                     <LogOut className="h-4 w-4" />
-                    Log Out
+                    <span className="sr-only">Sign Out</span>
                   </Button>
                 </>
               ) : (

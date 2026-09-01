@@ -1,27 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ShieldCheck, Zap, LogOut } from "lucide-react";
-import { toast } from "sonner";
+import { ShieldCheck, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { authClient } from "@/lib/auth-client";
 import { useAccountProfile } from "@/hooks/use-account-profile";
 
 export function AccountHeader() {
-  const router = useRouter();
   const { profile, isSessionPending } = useAccountProfile();
-
-  const handleSignOut = async () => {
-    try {
-      await authClient.signOut();
-      toast.info("Logged out successfully");
-      router.push("/");
-    } catch {
-      toast.error("Failed to sign out");
-    }
-  };
 
   const used = profile.apiUsageToday;
   const limit = profile.apiUsageLimit;
@@ -54,16 +39,6 @@ export function AccountHeader() {
             Quota: <strong>{used.toLocaleString()} / {limit.toLocaleString()} req/hour</strong>
           </span>
         </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleSignOut}
-          className="gap-1.5 text-xs font-semibold cursor-pointer text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          Log Out
-        </Button>
       </div>
     </div>
   );

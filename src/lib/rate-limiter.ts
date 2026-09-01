@@ -47,10 +47,11 @@ function getResetEpochSeconds(now: Date = new Date()): number {
 }
 
 /**
- * Extract and resolve the caller identity (IP or API Key) from a request.
+ * Extract and resolve the caller identity (IP, API Key, or User) from a request.
  */
 export async function resolveIdentity(
   request: Request,
+  db?: D1Database,
 ): Promise<RateLimitIdentity> {
   const url = new URL(request.url);
   const apiKeyHeader = request.headers.get("X-API-Key");
@@ -67,6 +68,31 @@ export async function resolveIdentity(
       apiKey.startsWith("test_");
 
     if (isValidKey) {
+      let userId: string | undefined;
+      if (db) {
+        try {
+          const row = await db
+            .prepare("SELECT user_id FROM api_keys WHERE key_hash = ? AND status = 'active' LIMIT 1")
+            .bind(keyHash)
+            .first<{ user_id: string }>();
+          if (row?.user_id) {
+            userId = row.user_id;
+          }
+        } catch {
+          // Fall back to keyHash identifier if DB lookup fails
+        }
+      }
+
+      if (userId) {
+        return {
+          type: "user",
+          identifier: userId,
+          userId,
+          keyId: apiKey.substring(0, 15),
+          authenticated: true,
+        };
+      }
+
       return {
         type: "api_key",
         identifier: keyHash,
@@ -183,6 +209,22 @@ export async function getRateLimitStatus(
     },
     rate: coreStatus,
   };
+}
+
+/**
+ * Read-only rate limit status check directly for a specific user account ID.
+ */
+export async function getAccountRateLimitStatus(
+  kv: KVNamespace | undefined,
+  userId: string,
+): Promise<RateLimitStatusResponse> {
+  const identity: RateLimitIdentity = {
+    type: "user",
+    identifier: userId,
+    userId,
+    authenticated: true,
+  };
+  return getRateLimitStatus(kv, identity);
 }
 
 /**
