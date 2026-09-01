@@ -14,7 +14,7 @@ export function HomeHero() {
     <section className="relative overflow-hidden border-b border-border/40">
       {/* Background gradient */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-      <div className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 bg-primary/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:py-36">
         <div className="flex flex-col items-center text-center">

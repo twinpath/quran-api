@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { SurahCatalog } from "@/components/surah/surah-catalog";
-import { SurahCatalogSkeleton } from "@/components/surah/surah-catalog-skeleton";
 import { SITE_PAGE_METADATA } from "@/constants";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -14,9 +13,10 @@ export const metadata: Metadata = buildPageMetadata({
 export default function SurahPage() {
   return (
     <main className="min-h-screen py-8">
-      <Suspense fallback={<SurahCatalogSkeleton />}>
+      <Suspense fallback={<SurahCatalog isLoading />}>
         <SurahCatalog />
       </Suspense>
     </main>
   );
 }
+

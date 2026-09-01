@@ -46,7 +46,7 @@ export function PlaygroundPreview() {
                     200 OK
                   </Badge>
                 </div>
-                <div className="mt-4 rounded-lg border border-border/40 bg-muted/40 p-4 font-mono text-xs text-muted-foreground">
+                <div className="mt-4 border border-border/40 bg-muted/40 p-4 font-mono text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 text-foreground">
                     <Code2 className="h-4 w-4 text-primary" />
                     <span>Response Payload (Al-Fatihah)</span>

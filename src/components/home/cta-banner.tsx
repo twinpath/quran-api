@@ -9,7 +9,7 @@ export function CtaBanner() {
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-8 sm:p-12 text-center">
           {/* Decorative blur */}
-          <div className="pointer-events-none absolute -top-20 right-0 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
+          <div className="pointer-events-none absolute -top-20 right-0 h-60 w-60 bg-primary/10 blur-3xl" />
 
           <h2 className="relative font-heading text-2xl font-bold tracking-tight sm:text-3xl">
             Ready to build with {SITE_NAME}?

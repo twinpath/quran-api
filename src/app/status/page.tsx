@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { StatusPageClient } from "@/components/status/status-page-client";
-import { StatusSkeleton } from "@/components/status/status-skeleton";
 import { SITE_PAGE_METADATA } from "@/constants";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -13,8 +12,9 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function StatusPage() {
   return (
-    <Suspense fallback={<StatusSkeleton />}>
+    <Suspense fallback={<StatusPageClient isLoading />}>
       <StatusPageClient />
     </Suspense>
   );
 }
+

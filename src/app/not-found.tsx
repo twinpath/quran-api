@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <section className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
       {/* Icon */}
-      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+      <div className="mb-6 flex h-20 w-20 items-center justify-center bg-primary/10 text-primary">
         <FileQuestion className="h-10 w-10" />
       </div>
 

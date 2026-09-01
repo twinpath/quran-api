@@ -7,7 +7,9 @@
 - Do not hand-edit `src/components/ui/**`; it is managed by shadcn and excluded from manual modification.
 - Zero native emoji throughout the entire codebase and UI. Use `lucide-react` for all icons, status indicators, badges, and decorative accents without exception.
 - Use `lucide-react` for Lucide icons; do not add `lucide-vue-next`, `@lucide/vue`, or any other Lucide binding.
-- Skeleton-first loading: every data-driven UI section must have a companion `*-skeleton.tsx` component built with the shadcn `Skeleton` primitive, wrapped in React `Suspense` boundaries at the page level.
+- Skeleton loading: skeletons must be rendered directly inline within the single main return statement of feature/page components using the shadcn `Skeleton` primitive with an `isLoading` prop (without creating separate `*-skeleton.tsx` files, early return blocks, or separate skeleton render functions).
+- Strictly forbid using ad-hoc CSS or custom styling overrides on UI primitives (`src/components/ui/**`), as default primitive styles are pre-established.
+- Strictly forbid using custom `rounded-*` classes. `components.json` configures `rounded-none`, which is already set by default on all UI primitives.
 - All TypeScript interfaces and types live in `src/types/`. Never define inline types in components or pages.
 - All static constants (site metadata, navigation, API paths, feature lists, FAQ items, UI data arrays) live in `src/constants/`. Modularized by domain (e.g. `site.ts`, `navigation.ts`, `api.ts`) and re-exported via `src/constants/index.ts`. Import as `@/constants`.
 - All pure functions (formatting, data transforms, code generation) live in `src/lib/`. These files must not import React or render JSX.
@@ -32,8 +34,8 @@ src/
   components/
     ui/                   # shadcn primitives (do not hand-edit)
     common/               # Shared layout: Header, Footer, ThemeToggle, CodeBlock, JsonViewer
-    home/                 # Home page components and skeletons
-    about/                # About page components and skeletons
+    home/                 # Home page components
+    about/                # About page components
   constants/              # Static constants, modularized by domain (site, navigation, api, features, faq, about, quickstart)
   hooks/                  # Custom React hooks
   lib/                    # Pure functions, formatters, data helpers (no constants)

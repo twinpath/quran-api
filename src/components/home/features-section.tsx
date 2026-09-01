@@ -35,7 +35,7 @@ export function FeaturesSection() {
               className="group transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5"
             >
               <CardContent className="p-6">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-base font-semibold">{feature.title}</h3>

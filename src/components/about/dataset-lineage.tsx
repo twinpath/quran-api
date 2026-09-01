@@ -18,7 +18,7 @@ export function DatasetLineage() {
             <Card key={item.title}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <div className="flex h-9 w-9 items-center justify-center bg-primary/10 text-primary">
                     <Icon className="h-4 w-4" />
                   </div>
                   <CardTitle className="text-base">{item.title}</CardTitle>

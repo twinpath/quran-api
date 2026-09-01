@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ApiPlayground } from "@/components/playground/api-playground";
-import { ApiPlaygroundSkeleton } from "@/components/playground/api-playground-skeleton";
 import { SITE_PAGE_METADATA } from "@/constants";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -14,9 +13,10 @@ export const metadata: Metadata = buildPageMetadata({
 export default function PlaygroundPage() {
   return (
     <main className="min-h-screen py-8">
-      <Suspense fallback={<ApiPlaygroundSkeleton />}>
+      <Suspense fallback={<ApiPlayground isLoading />}>
         <ApiPlayground />
       </Suspense>
     </main>
   );
 }
+

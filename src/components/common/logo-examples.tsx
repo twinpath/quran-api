@@ -56,7 +56,7 @@ export const CustomColorLogoExample: FC = () => {
 export const IconOnlyLogoExample: FC = () => {
   return (
     <div className="flex gap-4 items-center">
-      <Logo size={32} variant="icon" className="rounded-lg" />
+      <Logo size={32} variant="icon" />
       <Logo size={48} variant="icon" />
       <Logo size={64} variant="icon" />
     </div>
@@ -115,10 +115,10 @@ export const MultiContextLogoExample: FC = () => {
       </div>
 
       {/* Sidebar */}
-      <div className="bg-card p-4 rounded-lg">
+      <div className="bg-card p-4">
         <Logo size={40} variant="icon" className="mb-4" />
         <nav className="space-y-2">
-          <div className="px-2 py-1 hover:bg-primary/10 rounded">
+          <div className="px-2 py-1 hover:bg-primary/10">
             Home
           </div>
         </nav>

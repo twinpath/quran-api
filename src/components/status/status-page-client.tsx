@@ -23,20 +23,20 @@ import { Button } from "@/components/ui/button";
 import { WorldMap } from "@/components/status/world-map";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { LoadingProps } from "@/types/components";
 
 const Globe = dynamic(() => import("@/components/status/globe").then((m) => m.Globe), {
   ssr: false,
   loading: () => (
-    <div className="relative size-full min-h-[320px] flex items-center justify-center rounded-lg bg-background/50 border border-border/40 overflow-hidden">
+    <div className="relative size-full min-h-[320px] flex items-center justify-center bg-background/50 border border-border/40 overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center p-8">
         <div className="relative aspect-square w-3/4 max-w-[280px]">
-          <Skeleton className="size-full rounded-full" />
+          <Skeleton className="size-full" />
         </div>
       </div>
     </div>
   ),
 });
-import { StatusSkeleton } from "@/components/status/status-skeleton";
 import type { TelemetryStatusResponse, TelemetryDistributionItem } from "@/types/telemetry";
 
 const chartConfig = {
@@ -50,7 +50,7 @@ const chartConfig = {
   },
 };
 
-export function StatusPageClient() {
+export function StatusPageClient({ isLoading: propsIsLoading }: LoadingProps = {}) {
   const [data, setData] = useState<TelemetryStatusResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -92,9 +92,7 @@ export function StatusPageClient() {
     };
   }, [days, fetchStatusData]);
 
-  if (isLoading && !data) {
-    return <StatusSkeleton />;
-  }
+  const showSkeleton = propsIsLoading || (isLoading && !data);
 
   const overview = data?.overview || {
     totalRequests: 0,
@@ -160,7 +158,9 @@ export function StatusPageClient() {
             <Activity className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overview.totalRequests.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {showSkeleton ? <Skeleton className="h-8 w-24" /> : overview.totalRequests.toLocaleString()}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               Logged in the last {days} days
             </p>
@@ -173,7 +173,9 @@ export function StatusPageClient() {
             <Users className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overview.uniqueVisitors.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {showSkeleton ? <Skeleton className="h-8 w-20" /> : overview.uniqueVisitors.toLocaleString()}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               Distinct client IP hashes
             </p>
@@ -186,7 +188,9 @@ export function StatusPageClient() {
             <CheckCircle2 className="size-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overview.successRate.toFixed(1)}%</div>
+            <div className="text-2xl font-bold">
+              {showSkeleton ? <Skeleton className="h-8 w-16" /> : `${overview.successRate.toFixed(1)}%`}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               {overview.errorCount} HTTP errors logged
             </p>
@@ -199,7 +203,9 @@ export function StatusPageClient() {
             <Clock className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overview.avgResponseTimeMs} ms</div>
+            <div className="text-2xl font-bold">
+              {showSkeleton ? <Skeleton className="h-8 w-20" /> : `${overview.avgResponseTimeMs} ms`}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               D1 execution & edge timing
             </p>

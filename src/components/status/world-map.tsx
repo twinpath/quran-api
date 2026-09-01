@@ -129,7 +129,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
       >
         {isLoading || !topoData ? (
           <div className="w-full h-full min-h-[280px] flex items-center justify-center">
-            <Skeleton className="w-full h-full min-h-[280px] rounded-md" />
+            <Skeleton className="w-full h-full min-h-[280px]" />
           </div>
         ) : hasError ? (
           <div className="text-sm text-destructive flex items-center justify-center h-full">
@@ -172,7 +172,7 @@ export function WorldMap({ countries, isLoading = false }: WorldMapProps) {
             {/* Hover Tooltip Overlay */}
             {hoveredInfo && (
               <div
-                className="absolute z-30 pointer-events-none px-3 py-1.5 rounded-md bg-popover text-popover-foreground border border-border/80 shadow-md text-xs font-sans -translate-x-1/2 -translate-y-full transition-all duration-75"
+                className="absolute z-30 pointer-events-none px-3 py-1.5 bg-popover text-popover-foreground border border-border/80 shadow-md text-xs font-sans -translate-x-1/2 -translate-y-full transition-all duration-75"
                 style={{
                   left: `${hoveredInfo.x}px`,
                   top: `${hoveredInfo.y - 8}px`,

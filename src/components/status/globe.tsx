@@ -22,7 +22,7 @@ export function Globe({ locations, autoRotate = true }: GlobeProps) {
   return (
     <div
       ref={containerRef}
-      className="relative size-full min-h-[320px] flex items-center justify-center rounded-lg bg-background/50 border border-border/40 overflow-hidden"
+      className="relative size-full min-h-[320px] flex items-center justify-center bg-background/50 border border-border/40 overflow-hidden"
     >
       <canvas
         ref={canvasRef}
@@ -35,7 +35,7 @@ export function Globe({ locations, autoRotate = true }: GlobeProps) {
       {!isReady && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center p-8">
           <div className="relative aspect-square w-3/4 max-w-[280px]">
-            <Skeleton className="size-full rounded-full" />
+            <Skeleton className="size-full" />
           </div>
         </div>
       )}
@@ -50,7 +50,7 @@ export function Globe({ locations, autoRotate = true }: GlobeProps) {
 
       {/* Floating Control Buttons */}
       {isReady && !hasError && (
-        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1 bg-background/80 backdrop-blur-md p-1 rounded-md border border-border/60 shadow-sm">
+        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1 bg-background/80 backdrop-blur-md p-1 border border-border/60 shadow-sm">
           <Button
             variant="ghost"
             size="icon"

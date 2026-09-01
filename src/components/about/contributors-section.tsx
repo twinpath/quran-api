@@ -37,7 +37,7 @@ export function ContributorsSection() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-lg border border-dashed border-border p-6 text-center">
+      <div className="mt-8 border border-dashed border-border p-6 text-center">
         <p className="text-sm font-medium">Want to contribute?</p>
         <p className="mt-1 text-sm text-muted-foreground">
           We welcome Pull Requests for translations, bug fixes, and feature improvements.

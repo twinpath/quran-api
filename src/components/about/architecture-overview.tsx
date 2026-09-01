@@ -23,7 +23,7 @@ export function ArchitectureOverview() {
               )}
 
               {/* Icon */}
-              <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-background text-primary">
+              <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-background text-primary">
                 <Icon className="h-4 w-4" />
               </div>
 

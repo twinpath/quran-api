@@ -10,3 +10,8 @@ export interface JsonViewerProps {
   className?: string;
   maxHeight?: string;
 }
+
+export interface LoadingProps {
+  isLoading?: boolean;
+}
+
