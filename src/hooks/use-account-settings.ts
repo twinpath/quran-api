@@ -116,10 +116,24 @@ export function useAccountSettings(): UseAccountSettingsReturn {
   };
 
   const handleTogglePreference = (key: "usageAlerts" | "emailNotifications") => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setSettings((prev) => {
+      const nextValue = !prev[key];
+      const featureLabel =
+        key === "usageAlerts"
+          ? "Telegram Usage & Rate Limit Alerts"
+          : "System & Security Email Notifications";
+
+      if (nextValue) {
+        toast.success(`${featureLabel} enabled`);
+      } else {
+        toast.info(`${featureLabel} disabled`);
+      }
+
+      return {
+        ...prev,
+        [key]: nextValue,
+      };
+    });
   };
 
   const handleUpdateTelegramChatId = (chatId: string) => {

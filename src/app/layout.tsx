@@ -4,8 +4,7 @@ import {
   Geist_Mono,
   DM_Sans,
   Aref_Ruqaa,
-  Amiri_Quran
-} from "next/font/google";
+  Amiri_Quran, Noto_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,9 +22,9 @@ import {
 } from "@/constants";
 import { buildPageMetadata } from "@/lib/seo";
 
-const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
+const playfairDisplayHeading = Playfair_Display({subsets:['latin'],variable:'--font-heading'});
 
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +70,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", dmSans.variable, geistHeading.variable, geistMono.variable, amiriQuran.variable, arefRuqaa.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", notoSans.variable, playfairDisplayHeading.variable, geistMono.variable, amiriQuran.variable, arefRuqaa.variable)}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
         <script

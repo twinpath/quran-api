@@ -131,4 +131,11 @@
 	html {
 		@apply font-sans;
 	}
+
+	button:not(:disabled),
+	[role="button"]:not(:disabled),
+	[data-slot="switch"]:not([data-disabled]),
+	[data-slot="checkbox"]:not([data-disabled]) {
+		cursor: pointer;
+	}
 }
