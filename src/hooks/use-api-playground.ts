@@ -11,9 +11,18 @@ import {
   extractServerLatencyMs,
 } from "@/lib/latency";
 
+function getInitialParamValues(endpointId: string): Record<string, string> {
+  const endpoint = API_ENDPOINTS.find((e) => e.id === endpointId) ?? API_ENDPOINTS[0];
+  const initial: Record<string, string> = {};
+  for (const param of endpoint.pathParams) {
+    initial[param.name] = param.defaultValue;
+  }
+  return initial;
+}
+
 const DEFAULT_STATE: PlaygroundState = {
   selectedEndpointId: API_ENDPOINTS[0].id,
-  paramValues: {},
+  paramValues: getInitialParamValues(API_ENDPOINTS[0].id),
   response: null,
   isLoading: false,
   activeSnippetLang: "curl",
@@ -41,7 +50,7 @@ export function useApiPlayground() {
     setState((prev) => ({
       ...prev,
       selectedEndpointId: endpointId,
-      paramValues: {},
+      paramValues: getInitialParamValues(endpointId),
       response: null,
     }));
   }, []);
