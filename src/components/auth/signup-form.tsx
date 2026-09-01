@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { AuthCardWrapper } from "./auth-card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
 import type { SignUpFormProps, SignUpFormData } from "@/types/auth";
 
@@ -110,8 +111,7 @@ export function SignUpForm({ isLoading = false }: SignUpFormProps) {
             <Key className="h-3.5 w-3.5 text-muted-foreground" />
             Password
           </label>
-          <Input
-            type="password"
+          <PasswordInput
             name="password"
             placeholder="Minimum 8 characters"
             value={formData.password}
@@ -126,8 +126,7 @@ export function SignUpForm({ isLoading = false }: SignUpFormProps) {
             <Key className="h-3.5 w-3.5 text-muted-foreground" />
             Confirm Password
           </label>
-          <Input
-            type="password"
+          <PasswordInput
             name="confirmPassword"
             placeholder="Re-enter password"
             value={formData.confirmPassword}

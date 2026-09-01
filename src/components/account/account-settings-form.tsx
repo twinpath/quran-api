@@ -5,7 +5,7 @@ import { Settings, Bell, Lock, KeyRound, Save, Check, Zap, Mail, ShieldCheck, Un
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/common/password-input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_ACCOUNT_SETTINGS } from "@/constants/account";
@@ -197,8 +197,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
                   <form onSubmit={handleUpdatePassword} className="p-4 border border-border bg-card space-y-3">
                     <div className="space-y-1">
                       <label className="text-xs font-medium text-foreground">Current Password</label>
-                      <Input
-                        type="password"
+                      <PasswordInput
                         name="currentPassword"
                         placeholder="••••••••"
                         value={passwordState.currentPassword}
@@ -210,8 +209,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1">
                         <label className="text-xs font-medium text-foreground">New Password</label>
-                        <Input
-                          type="password"
+                        <PasswordInput
                           name="newPassword"
                           placeholder="Min 8 characters"
                           value={passwordState.newPassword}
@@ -221,8 +219,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-medium text-foreground">Confirm New Password</label>
-                        <Input
-                          type="password"
+                        <PasswordInput
                           name="confirmPassword"
                           placeholder="Re-enter new password"
                           value={passwordState.confirmPassword}

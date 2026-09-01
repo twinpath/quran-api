@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { AuthCardWrapper } from "./auth-card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
 import type { SignInFormProps, SignInFormData } from "@/types/auth";
 
@@ -91,8 +92,7 @@ export function SignInForm({ isLoading = false }: SignInFormProps) {
               Forgot password?
             </Link>
           </div>
-          <Input
-            type="password"
+          <PasswordInput
             name="password"
             placeholder="••••••••"
             value={formData.password}
