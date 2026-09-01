@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import { DEFAULT_TELEGRAM_BOT_USERNAME } from "@/constants";
 import type { NotificationPreferencesSectionProps } from "@/types/account";
 
@@ -77,19 +78,19 @@ export function NotificationPreferencesSection({
                 Receive instant alerts on Telegram when your key consumption reaches 80% daily quota or rate limit thresholds.
               </p>
             </div>
-            <Button
-              type="button"
-              variant={usageAlerts ? "default" : "outline"}
-              size="sm"
-              onClick={() => onTogglePreference("usageAlerts")}
-              className={`w-24 shrink-0 cursor-pointer text-xs font-semibold ${
-                usageAlerts
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                  : "text-muted-foreground"
-              }`}
-            >
-              {usageAlerts ? "Enabled" : "Disabled"}
-            </Button>
+            <div className="flex items-center gap-2.5 shrink-0">
+              <Switch
+                id="usage-alerts-switch"
+                checked={usageAlerts}
+                onCheckedChange={() => onTogglePreference("usageAlerts")}
+              />
+              <label
+                htmlFor="usage-alerts-switch"
+                className="text-xs font-semibold w-16 cursor-pointer select-none text-muted-foreground"
+              >
+                {usageAlerts ? "Enabled" : "Disabled"}
+              </label>
+            </div>
           </div>
 
           {/* Telegram Bot Connection & Chat ID Setup */}
@@ -188,19 +189,19 @@ export function NotificationPreferencesSection({
               Receive security alerts, password changes, and platform announcements via Email (Resend, Brevo, Cloudflare).
             </p>
           </div>
-          <Button
-            type="button"
-            variant={emailNotifications ? "default" : "outline"}
-            size="sm"
-            onClick={() => onTogglePreference("emailNotifications")}
-            className={`w-24 shrink-0 cursor-pointer text-xs font-semibold ${
-              emailNotifications
-                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                : "text-muted-foreground"
-            }`}
-          >
-            {emailNotifications ? "Enabled" : "Disabled"}
-          </Button>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Switch
+              id="email-notif-switch"
+              checked={emailNotifications}
+              onCheckedChange={() => onTogglePreference("emailNotifications")}
+            />
+            <label
+              htmlFor="email-notif-switch"
+              className="text-xs font-semibold w-16 cursor-pointer select-none text-muted-foreground"
+            >
+              {emailNotifications ? "Enabled" : "Disabled"}
+            </label>
+          </div>
         </div>
 
         {/* Save Preferences Button */}
