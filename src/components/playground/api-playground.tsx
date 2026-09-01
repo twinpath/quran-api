@@ -35,7 +35,7 @@ export function ApiPlayground() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="border border-border bg-card shadow-sm">
         {/* Endpoint selector */}
         <div className="border-b border-border p-4">
           <div className="flex flex-wrap gap-2">

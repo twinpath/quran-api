@@ -23,7 +23,7 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
 
   if (!mounted) {
     return (
-      <div className={cn("group relative rounded-lg border border-border bg-muted/50", className)}>
+      <div className={cn("group relative border border-border bg-muted/50", className)}>
         <div className="flex items-center justify-between border-b border-border/60 px-4 py-2">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             JSON
@@ -38,7 +38,7 @@ export function JsonViewer({ data, className, maxHeight = "400px" }: JsonViewerP
   }
 
   return (
-    <div className={cn("group relative rounded-lg border border-border bg-card", className)}>
+    <div className={cn("group relative border border-border bg-card", className)}>
       <div className="flex items-center justify-between border-b border-border px-4 py-2">
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           JSON Response

@@ -9,7 +9,7 @@ import { PLAYGROUND_SAMPLE_RESPONSE } from "@/constants";
 export function PlaygroundPreview() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-      <div className="rounded-2xl border border-border bg-card/60 p-8 shadow-sm backdrop-blur-sm sm:p-12">
+      <div className="border border-border bg-card/60 p-8 shadow-sm backdrop-blur-sm sm:p-12">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
           <div className="space-y-4 lg:col-span-6">
             <Badge variant="secondary" className="gap-1.5 font-mono text-xs">
