@@ -108,6 +108,12 @@ export const SITE_PAGE_METADATA = {
       "Monitor real-time API uptime, latency, and global request telemetry for the Quran Edge API platform.",
     path: "/status",
   },
+  account: {
+    title: "Developer Account",
+    description:
+      "Manage your personal profile, authentication, and API access keys for Quran Edge API.",
+    path: "/account",
+  },
 } as const;
 
 /** Data source attribution */
