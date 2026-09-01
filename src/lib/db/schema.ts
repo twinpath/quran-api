@@ -162,6 +162,7 @@ export const apiKeys = sqliteTable(
     status: text("status").notNull().default("active"),
     rateLimit: integer("rate_limit").notNull().default(5000),
     lastUsedAt: integer("last_used_at", { mode: "timestamp" }),
+    expiresAt: integer("expires_at", { mode: "timestamp" }),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   },
   (table) => [

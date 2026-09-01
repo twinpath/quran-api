@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { getDb } from "@/lib/db";
 import { apiKeys } from "@/lib/db/schema";
-import { generateApiKey, hashApiKey, maskApiKey } from "@/lib/api-key";
+import {
+  generateApiKey,
+  hashApiKey,
+  maskApiKey,
+  calculateExpirationDate,
+  formatExpirationLabel,
+} from "@/lib/api-key";
 import { generatePrefixedId, getAuth } from "@/lib/auth";
 import { API_KEY_PREFIX, DEFAULT_DEVELOPER_RATE_LIMIT, MAX_KEYS_PER_USER } from "@/constants/api-key";
 import { eq } from "drizzle-orm";
@@ -27,7 +33,7 @@ async function getSessionUserId(env?: CloudflareEnv): Promise<string | null> {
 
 /**
  * GET /api/keys
- * List active and revoked API keys for the current authenticated user.
+ * List active, revoked, and expired API keys for the current authenticated user.
  */
 export async function GET() {
   let env: CloudflareEnv | undefined;
@@ -57,15 +63,27 @@ export async function GET() {
       .where(eq(apiKeys.userId, userId))
       .all();
 
-    const formattedKeys: ApiKeyItem[] = dbKeys.map((k) => ({
-      id: k.id,
-      name: k.name,
-      keyMasked: `${k.keyPrefix}${k.keyHash.substring(0, 4)}...${k.keyHash.substring(k.keyHash.length - 4)}`,
-      createdAt: k.createdAt ? new Date(k.createdAt).toISOString().split("T")[0] : "Recently",
-      lastUsed: k.lastUsedAt ? new Date(k.lastUsedAt).toISOString() : "Never",
-      status: (k.status as "active" | "revoked" | "expired") || "active",
-      rateLimit: `${k.rateLimit.toLocaleString()} req/hour`,
-    }));
+    const formattedKeys: ApiKeyItem[] = dbKeys.map((k) => {
+      const { label: expiresLabel, isExpired } = formatExpirationLabel(k.expiresAt);
+      
+      let computedStatus: "active" | "revoked" | "expired" = (k.status as "active" | "revoked" | "expired") || "active";
+      if (computedStatus === "active" && isExpired) {
+        computedStatus = "expired";
+      }
+
+      return {
+        id: k.id,
+        name: k.name,
+        keyMasked: maskApiKey(`${k.keyPrefix}${k.keyHash.substring(0, 8)}`),
+        createdAt: k.createdAt ? new Date(k.createdAt).toISOString().split("T")[0] : "Recently",
+        expiresAt: k.expiresAt ? new Date(k.expiresAt).toISOString() : null,
+        expiresLabel,
+        isExpired,
+        lastUsed: k.lastUsedAt ? new Date(k.lastUsedAt).toISOString() : "Never",
+        status: computedStatus,
+        rateLimit: `${k.rateLimit.toLocaleString()} req/hour`,
+      };
+    });
 
     return NextResponse.json({ success: true, data: formattedKeys });
   } catch (err) {
@@ -79,7 +97,7 @@ export async function GET() {
 
 /**
  * POST /api/keys
- * Create a new API Key, return raw key ONCE to the user, and store SHA-256 hash in D1.
+ * Create a new API Key with expiration options, return raw key ONCE to the user, and store SHA-256 hash in D1.
  */
 export async function POST(request: Request) {
   let env: CloudflareEnv | undefined;
@@ -105,6 +123,9 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    const expirationOption = body.expirationOption || "30d";
+    const expiresAtDate = calculateExpirationDate(expirationOption, body.customDays);
 
     const rawKey = generateApiKey();
     const keyHash = await hashApiKey(rawKey);
@@ -141,9 +162,12 @@ export async function POST(request: Request) {
         keyHash,
         status: "active",
         rateLimit: DEFAULT_DEVELOPER_RATE_LIMIT,
+        expiresAt: expiresAtDate,
         createdAt: now,
       });
     }
+
+    const { label: expiresLabel } = formatExpirationLabel(expiresAtDate);
 
     return NextResponse.json({
       success: true,
@@ -155,6 +179,8 @@ export async function POST(request: Request) {
         keyMasked,
         rateLimit: `${DEFAULT_DEVELOPER_RATE_LIMIT.toLocaleString()} req/hour`,
         createdAt: now.toISOString().split("T")[0],
+        expiresAt: expiresAtDate ? expiresAtDate.toISOString() : null,
+        expiresLabel,
         status: "active",
       },
     });

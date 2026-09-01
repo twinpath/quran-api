@@ -26,10 +26,10 @@ async function getSessionUserId(env?: CloudflareEnv): Promise<string | null> {
 }
 
 /**
- * DELETE /api/keys/[id]
- * Revoke an API key by ID for the current authenticated user.
+ * PATCH /api/keys/[id]
+ * Revoke an active API key by ID (sets status to 'revoked').
  */
-export async function DELETE(_request: Request, { params }: RouteParams) {
+export async function PATCH(_request: Request, { params }: RouteParams) {
   const { id } = await params;
 
   if (!id) {
@@ -72,6 +72,57 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     console.error("Error revoking API key:", err);
     return NextResponse.json(
       { success: false, error: "Failed to revoke API key" },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * DELETE /api/keys/[id]
+ * Hard delete an API key by ID (permanently removes row from database).
+ */
+export async function DELETE(_request: Request, { params }: RouteParams) {
+  const { id } = await params;
+
+  if (!id) {
+    return NextResponse.json(
+      { success: false, error: "API key ID is required" },
+      { status: 400 },
+    );
+  }
+
+  let env: CloudflareEnv | undefined;
+  try {
+    env = getCloudflareContext().env;
+  } catch {
+    env = process.env as unknown as CloudflareEnv;
+  }
+
+  const userId = await getSessionUserId(env);
+  if (!userId) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  try {
+    if (env && env.DB) {
+      const db = getDb(env);
+      await db
+        .delete(apiKeys)
+        .where(and(eq(apiKeys.id, id), eq(apiKeys.userId, userId)));
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `API key ${id} deleted successfully`,
+      id,
+    });
+  } catch (err) {
+    console.error("Error deleting API key:", err);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete API key" },
       { status: 500 },
     );
   }

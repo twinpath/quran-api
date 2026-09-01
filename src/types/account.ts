@@ -1,4 +1,4 @@
-import type { ApiKeyStatus } from "./api-key";
+import type { ApiKeyStatus, ExpirationOption } from "./api-key";
 
 /** Account tab navigation item definition */
 export interface AccountTab {
@@ -25,8 +25,10 @@ export interface ApiKeyItem {
   id: string;
   name: string;
   keyMasked: string;
-  fullKey?: string;
   createdAt: string;
+  expiresAt?: string | null;
+  expiresLabel: string;
+  isExpired: boolean;
   lastUsed: string;
   status: ApiKeyStatus;
   rateLimit: string;
@@ -105,14 +107,19 @@ export interface UseApiKeysReturn {
   keys: ApiKeyItem[];
   newKeyName: string;
   setNewKeyName: (name: string) => void;
-  isCreating: boolean;
-  setIsCreating: (creating: boolean) => void;
+  expirationOption: ExpirationOption;
+  setExpirationOption: (option: ExpirationOption) => void;
+  customDays: number;
+  setCustomDays: (days: number) => void;
+  isSheetOpen: boolean;
+  setIsSheetOpen: (open: boolean) => void;
   isSubmitting: boolean;
-  copiedId: string | null;
+  createdRawKey: string | null;
   isFetching: boolean;
   handleCreateKey: (e: React.FormEvent) => Promise<void>;
-  handleCopyKey: (key: ApiKeyItem) => void;
   handleRevokeKey: (id: string, name: string) => Promise<void>;
+  handleDeleteKey: (id: string, name: string) => Promise<void>;
+  handleCloseSheet: () => void;
 }
 
 /** Return type for useAccountSettings hook */

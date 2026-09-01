@@ -77,3 +77,59 @@ export async function verifyApiKey(
 
   return { valid: false, error: "Invalid API key" };
 }
+
+/**
+ * Calculates the expiration Date based on selected ExpirationOption or custom days.
+ */
+export function calculateExpirationDate(
+  option: string,
+  customDays?: number,
+): Date | null {
+  if (option === "never" || !option) {
+    return null;
+  }
+
+  let days = 30;
+  if (option === "7d") days = 7;
+  else if (option === "30d") days = 30;
+  else if (option === "60d") days = 60;
+  else if (option === "90d") days = 90;
+  else if (option === "365d") days = 365;
+  else if (option === "custom" && customDays && customDays > 0) days = customDays;
+
+  const now = new Date();
+  now.setDate(now.getDate() + days);
+  return now;
+}
+
+/**
+ * Formats expiration timestamp into human readable label and checks if expired.
+ */
+export function formatExpirationLabel(expiresAt?: Date | string | null): {
+  label: string;
+  isExpired: boolean;
+} {
+  if (!expiresAt) {
+    return { label: "No expiration", isExpired: false };
+  }
+
+  const expDate = new Date(expiresAt);
+  const now = new Date();
+
+  if (expDate.getTime() <= now.getTime()) {
+    return {
+      label: `Expired on ${expDate.toISOString().split("T")[0]}`,
+      isExpired: true,
+    };
+  }
+
+  const diffMs = expDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 1) {
+    return { label: "Expires in 1 day", isExpired: false };
+  }
+
+  return { label: `Expires in ${diffDays} days`, isExpired: false };
+}
+

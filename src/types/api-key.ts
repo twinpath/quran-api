@@ -3,6 +3,8 @@
  */
 export type ApiKeyStatus = "active" | "revoked" | "expired";
 
+export type ExpirationOption = "never" | "7d" | "30d" | "60d" | "90d" | "365d" | "custom";
+
 /**
  * API Key item definition for database and API responses
  */
@@ -15,6 +17,7 @@ export interface ApiKeyRecord {
   status: ApiKeyStatus;
   rateLimit: number;
   lastUsedAt?: string | null;
+  expiresAt?: string | null;
   createdAt: string;
 }
 
@@ -23,6 +26,8 @@ export interface ApiKeyRecord {
  */
 export interface CreateApiKeyPayload {
   name: string;
+  expirationOption?: ExpirationOption;
+  customDays?: number;
 }
 
 /**
@@ -36,6 +41,8 @@ export interface CreateApiKeyResponse {
   keyMasked: string;
   rateLimit: number;
   createdAt: string;
+  expiresAt?: string | null;
+  expiresLabel?: string;
 }
 
 /**
