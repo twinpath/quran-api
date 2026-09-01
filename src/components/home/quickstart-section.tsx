@@ -16,7 +16,7 @@ export function QuickstartSection() {
 
       <Tabs defaultValue="curl" className="mx-auto max-w-3xl">
         <div className="w-full overflow-x-auto pb-1">
-          <TabsList className="inline-flex min-w-full justify-start w-max border border-border/80 bg-muted/80 p-1">
+          <TabsList className="inline-flex min-w-full justify-start w-max">
             <TabsTrigger value="curl">cURL</TabsTrigger>
             <TabsTrigger value="fetch">JavaScript</TabsTrigger>
             <TabsTrigger value="python">Python</TabsTrigger>
