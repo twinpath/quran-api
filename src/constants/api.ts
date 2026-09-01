@@ -86,7 +86,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
     method: "GET",
     description: "Retrieve a list of all 114 surahs with basic metadata including Arabic names, transliterations, and revelation types.",
     pathParams: [],
-    sampleResponse: { success: true, data: sampleSurahList } as unknown as Record<string, unknown>,
+    sampleResponse: { success: true, data: sampleSurahList, meta: { cached: true, responseTimeMs: 12 } } as unknown as Record<string, unknown>,
   },
   {
     id: "get-surah-detail",
@@ -103,7 +103,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
         defaultValue: "1",
       },
     ],
-    sampleResponse: { success: true, data: sampleSurahDetail } as unknown as Record<string, unknown>,
+    sampleResponse: { success: true, data: sampleSurahDetail, meta: { cached: true, responseTimeMs: 18 } } as unknown as Record<string, unknown>,
   },
   {
     id: "get-ayah-detail",
@@ -127,7 +127,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
         defaultValue: "1",
       },
     ],
-    sampleResponse: { success: true, data: sampleAyahDetail } as unknown as Record<string, unknown>,
+    sampleResponse: { success: true, data: sampleAyahDetail, meta: { cached: true, responseTimeMs: 15 } } as unknown as Record<string, unknown>,
   },
   {
     id: "search-ayahs",
@@ -144,7 +144,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
         defaultValue: "esa",
       },
     ],
-    sampleResponse: { success: true, data: sampleSearchResult } as unknown as Record<string, unknown>,
+    sampleResponse: { success: true, data: sampleSearchResult, meta: { cached: false, responseTimeMs: 22 } } as unknown as Record<string, unknown>,
   },
 ];
 

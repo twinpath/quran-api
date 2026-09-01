@@ -60,7 +60,10 @@ export function useApiPlayground() {
     try {
       const res = await fetch(url);
       const data = (await res.json()) as Record<string, unknown>;
-      const latencyMs = performance.now() - startTime;
+      const clientLatencyMs = performance.now() - startTime;
+
+      const meta = data?.meta as { responseTimeMs?: number } | undefined;
+      const latencyMs = typeof meta?.responseTimeMs === "number" ? meta.responseTimeMs : clientLatencyMs;
 
       const response: PlaygroundResponse = {
         status: res.status,
@@ -71,7 +74,10 @@ export function useApiPlayground() {
 
       setState((prev) => ({ ...prev, isLoading: false, response }));
     } catch {
-      const latencyMs = performance.now() - startTime;
+      const clientLatencyMs = performance.now() - startTime;
+
+      const sampleMeta = selectedEndpoint.sampleResponse?.meta as { responseTimeMs?: number } | undefined;
+      const latencyMs = typeof sampleMeta?.responseTimeMs === "number" ? sampleMeta.responseTimeMs : clientLatencyMs;
 
       // Fallback to sample response on error (e.g. CORS in dev)
       const response: PlaygroundResponse = {
