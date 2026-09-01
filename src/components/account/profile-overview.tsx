@@ -1,60 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { User, Mail, Calendar, Award, Activity, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { DEFAULT_USER_PROFILE } from "@/constants/account";
-import { useSession, authClient } from "@/lib/auth-client";
-import type { ApiResponse } from "@/types/api";
-import type { ProfileOverviewProps, UserProfile } from "@/types/account";
-import type { RateLimitStatusResponse } from "@/types/rate-limit";
-import { useRouter } from "next/navigation";
+import { useAccountProfile } from "@/hooks/use-account-profile";
+import type { ProfileOverviewProps } from "@/types/account";
 
 export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
-  const router = useRouter();
-  const { data: session, isPending: isSessionPending } = useSession();
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
-  const [rateLimitData, setRateLimitData] = useState<{ used: number; limit: number } | null>(null);
-
-  useEffect(() => {
-    if (session?.user) {
-      setProfile((prev) => ({
-        ...prev,
-        id: session.user.id || prev.id,
-        name: session.user.name || prev.name,
-        email: session.user.email || prev.email,
-        avatarUrl: session.user.image || undefined,
-        tier: (session.user as unknown as { tier?: string }).tier === "enterprise" ? "Enterprise" : "Developer",
-        memberSince: session.user.createdAt
-          ? new Date(session.user.createdAt).toISOString().split("T")[0]
-          : prev.memberSince,
-      }));
-    }
-  }, [session]);
-
-  useEffect(() => {
-    async function fetchQuota() {
-      try {
-        const res = await fetch("/api/rate_limit?api_key=qr_live_8f01a4b2");
-        if (res.ok) {
-          const json = (await res.json()) as ApiResponse<RateLimitStatusResponse>;
-          if (json.success && json.data) {
-            const data: RateLimitStatusResponse = json.data;
-            setRateLimitData({
-              used: data.rate.used,
-              limit: data.rate.limit,
-            });
-          }
-        }
-      } catch {
-        // Fallback to static profile defaults if fetch fails
-      }
-    }
-    fetchQuota();
-  }, []);
+  const { profile, rateLimitData, isSessionPending } = useAccountProfile();
 
   const showSkeleton = isLoading || isSessionPending;
   const used = rateLimitData?.used ?? profile.apiUsageToday;

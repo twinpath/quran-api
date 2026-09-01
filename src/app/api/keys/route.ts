@@ -1,44 +1,60 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { getDb } from "@/lib/db";
 import { apiKeys } from "@/lib/db/schema";
 import { generateApiKey, hashApiKey, maskApiKey } from "@/lib/api-key";
-import { generatePrefixedId } from "@/lib/auth";
+import { generatePrefixedId, getAuth } from "@/lib/auth";
 import { API_KEY_PREFIX, DEFAULT_DEVELOPER_RATE_LIMIT, MAX_KEYS_PER_USER } from "@/constants/api-key";
 import { eq } from "drizzle-orm";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { CreateApiKeyPayload } from "@/types/api-key";
 import type { ApiKeyItem } from "@/types/account";
 
 /**
+ * Resolves the authenticated user ID from the Better Auth session cookie.
+ * Returns null if no valid session exists.
+ */
+async function getSessionUserId(env?: CloudflareEnv): Promise<string | null> {
+  try {
+    const auth = getAuth(env);
+    const headersList = await headers();
+    const session = await auth.api.getSession({ headers: headersList });
+    return session?.user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * GET /api/keys
- * List active and revoked API keys for the current user.
+ * List active and revoked API keys for the current authenticated user.
  */
 export async function GET() {
-  // In production, user_id is extracted from validated session.
-  const mockUserId = "usr_quran_8921";
+  let env: CloudflareEnv | undefined;
+  try {
+    env = getCloudflareContext().env;
+  } catch {
+    env = process.env as unknown as CloudflareEnv;
+  }
+
+  const userId = await getSessionUserId(env);
+  if (!userId) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
 
   try {
-    const env = process.env as unknown as CloudflareEnv;
     if (!env || !env.DB) {
-      // Fallback mock response when DB binding is missing
-      const mockKeys: ApiKeyItem[] = [
-        {
-          id: "key_live_01",
-          name: "Production Web App",
-          keyMasked: "qr_live_8f8a...4a1b",
-          createdAt: "2026-08-15",
-          lastUsed: "Just now",
-          status: "active",
-          rateLimit: "5,000 req/hour",
-        },
-      ];
-      return NextResponse.json({ success: true, data: mockKeys });
+      return NextResponse.json({ success: true, data: [] });
     }
 
     const db = getDb(env);
     const dbKeys = await db
       .select()
       .from(apiKeys)
-      .where(eq(apiKeys.userId, mockUserId))
+      .where(eq(apiKeys.userId, userId))
       .all();
 
     const formattedKeys: ApiKeyItem[] = dbKeys.map((k) => ({
@@ -66,7 +82,20 @@ export async function GET() {
  * Create a new API Key, return raw key ONCE to the user, and store SHA-256 hash in D1.
  */
 export async function POST(request: Request) {
-  const mockUserId = "usr_quran_8921";
+  let env: CloudflareEnv | undefined;
+  try {
+    env = getCloudflareContext().env;
+  } catch {
+    env = process.env as unknown as CloudflareEnv;
+  }
+
+  const userId = await getSessionUserId(env);
+  if (!userId) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
 
   try {
     const body = (await request.json()) as CreateApiKeyPayload;
@@ -77,7 +106,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const env = process.env as unknown as CloudflareEnv;
     const rawKey = generateApiKey();
     const keyHash = await hashApiKey(rawKey);
     const keyMasked = maskApiKey(rawKey);
@@ -91,7 +119,7 @@ export async function POST(request: Request) {
       const existingKeys = await db
         .select()
         .from(apiKeys)
-        .where(eq(apiKeys.userId, mockUserId))
+        .where(eq(apiKeys.userId, userId))
         .all();
 
       const activeKeysCount = existingKeys.filter((k) => k.status === "active").length;
@@ -107,7 +135,7 @@ export async function POST(request: Request) {
 
       await db.insert(apiKeys).values({
         id: keyId,
-        userId: mockUserId,
+        userId,
         name: body.name.trim(),
         keyPrefix: API_KEY_PREFIX,
         keyHash,

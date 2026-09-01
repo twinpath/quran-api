@@ -1,120 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Key, Plus, Copy, Check, Trash2, Info } from "lucide-react";
-import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DEFAULT_API_KEYS } from "@/constants/account";
-import type { ApiKeyItem, ApiKeysManagerProps } from "@/types/account";
+import { useApiKeys } from "@/hooks/use-api-keys";
+import type { ApiKeysManagerProps } from "@/types/account";
 
 export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
-  const [keys, setKeys] = useState<ApiKeyItem[]>(DEFAULT_API_KEYS);
-  const [newKeyName, setNewKeyName] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const {
+    keys,
+    newKeyName,
+    setNewKeyName,
+    isCreating,
+    setIsCreating,
+    isSubmitting,
+    copiedId,
+    isFetching,
+    handleCreateKey,
+    handleCopyKey,
+    handleRevokeKey,
+  } = useApiKeys();
 
-  useEffect(() => {
-    async function fetchKeys() {
-      try {
-        const res = await fetch("/api/keys");
-        if (res.ok) {
-          const json = (await res.json()) as { success: boolean; data?: ApiKeyItem[] };
-          if (json.success && Array.isArray(json.data)) {
-            setKeys(json.data);
-          }
-        }
-
-      } catch (err) {
-        console.error("Failed to load API keys:", err);
-      }
-    }
-    fetchKeys();
-  }, []);
-
-  const handleCreateKey = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newKeyName.trim()) {
-      toast.error("Please enter a name for your API key");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const res = await fetch("/api/keys", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newKeyName.trim() }),
-      });
-
-      const json = (await res.json()) as {
-        success: boolean;
-        error?: string;
-        data?: {
-          id: string;
-          name: string;
-          keyMasked: string;
-          rawKey: string;
-          createdAt: string;
-          rateLimit: string;
-        };
-      };
-      if (json.success && json.data) {
-
-        const createdItem: ApiKeyItem = {
-          id: json.data.id,
-          name: json.data.name,
-          keyMasked: json.data.keyMasked,
-          fullKey: json.data.rawKey,
-          createdAt: json.data.createdAt,
-          lastUsed: "Never",
-          status: "active",
-          rateLimit: json.data.rateLimit,
-        };
-
-        setKeys([createdItem, ...keys]);
-        setNewKeyName("");
-        setIsCreating(false);
-        toast.success(`API Key "${createdItem.name}" generated! Copy your key now.`);
-      } else {
-        toast.error(json.error || "Failed to create API key");
-      }
-    } catch (err) {
-      console.error("Error creating API key:", err);
-      toast.error("An unexpected error occurred");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCopyKey = (key: ApiKeyItem) => {
-    const textToCopy = key.fullKey || key.keyMasked;
-    navigator.clipboard.writeText(textToCopy);
-    setCopiedId(key.id);
-    toast.success("API Key copied to clipboard");
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const handleRevokeKey = async (id: string, name: string) => {
-    try {
-      const res = await fetch(`/api/keys/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setKeys(
-          keys.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k)),
-        );
-        toast.info(`API Key "${name}" has been revoked`);
-      } else {
-        toast.error("Failed to revoke API key");
-      }
-    } catch (err) {
-      console.error("Error revoking key:", err);
-      toast.error("Failed to revoke API key");
-    }
-  };
+  const showSkeleton = isLoading || isFetching;
 
   return (
     <div className="space-y-6">
@@ -193,7 +103,7 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
           )}
 
           {/* Keys List */}
-          {isLoading ? (
+          {showSkeleton ? (
             <div className="space-y-3">
               <Skeleton className="h-12 w-full" />
               <Skeleton className="h-12 w-full" />

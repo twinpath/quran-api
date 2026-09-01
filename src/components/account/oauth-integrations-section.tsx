@@ -1,57 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { KeyRound, Unlink, Link2 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { authClient } from "@/lib/auth-client";
 import type { OauthIntegrationsSectionProps } from "@/types/account";
 
 export function OauthIntegrationsSection({
   googleConnected = false,
-  googleEmail = "developer@gmail.com",
-  onToggleConnect,
+  googleEmail,
+  onLinkGoogle,
+  onUnlinkGoogle,
+  isLinking,
+  isUnlinking,
   isLoading = false,
 }: OauthIntegrationsSectionProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleGoogleAction = async () => {
-    setIsProcessing(true);
-    try {
-      if (googleConnected) {
-        // Better Auth unlinkAccount requires `accountId`, not `providerId`.
-        // List linked accounts first to resolve the Google account ID.
-        const { data: accounts } = await authClient.listAccounts();
-        const googleAccount = accounts?.find(
-          (a) => a.providerId === "google",
-        );
-        if (!googleAccount) {
-          toast.error("Google OAuth account not found");
-          return;
-        }
-        const { error } = await authClient.unlinkAccount({ accountId: googleAccount.id });
-        if (error) {
-          toast.error(error.message || "Failed to disconnect Google OAuth account");
-        } else {
-          toast.info("Google OAuth account disconnected");
-          onToggleConnect();
-        }
-      } else {
-        toast.info("Redirecting to Google OAuth link consent...");
-        await authClient.linkSocial({
-          provider: "google",
-          callbackURL: "/account/settings",
-        });
-      }
-    } catch (err) {
-      console.error("Google OAuth toggle error:", err);
-      toast.error("Failed to perform Google OAuth action");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  const isProcessing = isLinking || isUnlinking;
 
   if (isLoading) {
     return <Skeleton className="h-24 w-full" />;
@@ -120,18 +84,18 @@ export function OauthIntegrationsSection({
             variant={googleConnected ? "outline" : "default"}
             size="sm"
             disabled={isProcessing}
-            onClick={handleGoogleAction}
+            onClick={googleConnected ? onUnlinkGoogle : onLinkGoogle}
             className="gap-1.5 text-xs shrink-0 cursor-pointer"
           >
             {googleConnected ? (
               <>
                 <Unlink className="h-3.5 w-3.5 text-destructive" />
-                Disconnect
+                {isUnlinking ? "Disconnecting..." : "Disconnect"}
               </>
             ) : (
               <>
                 <Link2 className="h-3.5 w-3.5" />
-                Connect Google
+                {isLinking ? "Connecting..." : "Connect Google"}
               </>
             )}
           </Button>

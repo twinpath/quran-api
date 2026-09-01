@@ -1,60 +1,27 @@
 "use client";
 
-import { useState } from "react";
 import { Settings } from "lucide-react";
-import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DEFAULT_ACCOUNT_SETTINGS } from "@/constants/account";
 import { OauthIntegrationsSection } from "./oauth-integrations-section";
 import { PasswordManagementSection } from "./password-management-section";
 import { NotificationPreferencesSection } from "./notification-preferences-section";
-import type { AccountSettingsFormProps, AccountSettings } from "@/types/account";
+import { useAccountSettings } from "@/hooks/use-account-settings";
+import type { AccountSettingsFormProps } from "@/types/account";
 
 export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormProps) {
-  const [settings, setSettings] = useState<AccountSettings>(DEFAULT_ACCOUNT_SETTINGS);
+  const {
+    settings,
+    isLoadingAccounts,
+    isLinkingGoogle,
+    isUnlinkingGoogle,
+    handleTogglePreference,
+    handleLinkGoogle,
+    handleUnlinkGoogle,
+    handleUpdatePassword,
+    handleSavePreferences,
+  } = useAccountSettings();
 
-  const handleTogglePreference = (key: "usageAlerts" | "emailNotifications") => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleGoogleConnectToggle = () => {
-    if (settings.googleConnected) {
-      setSettings((prev) => ({
-        ...prev,
-        googleConnected: false,
-        googleEmail: undefined,
-      }));
-      toast.info("Google OAuth account unlinked successfully");
-    } else {
-      setSettings((prev) => ({
-        ...prev,
-        googleConnected: true,
-        googleEmail: "developer@gmail.com",
-      }));
-      toast.success("Google OAuth account linked successfully as developer@gmail.com");
-    }
-  };
-
-  const handleUpdatePassword = (currentPass: string, newPass: string, confirmPass: string) => {
-    if (!currentPass || !newPass) {
-      toast.error("Please fill in current and new password");
-      return;
-    }
-
-    if (newPass !== confirmPass) {
-      toast.error("New passwords do not match");
-      return;
-    }
-
-    toast.success("Password updated successfully!");
-  };
-
-  const handleSavePreferences = () => {
-    toast.success("Developer preferences saved successfully!");
-  };
+  const showSkeleton = isLoading || isLoadingAccounts;
 
   return (
     <Card className="border-border shadow-none">
@@ -71,10 +38,13 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
       <CardContent className="space-y-8">
         {/* Section 1: Connected OAuth Accounts */}
         <OauthIntegrationsSection
-          googleConnected={settings.googleConnected}
+          googleConnected={Boolean(settings.googleConnected)}
           googleEmail={settings.googleEmail}
-          onToggleConnect={handleGoogleConnectToggle}
-          isLoading={isLoading}
+          onLinkGoogle={handleLinkGoogle}
+          onUnlinkGoogle={handleUnlinkGoogle}
+          isLinking={isLinkingGoogle}
+          isUnlinking={isUnlinkingGoogle}
+          isLoading={showSkeleton}
         />
 
         <div className="border-t border-border" />
@@ -82,7 +52,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
         {/* Section 2: Password & Credentials */}
         <PasswordManagementSection
           onUpdatePassword={handleUpdatePassword}
-          isLoading={isLoading}
+          isLoading={showSkeleton}
         />
 
         <div className="border-t border-border" />
@@ -93,7 +63,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
           emailNotifications={settings.emailNotifications}
           onTogglePreference={handleTogglePreference}
           onSavePreferences={handleSavePreferences}
-          isLoading={isLoading}
+          isLoading={showSkeleton}
         />
       </CardContent>
     </Card>

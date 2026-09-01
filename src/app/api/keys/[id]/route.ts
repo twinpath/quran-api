@@ -1,19 +1,36 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { getDb } from "@/lib/db";
 import { apiKeys } from "@/lib/db/schema";
+import { getAuth } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 /**
+ * Resolves the authenticated user ID from the Better Auth session cookie.
+ * Returns null if no valid session exists.
+ */
+async function getSessionUserId(env?: CloudflareEnv): Promise<string | null> {
+  try {
+    const auth = getAuth(env);
+    const headersList = await headers();
+    const session = await auth.api.getSession({ headers: headersList });
+    return session?.user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * DELETE /api/keys/[id]
- * Revoke or delete an API key by ID.
+ * Revoke an API key by ID for the current authenticated user.
  */
 export async function DELETE(_request: Request, { params }: RouteParams) {
   const { id } = await params;
-  const mockUserId = "usr_quran_8921";
 
   if (!id) {
     return NextResponse.json(
@@ -22,14 +39,28 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     );
   }
 
+  let env: CloudflareEnv | undefined;
   try {
-    const env = process.env as unknown as CloudflareEnv;
+    env = getCloudflareContext().env;
+  } catch {
+    env = process.env as unknown as CloudflareEnv;
+  }
+
+  const userId = await getSessionUserId(env);
+  if (!userId) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  try {
     if (env && env.DB) {
       const db = getDb(env);
       await db
         .update(apiKeys)
         .set({ status: "revoked" })
-        .where(and(eq(apiKeys.id, id), eq(apiKeys.userId, mockUserId)));
+        .where(and(eq(apiKeys.id, id), eq(apiKeys.userId, userId)));
     }
 
     return NextResponse.json({

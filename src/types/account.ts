@@ -45,6 +45,13 @@ export interface AccountSettings {
   confirmPassword?: string;
 }
 
+/** Linked OAuth account info */
+export interface LinkedAccount {
+  id: string;
+  providerId: string;
+  accountId: string;
+}
+
 /** Component props for ProfileOverview */
 export interface ProfileOverviewProps {
   isLoading?: boolean;
@@ -62,9 +69,12 @@ export interface AccountSettingsFormProps {
 
 /** Component props for OauthIntegrationsSection */
 export interface OauthIntegrationsSectionProps {
-  googleConnected?: boolean;
+  googleConnected: boolean;
   googleEmail?: string;
-  onToggleConnect: () => void;
+  onLinkGoogle: () => void;
+  onUnlinkGoogle: () => void;
+  isLinking: boolean;
+  isUnlinking: boolean;
   isLoading?: boolean;
 }
 
@@ -83,4 +93,38 @@ export interface NotificationPreferencesSectionProps {
   isLoading?: boolean;
 }
 
+/** Return type for useAccountProfile hook */
+export interface UseAccountProfileReturn {
+  profile: UserProfile;
+  rateLimitData: { used: number; limit: number } | null;
+  isSessionPending: boolean;
+}
 
+/** Return type for useApiKeys hook */
+export interface UseApiKeysReturn {
+  keys: ApiKeyItem[];
+  newKeyName: string;
+  setNewKeyName: (name: string) => void;
+  isCreating: boolean;
+  setIsCreating: (creating: boolean) => void;
+  isSubmitting: boolean;
+  copiedId: string | null;
+  isFetching: boolean;
+  handleCreateKey: (e: React.FormEvent) => Promise<void>;
+  handleCopyKey: (key: ApiKeyItem) => void;
+  handleRevokeKey: (id: string, name: string) => Promise<void>;
+}
+
+/** Return type for useAccountSettings hook */
+export interface UseAccountSettingsReturn {
+  settings: AccountSettings;
+  linkedAccounts: LinkedAccount[];
+  isLoadingAccounts: boolean;
+  isLinkingGoogle: boolean;
+  isUnlinkingGoogle: boolean;
+  handleTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
+  handleLinkGoogle: () => void;
+  handleUnlinkGoogle: () => void;
+  handleUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<void>;
+  handleSavePreferences: (e: React.FormEvent) => void;
+}
