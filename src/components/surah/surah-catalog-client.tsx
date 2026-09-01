@@ -118,103 +118,99 @@ export function SurahCatalogClient({ initialSurahs }: SurahCatalogClientProps) {
           </div>
         </div>
 
-        {/* Row 2: Advanced filters */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/40 pt-4">
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Revelation Tabs */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                <Filter className="h-3.5 w-3.5" />
-                Revelation:
-              </span>
-              <Tabs value={revelationFilter} onValueChange={(val) => setRevelationFilter(val)}>
-                <TabsList variant="default" className="h-9">
-                  {REVELATION_FILTERS.map((filter) => (
-                    <TabsTrigger key={filter} value={filter} className="text-[10px]">
-                      {filter}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
-            </div>
-
-            {/* Ayah Count Combobox (Length Filter) */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground">Length:</span>
-              <Combobox
-                items={AYAH_COUNT_FILTERS.map((opt) => opt.value)}
-                value={ayahRange}
-                onValueChange={(val) => {
-                  if (val) setAyahRange(val as AyahCountRangeKey);
-                }}
-              >
-                <ComboboxInput
-                  placeholder="Filter length..."
-                  className="w-[150px] h-9 text-xs"
-                />
-                <ComboboxContent className="w-[180px] z-50">
-                  <ComboboxList>
-                    {AYAH_COUNT_FILTERS.map((opt) => (
-                      <ComboboxItem key={opt.value} value={opt.value} className="text-xs">
-                        <span className="font-medium">{opt.label}</span>
-                      </ComboboxItem>
-                    ))}
-                    <ComboboxEmpty>No length option found</ComboboxEmpty>
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-            </div>
+        {/* Row 2: Advanced filters - Unified left-aligned flow */}
+        <div className="flex flex-wrap items-center justify-start gap-4 border-t border-border/40 pt-4">
+          {/* Revelation Tabs */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+              <Filter className="h-3.5 w-3.5" />
+              Revelation:
+            </span>
+            <Tabs value={revelationFilter} onValueChange={(val) => setRevelationFilter(val)}>
+              <TabsList variant="default" className="h-9">
+                {REVELATION_FILTERS.map((filter) => (
+                  <TabsTrigger key={filter} value={filter} className="text-[10px]">
+                    {filter}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Sorting Combobox (Sort Filter) */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                <ArrowUpDown className="h-3.5 w-3.5" />
-                Sort:
-              </span>
-              <Combobox
-                items={SURAH_SORT_OPTIONS.map((opt) => opt.value)}
-                value={sortKey}
-                onValueChange={(val) => {
-                  if (val) setSortKey(val as SurahSortKey);
-                }}
-              >
-                <ComboboxInput
-                  placeholder="Sort by..."
-                  className="w-[170px] h-9 text-xs"
-                />
-                <ComboboxContent className="w-[190px] z-50">
-                  <ComboboxList>
-                    {SURAH_SORT_OPTIONS.map((opt) => (
-                      <ComboboxItem key={opt.value} value={opt.value} className="text-xs">
-                        <span className="font-medium">{opt.label}</span>
-                      </ComboboxItem>
-                    ))}
-                    <ComboboxEmpty>No sort option found</ComboboxEmpty>
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-            </div>
-
-            {/* Reset Filters button - Persistent layout to prevent layout shift */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetFilters}
-              disabled={!isFiltered}
-              tabIndex={isFiltered ? 0 : -1}
-              className={cn(
-                "h-9 px-3 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-all duration-200",
-                isFiltered
-                  ? "opacity-100 scale-100 pointer-events-auto visible"
-                  : "opacity-0 scale-95 pointer-events-none invisible"
-              )}
+          {/* Ayah Count Combobox (Length Filter) */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Length:</span>
+            <Combobox
+              items={AYAH_COUNT_FILTERS.map((opt) => opt.value)}
+              value={ayahRange}
+              onValueChange={(val) => {
+                if (val) setAyahRange(val as AyahCountRangeKey);
+              }}
             >
-              <X className="h-3.5 w-3.5" />
-              Reset
-            </Button>
+              <ComboboxInput
+                placeholder="Filter length..."
+                className="w-[150px] h-9 text-xs"
+              />
+              <ComboboxContent className="w-[180px] z-50">
+                <ComboboxList>
+                  {AYAH_COUNT_FILTERS.map((opt) => (
+                    <ComboboxItem key={opt.value} value={opt.value} className="text-xs">
+                      <span className="font-medium">{opt.label}</span>
+                    </ComboboxItem>
+                  ))}
+                  <ComboboxEmpty>No length option found</ComboboxEmpty>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
+
+          {/* Sorting Combobox (Sort Filter) */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+              <ArrowUpDown className="h-3.5 w-3.5" />
+              Sort:
+            </span>
+            <Combobox
+              items={SURAH_SORT_OPTIONS.map((opt) => opt.value)}
+              value={sortKey}
+              onValueChange={(val) => {
+                if (val) setSortKey(val as SurahSortKey);
+              }}
+            >
+              <ComboboxInput
+                placeholder="Sort by..."
+                className="w-[170px] h-9 text-xs"
+              />
+              <ComboboxContent className="w-[190px] z-50">
+                <ComboboxList>
+                  {SURAH_SORT_OPTIONS.map((opt) => (
+                    <ComboboxItem key={opt.value} value={opt.value} className="text-xs">
+                      <span className="font-medium">{opt.label}</span>
+                    </ComboboxItem>
+                  ))}
+                  <ComboboxEmpty>No sort option found</ComboboxEmpty>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </div>
+
+          {/* Reset Filters button - Persistent layout to prevent layout shift */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetFilters}
+            disabled={!isFiltered}
+            tabIndex={isFiltered ? 0 : -1}
+            className={cn(
+              "h-9 px-3 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-all duration-200",
+              isFiltered
+                ? "opacity-100 scale-100 pointer-events-auto visible"
+                : "opacity-0 scale-95 pointer-events-none invisible"
+            )}
+          >
+            <X className="h-3.5 w-3.5" />
+            Reset
+          </Button>
         </div>
       </div>
 
