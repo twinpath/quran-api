@@ -67,14 +67,16 @@ export function CreatePasswordForm({ isLoading = false }: CreatePasswordFormProp
 
     setIsSubmitting(true);
     try {
-      const { error } = await authClient.changePassword({
-        currentPassword: "",
-        newPassword: formData.password,
-        revokeOtherSessions: false,
+      const res = await fetch("/api/account/set-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword: formData.password }),
       });
 
-      if (error) {
-        toast.error(error.message || "Failed to save password");
+      const data = (await res.json()) as { error?: string; message?: string; success?: boolean };
+
+      if (!res.ok || data.error) {
+        toast.error(data.error || "Failed to save password");
       } else {
         toast.success("Password created! Your account is now fully active with multi-login support.");
         router.push("/account");
