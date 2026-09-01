@@ -1,21 +1,23 @@
 /**
- * KV-based rate limiter for API endpoints.
- * Uses per-minute time windows with automatic TTL expiry.
+ * GitHub-style KV-based rate limiter for API endpoints.
+ * Supports dual identity (IP & API Key), hourly reset windows,
+ * resource-based quotas (core & search), and rate limit status introspection.
  */
 
-/** Default rate limit: 60 requests per minute */
-const DEFAULT_MAX_REQUESTS = 60;
-
-/** TTL in seconds for rate limit keys (auto-expire after 60s) */
-const RATE_LIMIT_TTL_SECONDS = 60;
+import { RATE_LIMITS, RATE_LIMIT_WINDOW_SECONDS } from "@/constants/rate-limit";
+import type {
+  RateLimitResult,
+  RateLimitIdentity,
+  RateLimitResource,
+  RateLimitStatusResponse,
+} from "@/types/rate-limit";
 
 /**
- * Hash an IP address using SHA-256 for privacy.
- * We never store raw IP addresses in KV.
+ * Hash a string (IP address or API key) using SHA-256 for privacy and key safety.
  */
-async function hashIp(ip: string): Promise<string> {
+async function hashString(value: string): Promise<string> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(ip);
+  const data = encoder.encode(value);
   const digest = await crypto.subtle.digest("SHA-256", data);
   const bytes = new Uint8Array(digest);
   return Array.from(bytes.slice(0, 8))
@@ -24,64 +26,174 @@ async function hashIp(ip: string): Promise<string> {
 }
 
 /**
- * Get the current time window key (minute-level granularity).
+ * Get current hourly window key string (e.g., "2026090103").
  */
-function getWindowKey(): string {
-  const now = new Date();
-  return `${now.getUTCFullYear()}${String(now.getUTCMonth() + 1).padStart(2, "0")}${String(now.getUTCDate()).padStart(2, "0")}${String(now.getUTCHours()).padStart(2, "0")}${String(now.getUTCMinutes()).padStart(2, "0")}`;
-}
-
-/** Result of a rate limit check */
-export interface RateLimitResult {
-  allowed: boolean;
-  current: number;
-  limit: number;
-  remaining: number;
+function getHourWindowKey(now: Date = new Date()): string {
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const date = String(now.getUTCDate()).padStart(2, "0");
+  const hours = String(now.getUTCHours()).padStart(2, "0");
+  return `${year}${month}${date}${hours}`;
 }
 
 /**
- * Check and increment the rate limit counter for a given IP.
- * Returns whether the request is allowed and remaining quota.
+ * Get UTC epoch timestamp (in seconds) for when the current hourly window resets.
  */
-export async function checkRateLimit(
-  kv: KVNamespace,
-  ip: string,
-  maxRequests: number = DEFAULT_MAX_REQUESTS,
-): Promise<RateLimitResult> {
-  const ipHash = await hashIp(ip);
-  const window = getWindowKey();
-  const key = `ratelimit:${ipHash}:${window}`;
+function getResetEpochSeconds(now: Date = new Date()): number {
+  const nextHour = new Date(now);
+  nextHour.setUTCMinutes(0, 0, 0);
+  nextHour.setUTCHours(nextHour.getUTCHours() + 1);
+  return Math.floor(nextHour.getTime() / 1000);
+}
 
-  const currentStr = await kv.get(key);
-  const current = currentStr ? parseInt(currentStr, 10) : 0;
+/**
+ * Extract and resolve the caller identity (IP or API Key) from a request.
+ */
+export async function resolveIdentity(
+  request: Request,
+): Promise<RateLimitIdentity> {
+  const url = new URL(request.url);
+  const apiKeyHeader = request.headers.get("X-API-Key");
+  const apiKeyQuery = url.searchParams.get("api_key");
+  const apiKey = apiKeyHeader?.trim() || apiKeyQuery?.trim();
 
-  if (current >= maxRequests) {
-    return {
-      allowed: false,
-      current,
-      limit: maxRequests,
-      remaining: 0,
-    };
+  // If API Key is provided, validate key format / mock presence
+  if (apiKey) {
+    const keyHash = await hashString(apiKey);
+    // Valid mock keys: any key starting with "quran_live_" or "test_" or mock keys
+    const isValidKey =
+      apiKey.startsWith("quran_live_") || apiKey.startsWith("test_");
+
+    if (isValidKey) {
+      return {
+        type: "api_key",
+        identifier: keyHash,
+        keyId: apiKey.substring(0, 15),
+        authenticated: true,
+      };
+    }
   }
 
-  const next = current + 1;
-  await kv.put(key, String(next), { expirationTtl: RATE_LIMIT_TTL_SECONDS });
-
+  // Fallback to IP address identity
+  const ip = request.headers.get("cf-connecting-ip") ?? "127.0.0.1";
+  const ipHash = await hashString(ip);
   return {
-    allowed: true,
-    current: next,
-    limit: maxRequests,
-    remaining: maxRequests - next,
+    type: "ip",
+    identifier: ipHash,
+    authenticated: false,
   };
 }
 
 /**
- * Build standard rate limit headers for an API response.
+ * Check and increment the rate limit counter for a request.
  */
-export function rateLimitHeaders(result: RateLimitResult): Record<string, string> {
+export async function checkRateLimit(
+  kv: KVNamespace | undefined,
+  identity: RateLimitIdentity,
+  resource: RateLimitResource = "core",
+): Promise<RateLimitResult> {
+  const now = new Date();
+  const reset = getResetEpochSeconds(now);
+  const tier = identity.authenticated ? "authenticated" : "unauthenticated";
+  const limit = RATE_LIMITS[tier][resource];
+
+  // If KV is not available (e.g. mock/build time), return permissive result
+  if (!kv) {
+    return {
+      allowed: true,
+      limit,
+      remaining: limit - 1,
+      used: 1,
+      reset,
+      resource,
+      authenticated: identity.authenticated,
+    };
+  }
+
+  const windowKey = getHourWindowKey(now);
+  const kvKey = `rl:${identity.type}:${identity.identifier}:${resource}:${windowKey}`;
+
+  const currentStr = await kv.get(kvKey);
+  const current = currentStr ? parseInt(currentStr, 10) : 0;
+
+  if (current >= limit) {
+    return {
+      allowed: false,
+      limit,
+      remaining: 0,
+      used: current,
+      reset,
+      resource,
+      authenticated: identity.authenticated,
+    };
+  }
+
+  const next = current + 1;
+  await kv.put(kvKey, String(next), {
+    expirationTtl: RATE_LIMIT_WINDOW_SECONDS,
+  });
+
+  return {
+    allowed: true,
+    limit,
+    remaining: limit - next,
+    used: next,
+    reset,
+    resource,
+    authenticated: identity.authenticated,
+  };
+}
+
+/**
+ * Read-only rate limit status check (does NOT increment quota cost).
+ * Used for /api/rate_limit endpoint and client-side quota views.
+ */
+export async function getRateLimitStatus(
+  kv: KVNamespace | undefined,
+  identity: RateLimitIdentity,
+): Promise<RateLimitStatusResponse> {
+  const now = new Date();
+  const reset = getResetEpochSeconds(now);
+  const tier = identity.authenticated ? "authenticated" : "unauthenticated";
+  const windowKey = getHourWindowKey(now);
+
+  const fetchResourceStatus = async (resource: RateLimitResource) => {
+    const limit = RATE_LIMITS[tier][resource];
+    if (!kv) {
+      return { limit, remaining: limit, used: 0, reset, resource };
+    }
+
+    const kvKey = `rl:${identity.type}:${identity.identifier}:${resource}:${windowKey}`;
+    const currentStr = await kv.get(kvKey);
+    const used = currentStr ? parseInt(currentStr, 10) : 0;
+    const remaining = Math.max(0, limit - used);
+
+    return { limit, remaining, used, reset, resource };
+  };
+
+  const coreStatus = await fetchResourceStatus("core");
+  const searchStatus = await fetchResourceStatus("search");
+
+  return {
+    resources: {
+      core: coreStatus,
+      search: searchStatus,
+    },
+    rate: coreStatus,
+  };
+}
+
+/**
+ * Build standard GitHub-style rate limit response headers.
+ */
+export function rateLimitHeaders(
+  result: RateLimitResult,
+): Record<string, string> {
   return {
     "X-RateLimit-Limit": String(result.limit),
     "X-RateLimit-Remaining": String(result.remaining),
-    "X-RateLimit-Reset": String(RATE_LIMIT_TTL_SECONDS),
+    "X-RateLimit-Used": String(result.used),
+    "X-RateLimit-Reset": String(result.reset),
+    "X-RateLimit-Resource": result.resource,
   };
 }

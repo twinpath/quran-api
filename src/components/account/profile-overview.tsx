@@ -1,17 +1,43 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { User, Mail, Calendar, Award, Activity, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { DEFAULT_USER_PROFILE } from "@/constants/account";
+import type { ApiResponse } from "@/types/api";
 import type { ProfileOverviewProps } from "@/types/account";
+import type { RateLimitStatusResponse } from "@/types/rate-limit";
 
 export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
-  const usagePercentage = Math.round(
-    (DEFAULT_USER_PROFILE.apiUsageToday / DEFAULT_USER_PROFILE.apiUsageLimit) * 100
-  );
+  const [rateLimitData, setRateLimitData] = useState<{ used: number; limit: number } | null>(null);
+
+  useEffect(() => {
+    async function fetchQuota() {
+      try {
+        const res = await fetch("/api/rate_limit?api_key=quran_live_8f01a4b2");
+        if (res.ok) {
+          const json = (await res.json()) as ApiResponse<RateLimitStatusResponse>;
+          if (json.success && json.data) {
+            const data: RateLimitStatusResponse = json.data;
+            setRateLimitData({
+              used: data.rate.used,
+              limit: data.rate.limit,
+            });
+          }
+        }
+      } catch {
+        // Fallback to static profile defaults if fetch fails
+      }
+    }
+    fetchQuota();
+  }, []);
+
+  const used = rateLimitData?.used ?? DEFAULT_USER_PROFILE.apiUsageToday;
+  const limit = rateLimitData?.limit ?? DEFAULT_USER_PROFILE.apiUsageLimit;
+  const usagePercentage = Math.round((used / limit) * 100);
 
   return (
     <div className="space-y-6">
@@ -105,13 +131,13 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
-                      <Activity className="h-3.5 w-3.5 text-primary" /> Daily Quota
+                      <Activity className="h-3.5 w-3.5 text-primary" /> Hourly Quota
                     </span>
                     <span>{usagePercentage}% used</span>
                   </div>
                   <Progress value={usagePercentage} className="h-2" />
                   <p className="text-xs text-muted-foreground">
-                    {DEFAULT_USER_PROFILE.apiUsageToday.toLocaleString()} / {DEFAULT_USER_PROFILE.apiUsageLimit.toLocaleString()} requests today
+                    {used.toLocaleString()} / {limit.toLocaleString()} req/hour
                   </p>
                 </div>
               </>

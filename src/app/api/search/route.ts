@@ -1,6 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getKv } from "@/lib/db";
-import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
+import { resolveIdentity, checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
 import { searchAyahs } from "@/lib/search.service";
 import { formatServerTimingHeader } from "@/lib/latency";
@@ -14,7 +14,6 @@ export async function GET(request: Request) {
   const startTime = Date.now();
   const { env } = getCloudflareContext();
   const kv = getKv(env);
-  const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
 
   const url = new URL(request.url);
   const query = url.searchParams.get("q")?.trim();
@@ -28,12 +27,13 @@ export async function GET(request: Request) {
     return Response.json(errorBody, { status: 400 });
   }
 
-  // Rate limit check
-  const rateResult = await checkRateLimit(kv, ip);
+  // Rate limit check for search resource
+  const identity = await resolveIdentity(request);
+  const rateResult = await checkRateLimit(kv, identity, "search");
   if (!rateResult.allowed) {
     const errorBody: ApiErrorResponse = {
       success: false,
-      error: { code: "RATE_LIMIT_EXCEEDED", message: "Too many requests. Please try again later." },
+      error: { code: "RATE_LIMIT_EXCEEDED", message: "Search API rate limit exceeded. Please try again later or provide an API Key." },
     };
     return Response.json(errorBody, {
       status: 429,

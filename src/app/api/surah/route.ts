@@ -1,6 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getKv } from "@/lib/db";
-import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
+import { resolveIdentity, checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
 import { getSurahList } from "@/lib/surah.service";
 import { formatServerTimingHeader } from "@/lib/latency";
@@ -14,14 +14,13 @@ export async function GET(request: Request) {
   const startTime = Date.now();
   const { env } = getCloudflareContext();
   const kv = getKv(env);
-  const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
-
   // Rate limit check
-  const rateResult = await checkRateLimit(kv, ip);
+  const identity = await resolveIdentity(request);
+  const rateResult = await checkRateLimit(kv, identity, "core");
   if (!rateResult.allowed) {
     const errorBody: ApiErrorResponse = {
       success: false,
-      error: { code: "RATE_LIMIT_EXCEEDED", message: "Too many requests. Please try again later." },
+      error: { code: "RATE_LIMIT_EXCEEDED", message: "API rate limit exceeded. Please try again later or provide an API Key." },
     };
     return Response.json(errorBody, {
       status: 429,

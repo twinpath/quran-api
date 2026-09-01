@@ -33,7 +33,7 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
       createdAt: new Date().toISOString().split("T")[0],
       lastUsed: "Never",
       status: "active",
-      rateLimit: "5,000 req/day",
+      rateLimit: "5,000 req/hour",
     };
 
     setKeys([newKey, ...keys]);

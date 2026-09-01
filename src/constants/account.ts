@@ -42,7 +42,7 @@ export const DEFAULT_API_KEYS: ApiKeyItem[] = [
     createdAt: "2026-08-15",
     lastUsed: "Just now",
     status: "active",
-    rateLimit: "5,000 req/day",
+    rateLimit: "5,000 req/hour",
   },
   {
     id: "key_live_02",
@@ -51,7 +51,7 @@ export const DEFAULT_API_KEYS: ApiKeyItem[] = [
     createdAt: "2026-08-20",
     lastUsed: "2 hours ago",
     status: "active",
-    rateLimit: "5,000 req/day",
+    rateLimit: "5,000 req/hour",
   },
 ];
 
