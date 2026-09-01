@@ -13,7 +13,10 @@
 		"upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-		"generate:vars": "npx tsx scripts/generate-vars.ts"
+		"generate:vars": "npx tsx scripts/generate-vars.ts",
+		"db:migrate:local": "wrangler d1 migrations apply quran --local",
+		"db:migrate:remote": "wrangler d1 migrations apply quran --remote",
+		"db:reset:remote": "wrangler d1 execute quran --remote --command \"PRAGMA foreign_keys = OFF; DROP TABLE IF EXISTS d1_migrations; DROP TABLE IF EXISTS drizzle_migrations; DROP TABLE IF EXISTS account; DROP TABLE IF EXISTS api_keys; DROP TABLE IF EXISTS ayahs; DROP TABLE IF EXISTS session; DROP TABLE IF EXISTS surahs; DROP TABLE IF EXISTS telegram_connect_tokens; DROP TABLE IF EXISTS telemetry_logs; DROP TABLE IF EXISTS user; DROP TABLE IF EXISTS verification;\" && wrangler d1 migrations apply quran --remote -y"
 	},
 	"engines": {
 		"node": ">=24.14.0 < 25.0.0",
