@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import {
-  Geist,
-  Geist_Mono,
-  DM_Sans,
+  Fraunces,
+  Plus_Jakarta_Sans,
+  JetBrains_Mono,
   Aref_Ruqaa,
-  Amiri_Quran, Noto_Sans, Playfair_Display } from "next/font/google";
+  Amiri_Quran,
+} from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,15 +23,24 @@ import {
 } from "@/constants";
 import { buildPageMetadata } from "@/lib/seo";
 
-const playfairDisplayHeading = Playfair_Display({subsets:['latin'],variable:'--font-heading'});
-
-const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
-
 export const dynamic = "force-dynamic";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const frauncesHeading = Fraunces({
   subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 const amiriQuran = Amiri_Quran({
@@ -70,7 +80,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", notoSans.variable, playfairDisplayHeading.variable, geistMono.variable, amiriQuran.variable, arefRuqaa.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(
+        "font-sans",
+        plusJakartaSans.variable,
+        frauncesHeading.variable,
+        jetbrainsMono.variable,
+        amiriQuran.variable,
+        arefRuqaa.variable
+      )}
+    >
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
         <script
