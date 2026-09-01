@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient, useSession } from "@/lib/auth-client";
+import { DEFAULT_TELEGRAM_BOT_USERNAME } from "@/constants";
 import type {
   AccountSettings,
   LinkedAccount,
@@ -29,9 +30,12 @@ export function useAccountSettings(): UseAccountSettingsReturn {
   const [isUnlinkingGoogle, setIsUnlinkingGoogle] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
-  // Fetch real linked accounts on mount
+  const [telegramBotUsername, setTelegramBotUsername] = useState<string>(DEFAULT_TELEGRAM_BOT_USERNAME);
+  const [isTestingTelegram, setIsTestingTelegram] = useState<boolean>(false);
+
+  // Fetch real linked accounts and notification settings on mount
   useEffect(() => {
-    async function fetchLinkedAccounts() {
+    async function fetchLinkedAccountsAndSettings() {
       try {
         const { data: accounts } = await authClient.listAccounts();
         if (accounts && Array.isArray(accounts)) {
@@ -49,13 +53,38 @@ export function useAccountSettings(): UseAccountSettingsReturn {
             googleEmail: googleAccount ? session?.user?.email || googleAccount.accountId : undefined,
           }));
         }
+
+        // Fetch notification settings
+        const notifRes = await fetch("/api/account/notifications");
+        if (notifRes.ok) {
+          const notifData = (await notifRes.json()) as {
+            success?: boolean;
+            data?: {
+              telegramChatId?: string;
+              usageAlerts?: boolean;
+              emailNotifications?: boolean;
+              telegramBotUsername?: string;
+            };
+          };
+          if (notifData.success && notifData.data) {
+            setSettings((prev) => ({
+              ...prev,
+              telegramChatId: notifData.data?.telegramChatId || "",
+              usageAlerts: notifData.data?.usageAlerts ?? true,
+              emailNotifications: notifData.data?.emailNotifications ?? true,
+            }));
+            if (notifData.data.telegramBotUsername) {
+              setTelegramBotUsername(notifData.data.telegramBotUsername);
+            }
+          }
+        }
       } catch (err) {
-        console.error("Failed to fetch linked accounts:", err);
+        console.error("Failed to fetch linked accounts or notification settings:", err);
       } finally {
         setIsLoadingAccounts(false);
       }
     }
-    fetchLinkedAccounts();
+    fetchLinkedAccountsAndSettings();
   }, [session]);
 
   const handleTogglePreference = (key: "usageAlerts" | "emailNotifications") => {
@@ -63,6 +92,41 @@ export function useAccountSettings(): UseAccountSettingsReturn {
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const handleUpdateTelegramChatId = (chatId: string) => {
+    setSettings((prev) => ({
+      ...prev,
+      telegramChatId: chatId,
+    }));
+  };
+
+  const handleTestTelegramAlert = async () => {
+    if (!settings.telegramChatId) {
+      toast.error("Please enter a valid Telegram Chat ID first");
+      return;
+    }
+
+    setIsTestingTelegram(true);
+    try {
+      const res = await fetch("/api/notifications/test-telegram", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatId: settings.telegramChatId }),
+      });
+
+      const data = (await res.json()) as { error?: string; message?: string };
+      if (!res.ok || data.error) {
+        toast.error(data.error || "Failed to send Telegram test alert");
+      } else {
+        toast.success(data.message || "Test alert sent to your Telegram!");
+      }
+    } catch (err) {
+      console.error("Test Telegram alert error:", err);
+      toast.error("An error occurred while sending Telegram test alert");
+    } finally {
+      setIsTestingTelegram(false);
+    }
   };
 
   const handleLinkGoogle = async () => {
@@ -147,9 +211,29 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     }
   };
 
-  const handleSavePreferences = (e?: React.FormEvent) => {
+  const handleSavePreferences = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    toast.success("Developer preferences saved successfully!");
+    try {
+      const res = await fetch("/api/account/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegramChatId: settings.telegramChatId,
+          usageAlerts: settings.usageAlerts,
+          emailNotifications: settings.emailNotifications,
+        }),
+      });
+
+      const data = (await res.json()) as { error?: string; message?: string };
+      if (!res.ok || data.error) {
+        toast.error(data.error || "Failed to save preferences");
+      } else {
+        toast.success("Developer preferences saved successfully!");
+      }
+    } catch (err) {
+      console.error("Save preferences error:", err);
+      toast.error("Failed to save developer preferences");
+    }
   };
 
   const handleDeleteAccount = async (password: string): Promise<boolean> => {
@@ -192,7 +276,11 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     isLinkingGoogle,
     isUnlinkingGoogle,
     isDeletingAccount,
+    telegramBotUsername,
+    isTestingTelegram,
     handleTogglePreference,
+    handleUpdateTelegramChatId,
+    handleTestTelegramAlert,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,

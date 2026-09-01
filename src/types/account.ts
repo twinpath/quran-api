@@ -40,6 +40,8 @@ export interface AccountSettings {
   usageAlerts: boolean;
   security2FA: boolean;
   themePreference: "system" | "light" | "dark";
+  telegramChatId?: string;
+  telegramConnected?: boolean;
   googleConnected?: boolean;
   googleEmail?: string;
   currentPassword?: string;
@@ -90,7 +92,12 @@ export interface PasswordManagementSectionProps {
 export interface NotificationPreferencesSectionProps {
   usageAlerts: boolean;
   emailNotifications: boolean;
+  telegramChatId?: string;
+  telegramBotUsername?: string;
+  isTestingTelegram?: boolean;
   onTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
+  onUpdateTelegramChatId: (chatId: string) => void;
+  onTestTelegramAlert: () => Promise<void>;
   onSavePreferences: (e: React.FormEvent) => void;
   isLoading?: boolean;
 }
@@ -137,7 +144,11 @@ export interface UseAccountSettingsReturn {
   isLinkingGoogle: boolean;
   isUnlinkingGoogle: boolean;
   isDeletingAccount: boolean;
+  telegramBotUsername?: string;
+  isTestingTelegram: boolean;
   handleTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
+  handleUpdateTelegramChatId: (chatId: string) => void;
+  handleTestTelegramAlert: () => Promise<void>;
   handleLinkGoogle: () => void;
   handleUnlinkGoogle: () => void;
   handleUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<void>;

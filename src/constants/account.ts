@@ -21,3 +21,7 @@ export const ACCOUNT_TABS: AccountTab[] = [
     iconName: "Settings",
   },
 ];
+
+/** Default Telegram bot username for rate limit & quota alerts */
+export const DEFAULT_TELEGRAM_BOT_USERNAME = "QuranApiAlertsBot";
+

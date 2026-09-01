@@ -4,3 +4,14 @@ BETTER_AUTH_URL=http://localhost:3000
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Telegram Bot Notification Config
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_BOT_USERNAME=QuranApiAlertsBot
+
+# Multi-Provider Email Config (Resend / Brevo / Cloudflare)
+EMAIL_PROVIDER=auto
+RESEND_API_KEY=re_123456789
+RESEND_FROM_EMAIL=alerts@quran.dyzulk.com
+BREVO_API_KEY=xkeysib-123456789
+BREVO_FROM_EMAIL=alerts@quran.dyzulk.com

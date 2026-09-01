@@ -1,15 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Zap, Mail, Save, Check } from "lucide-react";
+import { Bell, Send, ShieldAlert, Save, Check, ExternalLink, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DEFAULT_TELEGRAM_BOT_USERNAME } from "@/constants";
 import type { NotificationPreferencesSectionProps } from "@/types/account";
 
 export function NotificationPreferencesSection({
   usageAlerts,
   emailNotifications,
+  telegramChatId = "",
+  telegramBotUsername = DEFAULT_TELEGRAM_BOT_USERNAME,
+  isTestingTelegram = false,
   onTogglePreference,
+  onUpdateTelegramChatId,
+  onTestTelegramAlert,
   onSavePreferences,
   isLoading = false,
 }: NotificationPreferencesSectionProps) {
@@ -22,8 +30,10 @@ export function NotificationPreferencesSection({
     setTimeout(() => setIsSaved(false), 2000);
   };
 
+  const botDeepLink = `https://t.me/${telegramBotUsername}`;
+
   if (isLoading) {
-    return <Skeleton className="h-24 w-full" />;
+    return <Skeleton className="h-48 w-full" />;
   }
 
   return (
@@ -35,47 +45,109 @@ export function NotificationPreferencesSection({
           Notifications & Alerts
         </h3>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Configure automated email warnings for API key quota usage and platform changelog updates.
+          Configure real-time Telegram quota alerts and multi-provider email security notifications.
         </p>
       </div>
 
       {/* Right Column: Preferences Cards */}
-      <div className="lg:col-span-2 space-y-3">
-        {/* Usage Alert Card */}
-        <div className="p-4 border border-border bg-card hover:bg-muted/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-amber-500" />
-              <span className="text-sm font-medium text-foreground">Usage & Rate Limit Alerts</span>
+      <div className="lg:col-span-2 space-y-4">
+        {/* Card 1: Usage & Rate Limit Alerts (via Telegram) */}
+        <div className="p-4 border border-border bg-card hover:bg-muted/10 space-y-4 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Send className="h-4 w-4 text-sky-500" />
+                <span className="text-sm font-medium text-foreground">Usage & Rate Limit Alerts</span>
+                <Badge variant="outline" className="text-[10px] bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20">
+                  Telegram Bot
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Receive instant alerts on Telegram when your key consumption reaches 80% daily quota or rate limit thresholds.
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Receive instant email notifications when daily key consumption reaches 80% quota.
-            </p>
+            <Button
+              type="button"
+              variant={usageAlerts ? "default" : "outline"}
+              size="sm"
+              onClick={() => onTogglePreference("usageAlerts")}
+              className={`w-24 shrink-0 cursor-pointer text-xs font-semibold ${
+                usageAlerts
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {usageAlerts ? "Enabled" : "Disabled"}
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant={usageAlerts ? "default" : "outline"}
-            size="sm"
-            onClick={() => onTogglePreference("usageAlerts")}
-            className={`w-24 shrink-0 cursor-pointer text-xs font-semibold ${
-              usageAlerts
-                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                : "text-muted-foreground"
-            }`}
-          >
-            {usageAlerts ? "Enabled" : "Disabled"}
-          </Button>
+
+          {/* Telegram Bot Connection & Chat ID Setup */}
+          {usageAlerts && (
+            <div className="pt-3 border-t border-border space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                  <Bot className="h-3.5 w-3.5 text-primary" />
+                  Telegram Chat ID
+                </label>
+                <a
+                  href={botDeepLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Connect Telegram Bot (@{telegramBotUsername})
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Input
+                  type="text"
+                  placeholder="e.g. 123456789 or @username"
+                  value={telegramChatId}
+                  onChange={(e) => onUpdateTelegramChatId(e.target.value)}
+                  className="text-xs font-mono"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={isTestingTelegram || !telegramChatId}
+                  onClick={onTestTelegramAlert}
+                  className="gap-1.5 text-xs shrink-0 cursor-pointer"
+                >
+                  {isTestingTelegram ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Testing...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3.5 w-3.5 text-sky-500" />
+                      Test Alert
+                    </>
+                  )}
+                </Button>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Click <strong>Connect Telegram Bot</strong> to send <code>/start</code> to our bot, then paste your Telegram Chat ID here.
+              </p>
+            </div>
+          )}
         </div>
 
-        {/* Platform Updates Card */}
+        {/* Card 2: System & Security Notifications (via Email Multi-Provider) */}
         <div className="p-4 border border-border bg-card hover:bg-muted/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-foreground">Platform & API Updates</span>
+              <ShieldAlert className="h-4 w-4 text-emerald-500" />
+              <span className="text-sm font-medium text-foreground">System & Security Notifications</span>
+              <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                Email Multi-Provider
+              </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Stay informed about new Quran API endpoints, dataset updates, and scheduled maintenance.
+              Receive security alerts, password changes, and platform announcements via Email (Resend, Brevo, Cloudflare).
             </p>
           </div>
           <Button
@@ -93,7 +165,7 @@ export function NotificationPreferencesSection({
           </Button>
         </div>
 
-        {/* Save Button */}
+        {/* Save Preferences Button */}
         <div className="pt-2 flex justify-end">
           <Button
             type="submit"

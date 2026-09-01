@@ -16,7 +16,11 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
     isLinkingGoogle,
     isUnlinkingGoogle,
     isDeletingAccount,
+    telegramBotUsername,
+    isTestingTelegram,
     handleTogglePreference,
+    handleUpdateTelegramChatId,
+    handleTestTelegramAlert,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,
@@ -64,7 +68,12 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
         <NotificationPreferencesSection
           usageAlerts={settings.usageAlerts}
           emailNotifications={settings.emailNotifications}
+          telegramChatId={settings.telegramChatId}
+          telegramBotUsername={telegramBotUsername}
+          isTestingTelegram={isTestingTelegram}
           onTogglePreference={handleTogglePreference}
+          onUpdateTelegramChatId={handleUpdateTelegramChatId}
+          onTestTelegramAlert={handleTestTelegramAlert}
           onSavePreferences={handleSavePreferences}
           isLoading={showSkeleton}
         />
