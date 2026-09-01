@@ -6,6 +6,7 @@ import { Highlight } from "prism-react-renderer";
 import { Prism } from "@/lib/prism-loader";
 import { usePrismTheme } from "@/hooks/use-prism-theme";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
 import { CodeBlockProps } from "@/types/components";
@@ -35,7 +36,7 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
 
   if (!mounted) {
     return (
-      <div className={cn("group relative border border-border bg-card font-mono text-sm", className)}>
+      <Card className={cn("group relative font-mono text-sm border border-border p-0 gap-0", className)}>
         <div className="flex items-center justify-between border-b border-border/80 bg-muted/40 px-4 py-2">
           {language && (
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -44,17 +45,17 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
           )}
           <div className="h-7 w-7" />
         </div>
-        <div className="overflow-x-auto p-4">
+        <CardContent className="overflow-x-auto p-4">
           <pre className="text-[13px] leading-relaxed text-muted-foreground/80">
             <code>{code.trim()}</code>
           </pre>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className={cn("group relative border border-border bg-card font-mono text-sm", className)}>
+    <Card className={cn("group relative font-mono text-sm border border-border p-0 gap-0", className)}>
       {/* Header bar */}
       <div className="flex items-center justify-between border-b border-border/80 bg-muted/40 px-4 py-2">
         {language && (
@@ -78,7 +79,7 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
       </div>
 
       {/* Code content */}
-      <div className="overflow-x-auto p-4">
+      <CardContent className="overflow-x-auto p-4">
         <Highlight
           prism={Prism}
           theme={prismTheme}
@@ -113,7 +114,7 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
             </pre>
           )}
         </Highlight>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
