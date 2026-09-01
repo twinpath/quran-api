@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
-import { DEFAULT_ACCOUNT_SETTINGS } from "@/constants/account";
+import { authClient, useSession } from "@/lib/auth-client";
 import type {
   AccountSettings,
   LinkedAccount,
@@ -13,7 +12,15 @@ import type {
  * for OAuth linking/unlinking and password updates.
  */
 export function useAccountSettings(): UseAccountSettingsReturn {
-  const [settings, setSettings] = useState<AccountSettings>(DEFAULT_ACCOUNT_SETTINGS);
+  const { data: session } = useSession();
+  const [settings, setSettings] = useState<AccountSettings>({
+    emailNotifications: true,
+    usageAlerts: true,
+    security2FA: false,
+    themePreference: "system",
+    googleConnected: false,
+    googleEmail: undefined,
+  });
   const [linkedAccounts, setLinkedAccounts] = useState<LinkedAccount[]>([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
@@ -36,7 +43,7 @@ export function useAccountSettings(): UseAccountSettingsReturn {
           setSettings((prev) => ({
             ...prev,
             googleConnected: Boolean(googleAccount),
-            googleEmail: googleAccount ? googleAccount.accountId : undefined,
+            googleEmail: googleAccount ? session?.user?.email || googleAccount.accountId : undefined,
           }));
         }
       } catch (err) {
@@ -46,7 +53,7 @@ export function useAccountSettings(): UseAccountSettingsReturn {
       }
     }
     fetchLinkedAccounts();
-  }, []);
+  }, [session]);
 
   const handleTogglePreference = (key: "usageAlerts" | "emailNotifications") => {
     setSettings((prev) => ({
@@ -127,7 +134,8 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     }
   };
 
-  const handleSavePreferences = () => {
+  const handleSavePreferences = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     toast.success("Developer preferences saved successfully!");
   };
 
