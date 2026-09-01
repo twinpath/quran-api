@@ -26,9 +26,12 @@ export function AccountNavigation() {
   );
 
   // Match current active pathname to tabs or default to /account
-  const activeValue = ACCOUNT_TABS.some((tab) => tab.href === pathname)
-    ? pathname
-    : "/account";
+  const activeValue =
+    ACCOUNT_TABS.find((tab) =>
+      tab.href === "/account"
+        ? pathname === "/account"
+        : pathname.startsWith(tab.href)
+    )?.value || "/account";
 
   const handleTabChange = (value: string) => {
     router.push(value);
@@ -37,20 +40,20 @@ export function AccountNavigation() {
   if (!mounted) {
     return (
       <div className="w-full mb-6">
-        <div className="inline-flex w-full sm:w-auto h-auto p-1 bg-muted/80 dark:bg-muted border border-border justify-start gap-1">
+        <div className="grid w-full grid-cols-3 h-auto p-1 sm:p-1.5 bg-muted/80 dark:bg-muted border border-border gap-1 sm:gap-1.5">
           {ACCOUNT_TABS.map((tab) => {
             const Icon = ICON_MAP[tab.iconName as keyof typeof ICON_MAP] || User;
             const isActive = tab.href === (pathname || "/account");
             return (
               <div
                 key={tab.value}
-                className={`py-2.5 px-4 text-sm font-semibold transition-all rounded-none border text-muted-foreground inline-flex items-center ${
+                className={`w-full flex items-center justify-center text-center py-2.5 sm:py-3 px-2 sm:px-5 text-xs sm:text-sm font-semibold transition-all rounded-none border text-muted-foreground ${
                   isActive
                     ? "bg-card text-card-foreground border-border shadow-xs"
                     : "border-transparent"
                 }`}
               >
-                <Icon className="h-4 w-4 mr-2 text-primary" />
+                <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 shrink-0 text-primary" />
                 {tab.label}
               </div>
             );
@@ -62,17 +65,17 @@ export function AccountNavigation() {
 
   return (
     <div className="w-full mb-6">
-      <Tabs value={activeValue} onValueChange={handleTabChange}>
-        <TabsList className="inline-flex w-full sm:w-auto h-auto p-1 bg-muted/80 dark:bg-muted border border-border justify-start gap-1">
+      <Tabs value={activeValue} onValueChange={handleTabChange} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 group-data-horizontal/tabs:h-auto h-auto p-1 sm:p-1.5 bg-muted/80 dark:bg-muted border border-border gap-1 sm:gap-1.5">
           {ACCOUNT_TABS.map((tab) => {
             const Icon = ICON_MAP[tab.iconName as keyof typeof ICON_MAP] || User;
             return (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="py-2.5 px-4 text-sm font-semibold transition-all rounded-none border border-transparent text-muted-foreground hover:text-foreground data-active:bg-card data-active:text-card-foreground data-active:border-border dark:data-active:bg-card dark:data-active:text-card-foreground dark:data-active:border-border shadow-xs cursor-pointer"
+                className="w-full flex items-center justify-center text-center py-2.5 sm:py-3 px-2 sm:px-5 text-xs sm:text-sm font-semibold transition-all rounded-none border border-transparent text-muted-foreground hover:text-foreground data-active:bg-card data-active:text-card-foreground data-active:border-border dark:data-active:bg-card dark:data-active:text-card-foreground dark:data-active:border-border shadow-xs cursor-pointer"
               >
-                <Icon className="h-4 w-4 mr-2 text-primary" />
+                <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 shrink-0 text-primary" />
                 {tab.label}
               </TabsTrigger>
             );

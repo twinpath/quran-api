@@ -15,7 +15,7 @@ export function NotificationPreferencesSection({
   emailNotifications,
   telegramChatId = "",
   telegramBotUsername = DEFAULT_TELEGRAM_BOT_USERNAME,
-  telegramConnectUrl = "",
+  telegramConnectUrl: _telegramConnectUrl = "",
   isTestingTelegram = false,
   isDisconnectingTelegram = false,
   isConnectingTelegram = false,

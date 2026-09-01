@@ -66,10 +66,7 @@ export interface ApiKeysManagerProps {
   isLoading?: boolean;
 }
 
-/** Component props for AccountSettingsForm */
-export interface AccountSettingsFormProps {
-  isLoading?: boolean;
-}
+
 
 /** Component props for OauthIntegrationsSection */
 export interface OauthIntegrationsSectionProps {
@@ -141,27 +138,52 @@ export interface UseApiKeysReturn {
   handleCloseSheet: () => void;
 }
 
-/** Return type for useAccountSettings hook */
-export interface UseAccountSettingsReturn {
-  settings: AccountSettings;
+/** Return type for useAccountOauth hook */
+export interface UseAccountOauthReturn {
   linkedAccounts: LinkedAccount[];
   isLoadingAccounts: boolean;
   isLinkingGoogle: boolean;
   isUnlinkingGoogle: boolean;
-  isDeletingAccount: boolean;
-  telegramBotUsername?: string;
-  telegramConnectUrl?: string;
+  googleConnected: boolean;
+  googleEmail?: string;
+  handleLinkGoogle: () => void;
+  handleUnlinkGoogle: () => void;
+}
+
+/** Return type for useAccountPassword hook */
+export interface UseAccountPasswordReturn {
+  handleUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<void>;
+}
+
+/** Return type for useAccountNotifications hook */
+export interface UseAccountNotificationsReturn {
+  usageAlerts: boolean;
+  emailNotifications: boolean;
+  telegramChatId: string;
+  telegramBotUsername: string;
+  telegramConnectUrl: string;
   isTestingTelegram: boolean;
   isDisconnectingTelegram: boolean;
   isConnectingTelegram: boolean;
+  isLoadingNotifications: boolean;
   handleTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
   handleUpdateTelegramChatId: (chatId: string) => void;
   handleTestTelegramAlert: () => Promise<void>;
   handleDisconnectTelegram: () => Promise<void>;
   handleConnectTelegram: () => Promise<void>;
-  handleLinkGoogle: () => void;
-  handleUnlinkGoogle: () => void;
-  handleUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<void>;
-  handleSavePreferences: (e: React.FormEvent) => void;
+  handleSavePreferences: (e?: React.FormEvent) => void;
+}
+
+/** Return type for useAccountDelete hook */
+export interface UseAccountDeleteReturn {
+  isDeletingAccount: boolean;
   handleDeleteAccount: (password: string) => Promise<boolean>;
+}
+
+/** Settings sidebar navigation item */
+export interface AccountSettingsSidebarItem {
+  label: string;
+  href: string;
+  iconName: string;
+  description: string;
 }

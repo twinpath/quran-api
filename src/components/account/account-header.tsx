@@ -19,7 +19,7 @@ export function AccountHeader() {
             Account & Developer Settings
           </h1>
           {isSessionPending ? (
-            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-28" />
           ) : (
             <Badge variant="outline" className="gap-1 bg-primary/10 text-primary border-primary/20">
               <ShieldCheck className="h-3.5 w-3.5" />

@@ -1,4 +1,4 @@
-import type { AccountTab } from "@/types/account";
+import type { AccountTab, AccountSettingsSidebarItem } from "@/types/account";
 
 /** Account tab items for route-based tab navigation */
 export const ACCOUNT_TABS: AccountTab[] = [
@@ -25,3 +25,24 @@ export const ACCOUNT_TABS: AccountTab[] = [
 /** Default Telegram bot username for rate limit & quota alerts */
 export const DEFAULT_TELEGRAM_BOT_USERNAME = "QuranApiAlertsBot";
 
+/** Sidebar navigation items for /account/settings sub-pages */
+export const ACCOUNT_SETTINGS_NAV_ITEMS: AccountSettingsSidebarItem[] = [
+  {
+    label: "Security & Credentials",
+    href: "/account/settings/security",
+    iconName: "ShieldCheck",
+    description: "OAuth integrations and password management",
+  },
+  {
+    label: "Notifications & Alerts",
+    href: "/account/settings/notifications",
+    iconName: "Bell",
+    description: "Telegram alerts and email preferences",
+  },
+  {
+    label: "Danger Zone",
+    href: "/account/settings/danger-zone",
+    iconName: "AlertTriangle",
+    description: "Account deletion and data removal",
+  },
+];
