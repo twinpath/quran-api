@@ -116,8 +116,8 @@ export function OauthIntegrationsSection({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction variant="destructive" onClick={onUnlinkGoogle}>
+                  <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive" onClick={onUnlinkGoogle} className="cursor-pointer">
                     Disconnect Account
                   </AlertDialogAction>
                 </AlertDialogFooter>

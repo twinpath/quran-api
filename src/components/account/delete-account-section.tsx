@@ -108,10 +108,14 @@ export function DeleteAccountSection({
                       <AlertTriangle className="h-5 w-5 shrink-0" />
                       Delete Account Permanently?
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="space-y-2 pt-2">
-                      <p>
+                    <AlertDialogDescription
+                      render={
+                        <div className="mt-0.5 text-sm leading-relaxed text-balance text-muted-foreground md:text-pretty space-y-2 pt-2" />
+                      }
+                    >
+                      <div>
                         This action is <strong>permanent and non-reversible</strong>.
-                      </p>
+                      </div>
                       <ul className="list-disc list-inside text-xs space-y-1 text-muted-foreground">
                         <li>All active API Keys will be immediately revoked.</li>
                         <li>Telemetry usage history and logs will be permanently deleted.</li>
@@ -120,10 +124,11 @@ export function DeleteAccountSection({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="pt-4">
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       variant="destructive"
                       onClick={handleProceedToStep2}
+                      className="cursor-pointer"
                     >
                       Proceed to Verification
                     </AlertDialogAction>
@@ -136,10 +141,14 @@ export function DeleteAccountSection({
                       <ShieldAlert className="h-5 w-5 shrink-0" />
                       Authorize Account Deletion
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="space-y-3 pt-2">
-                      <p>
+                    <AlertDialogDescription
+                      render={
+                        <div className="mt-0.5 text-sm leading-relaxed text-balance text-muted-foreground md:text-pretty space-y-3 pt-2" />
+                      }
+                    >
+                      <div>
                         Please enter your account password to authorize permanent deletion.
-                      </p>
+                      </div>
                       <div className="space-y-1.5 text-left">
                         <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
                           <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
@@ -158,12 +167,12 @@ export function DeleteAccountSection({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="pt-4">
-                    <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel type="button" className="cursor-pointer">Cancel</AlertDialogCancel>
                     <Button
                       type="submit"
                       variant="destructive"
                       disabled={!password || isDeleting}
-                      className="text-xs gap-1.5"
+                      className="text-xs gap-1.5 cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       {isDeleting ? "Deleting..." : "Permanently Delete Account"}
