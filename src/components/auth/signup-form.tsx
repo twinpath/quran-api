@@ -1,87 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { UserPlus, User, Mail, Key } from "lucide-react";
-import { toast } from "sonner";
 import { AuthCardWrapper } from "./auth-card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
-import { authClient } from "@/lib/auth-client";
-import type { SignUpFormProps, SignUpFormData } from "@/types/auth";
+import { useSignUpForm } from "@/hooks/use-sign-up-form";
+import type { SignUpFormProps } from "@/types/auth";
 
 export function SignUpForm({ isLoading = false }: SignUpFormProps) {
-  const router = useRouter();
-  const [formData, setFormData] = useState<SignUpFormData>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    acceptTerms: true,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.password) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (!formData.acceptTerms) {
-      toast.error("Please accept the Terms of Service");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const { error } = await authClient.signUp.email({
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-      });
-
-      if (error) {
-        toast.error(error.message || "Failed to create account");
-      } else {
-        toast.success("Account created successfully!");
-        router.push("/account");
-      }
-    } catch (err) {
-      console.error("Sign up error:", err);
-      toast.error("An unexpected error occurred during registration");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleGoogleAuth = async () => {
-    try {
-      toast.info("Redirecting to Google OAuth...");
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/account",
-      });
-    } catch (err) {
-      console.error("Google OAuth error:", err);
-      toast.error("Failed to initiate Google authentication");
-    }
-  };
+  const {
+    formData,
+    isSubmitting,
+    handleChange,
+    handleSubmit,
+    handleGoogleAuth,
+  } = useSignUpForm();
 
   return (
     <AuthCardWrapper

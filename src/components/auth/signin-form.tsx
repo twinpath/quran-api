@@ -1,75 +1,23 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { LogIn, Mail, Key } from "lucide-react";
-import { toast } from "sonner";
 import { AuthCardWrapper } from "./auth-card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
-import { authClient } from "@/lib/auth-client";
-import type { SignInFormProps, SignInFormData } from "@/types/auth";
+import { useSignInForm } from "@/hooks/use-sign-in-form";
+import type { SignInFormProps } from "@/types/auth";
 
 export function SignInForm({ isLoading = false }: SignInFormProps) {
-  const router = useRouter();
-  const [formData, setFormData] = useState<SignInFormData>({
-    email: "",
-    password: "",
-    rememberMe: true,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.email || !formData.password) {
-      toast.error("Please fill in both email and password");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const { error } = await authClient.signIn.email({
-        email: formData.email.trim(),
-        password: formData.password,
-      });
-
-      if (error) {
-        toast.error(error.message || "Invalid email or password");
-      } else {
-        toast.success("Signed in successfully!");
-        router.push("/account");
-      }
-    } catch (err) {
-      console.error("Sign in error:", err);
-      toast.error("An unexpected error occurred during authentication");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleGoogleAuth = async () => {
-    try {
-      toast.info("Redirecting to Google OAuth...");
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/account",
-      });
-    } catch (err) {
-      console.error("Google OAuth error:", err);
-      toast.error("Failed to initiate Google authentication");
-    }
-  };
+  const {
+    formData,
+    isSubmitting,
+    handleChange,
+    handleSubmit,
+    handleGoogleAuth,
+  } = useSignInForm();
 
   return (
     <AuthCardWrapper
