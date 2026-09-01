@@ -4,7 +4,7 @@ import type { AccountTab, UserProfile, ApiKeyItem, AccountSettings } from "@/typ
 export const ACCOUNT_TABS: AccountTab[] = [
   {
     value: "/account",
-    label: "Profil & Informasi",
+    label: "Profile",
     href: "/account",
     iconName: "User",
   },
@@ -16,7 +16,7 @@ export const ACCOUNT_TABS: AccountTab[] = [
   },
   {
     value: "/account/settings",
-    label: "Pengaturan",
+    label: "Settings",
     href: "/account/settings",
     iconName: "Settings",
   },
