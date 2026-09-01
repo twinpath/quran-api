@@ -1,11 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { eq } from "drizzle-orm";
-import { getDb, getKv } from "@/lib/db";
-import { surahs, ayahs } from "@/lib/db/schema";
+import { getKv } from "@/lib/db";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
-import { getFromCache, putInCache } from "@/lib/cache-helper";
 import { logTelemetry } from "@/lib/telemetry";
-import type { ApiResponse, ApiErrorResponse, ApiSurahDetail, ApiAyahItem } from "@/types/api";
+import { getSurahDetail } from "@/lib/surah.service";
+import type { ApiResponse, ApiErrorResponse, ApiSurahDetail } from "@/types/api";
 
 /**
  * GET /api/surah/[number]
@@ -44,76 +42,26 @@ export async function GET(
     });
   }
 
-  // Cache check
-  const cachePath = `surah/${surahNumber}`;
-  const cached = await getFromCache<ApiSurahDetail>(kv, cachePath);
-  if (cached.hit && cached.data) {
-    const responseTimeMs = Date.now() - startTime;
-    await logTelemetry(env, request, `/api/surah/${surahNumber}`, 200, responseTimeMs);
-
-    const body: ApiResponse<ApiSurahDetail> = {
-      success: true,
-      data: cached.data,
-      meta: { cached: true, responseTimeMs },
-    };
-    return Response.json(body, {
-      headers: { ...rateLimitHeaders(rateResult), "X-Cache": "HIT" },
-    });
-  }
-
-  // Query D1
-  const db = getDb(env);
-
-  const [surahRow] = await db
-    .select()
-    .from(surahs)
-    .where(eq(surahs.number, surahNumber))
-    .limit(1);
-
-  if (!surahRow) {
-    const errorBody: ApiErrorResponse = {
-      success: false,
-      error: { code: "SURAH_NOT_FOUND", message: `Surah ${surahNumber} not found.` },
-    };
-    return Response.json(errorBody, { status: 404 });
-  }
-
-  const ayahRows = await db
-    .select()
-    .from(ayahs)
-    .where(eq(ayahs.surahNumber, surahNumber))
-    .orderBy(ayahs.ayahNumber);
-
-  const ayahItems: ApiAyahItem[] = ayahRows.map((row) => ({
-    number: row.ayahNumber,
-    textArabic: row.textArabic,
-    translationId: row.translationId,
-    tafsirKemenag: row.tafsirKemenag,
-  }));
-
-  const data: ApiSurahDetail = {
-    number: surahRow.number,
-    name: surahRow.name,
-    nameLatin: surahRow.nameLatin,
-    numberOfAyah: surahRow.numberOfAyah,
-    translationName: surahRow.translationName,
-    revelationType: surahRow.revelationType,
-    ayahs: ayahItems,
-  };
-
-  // Store in cache
-  await putInCache(kv, cachePath, data);
+  // Service invocation
+  const result = await getSurahDetail(env, surahNumber);
 
   const responseTimeMs = Date.now() - startTime;
   await logTelemetry(env, request, `/api/surah/${surahNumber}`, 200, responseTimeMs);
 
+  if (!result.success) {
+    return Response.json(
+      { success: false, error: { code: result.error.code, message: result.error.message } } satisfies ApiErrorResponse,
+      { status: result.error.status, headers: rateLimitHeaders(rateResult) },
+    );
+  }
+
   const body: ApiResponse<ApiSurahDetail> = {
     success: true,
-    data,
-    meta: { cached: false, responseTimeMs },
+    data: result.data,
+    meta: { cached: result.cached, responseTimeMs },
   };
 
   return Response.json(body, {
-    headers: { ...rateLimitHeaders(rateResult), "X-Cache": "MISS" },
+    headers: { ...rateLimitHeaders(rateResult), "X-Cache": result.cached ? "HIT" : "MISS" },
   });
 }

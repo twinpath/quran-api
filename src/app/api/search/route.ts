@@ -1,13 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { eq, like, or } from "drizzle-orm";
-import { getDb, getKv } from "@/lib/db";
-import { ayahs, surahs } from "@/lib/db/schema";
+import { getKv } from "@/lib/db";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
-import type { ApiResponse, ApiErrorResponse, ApiSearchResult, ApiSearchHit } from "@/types/api";
-
-/** Maximum number of search results returned */
-const MAX_RESULTS = 50;
+import { searchAyahs } from "@/lib/search.service";
+import type { ApiResponse, ApiErrorResponse, ApiSearchResult } from "@/types/api";
 
 /**
  * GET /api/search?q={query}
@@ -44,48 +40,22 @@ export async function GET(request: Request) {
     });
   }
 
-  // Query D1 with LIKE search (no caching for search - queries are too variable)
-  const db = getDb(env);
-  const pattern = `%${query}%`;
-
-  const rows = await db
-    .select({
-      surahNumber: ayahs.surahNumber,
-      ayahNumber: ayahs.ayahNumber,
-      textArabic: ayahs.textArabic,
-      translationId: ayahs.translationId,
-      surahNameLatin: surahs.nameLatin,
-    })
-    .from(ayahs)
-    .innerJoin(surahs, eq(surahs.number, ayahs.surahNumber))
-    .where(
-      or(
-        like(ayahs.translationId, pattern),
-        like(surahs.nameLatin, pattern),
-      ),
-    )
-    .limit(MAX_RESULTS);
-
-  const results: ApiSearchHit[] = rows.map((row) => ({
-    surahNumber: row.surahNumber,
-    surahNameLatin: row.surahNameLatin,
-    ayahNumber: row.ayahNumber,
-    textArabic: row.textArabic,
-    translationId: row.translationId,
-  }));
-
-  const data: ApiSearchResult = {
-    query,
-    total: results.length,
-    results,
-  };
+  // Service invocation
+  const result = await searchAyahs(env, query);
 
   const responseTimeMs = Date.now() - startTime;
   await logTelemetry(env, request, "/api/search", 200, responseTimeMs);
 
+  if (!result.success) {
+    return Response.json(
+      { success: false, error: { code: result.error.code, message: result.error.message } } satisfies ApiErrorResponse,
+      { status: result.error.status, headers: rateLimitHeaders(rateResult) },
+    );
+  }
+
   const body: ApiResponse<ApiSearchResult> = {
     success: true,
-    data,
+    data: result.data,
     meta: { cached: false, responseTimeMs },
   };
 

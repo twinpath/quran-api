@@ -57,6 +57,18 @@ export interface ApiErrorResponse {
   };
 }
 
+/** Service-layer error descriptor (HTTP-agnostic) */
+export interface ServiceError {
+  code: string;
+  message: string;
+  status: number;
+}
+
+/** Discriminated union returned by service functions */
+export type ServiceResult<T> =
+  | { success: true; data: T; cached: boolean }
+  | { success: false; error: ServiceError };
+
 /** Optional metadata attached to successful API responses */
 export interface ApiResponseMeta {
   cached: boolean;

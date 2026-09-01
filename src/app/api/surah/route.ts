@@ -1,9 +1,8 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getDb, getKv } from "@/lib/db";
-import { surahs } from "@/lib/db/schema";
+import { getKv } from "@/lib/db";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
-import { getFromCache, putInCache } from "@/lib/cache-helper";
 import { logTelemetry } from "@/lib/telemetry";
+import { getSurahList } from "@/lib/surah.service";
 import type { ApiResponse, ApiErrorResponse, ApiSurahListItem } from "@/types/api";
 
 /**
@@ -29,49 +28,26 @@ export async function GET(request: Request) {
     });
   }
 
-  // Cache check
-  const cachePath = "surah";
-  const cached = await getFromCache<ApiSurahListItem[]>(kv, cachePath);
-  if (cached.hit && cached.data) {
-    const responseTimeMs = Date.now() - startTime;
-    await logTelemetry(env, request, "/api/surah", 200, responseTimeMs);
-
-    const body: ApiResponse<ApiSurahListItem[]> = {
-      success: true,
-      data: cached.data,
-      meta: { cached: true, responseTimeMs },
-    };
-    return Response.json(body, {
-      headers: { ...rateLimitHeaders(rateResult), "X-Cache": "HIT" },
-    });
-  }
-
-  // Query D1
-  const db = getDb(env);
-  const rows = await db.select().from(surahs).all();
-
-  const data: ApiSurahListItem[] = rows.map((row) => ({
-    number: row.number,
-    name: row.name,
-    nameLatin: row.nameLatin,
-    numberOfAyah: row.numberOfAyah,
-    translationName: row.translationName,
-    revelationType: row.revelationType,
-  }));
-
-  // Store in cache
-  await putInCache(kv, cachePath, data);
+  // Service invocation
+  const result = await getSurahList(env);
 
   const responseTimeMs = Date.now() - startTime;
   await logTelemetry(env, request, "/api/surah", 200, responseTimeMs);
 
+  if (!result.success) {
+    return Response.json(
+      { success: false, error: { code: result.error.code, message: result.error.message } },
+      { status: result.error.status, headers: rateLimitHeaders(rateResult) },
+    );
+  }
+
   const body: ApiResponse<ApiSurahListItem[]> = {
     success: true,
-    data,
-    meta: { cached: false, responseTimeMs },
+    data: result.data,
+    meta: { cached: result.cached, responseTimeMs },
   };
 
   return Response.json(body, {
-    headers: { ...rateLimitHeaders(rateResult), "X-Cache": "MISS" },
+    headers: { ...rateLimitHeaders(rateResult), "X-Cache": result.cached ? "HIT" : "MISS" },
   });
 }

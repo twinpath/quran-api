@@ -1,10 +1,8 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { and, eq } from "drizzle-orm";
-import { getDb, getKv } from "@/lib/db";
-import { surahs, ayahs } from "@/lib/db/schema";
+import { getKv } from "@/lib/db";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
-import { getFromCache, putInCache } from "@/lib/cache-helper";
 import { logTelemetry } from "@/lib/telemetry";
+import { getAyahDetail } from "@/lib/surah.service";
 import type { ApiResponse, ApiErrorResponse, ApiAyahDetail } from "@/types/api";
 
 /**
@@ -54,88 +52,26 @@ export async function GET(
     });
   }
 
-  // Cache check
-  const cachePath = `surah/${surahNumber}/ayah/${ayahNum}`;
-  const cached = await getFromCache<ApiAyahDetail>(kv, cachePath);
-  if (cached.hit && cached.data) {
-    const responseTimeMs = Date.now() - startTime;
-    await logTelemetry(env, request, `/api/surah/${surahNumber}/${ayahNum}`, 200, responseTimeMs);
-
-    const body: ApiResponse<ApiAyahDetail> = {
-      success: true,
-      data: cached.data,
-      meta: { cached: true, responseTimeMs },
-    };
-    return Response.json(body, {
-      headers: { ...rateLimitHeaders(rateResult), "X-Cache": "HIT" },
-    });
-  }
-
-  // Query D1
-  const db = getDb(env);
-
-  const [surahRow] = await db
-    .select()
-    .from(surahs)
-    .where(eq(surahs.number, surahNumber))
-    .limit(1);
-
-  if (!surahRow) {
-    const errorBody: ApiErrorResponse = {
-      success: false,
-      error: { code: "SURAH_NOT_FOUND", message: `Surah ${surahNumber} not found.` },
-    };
-    return Response.json(errorBody, { status: 404 });
-  }
-
-  if (ayahNum > surahRow.numberOfAyah) {
-    const errorBody: ApiErrorResponse = {
-      success: false,
-      error: {
-        code: "AYAH_NOT_FOUND",
-        message: `Ayah ${ayahNum} does not exist in Surah ${surahNumber} (${surahRow.nameLatin}), which has ${surahRow.numberOfAyah} ayahs.`,
-      },
-    };
-    return Response.json(errorBody, { status: 404 });
-  }
-
-  const [ayahRow] = await db
-    .select()
-    .from(ayahs)
-    .where(and(eq(ayahs.surahNumber, surahNumber), eq(ayahs.ayahNumber, ayahNum)))
-    .limit(1);
-
-  if (!ayahRow) {
-    const errorBody: ApiErrorResponse = {
-      success: false,
-      error: { code: "AYAH_NOT_FOUND", message: `Ayah ${ayahNum} in Surah ${surahNumber} not found.` },
-    };
-    return Response.json(errorBody, { status: 404 });
-  }
-
-  const data: ApiAyahDetail = {
-    surahNumber: surahRow.number,
-    surahName: surahRow.name,
-    surahNameLatin: surahRow.nameLatin,
-    number: ayahRow.ayahNumber,
-    textArabic: ayahRow.textArabic,
-    translationId: ayahRow.translationId,
-    tafsirKemenag: ayahRow.tafsirKemenag,
-  };
-
-  // Store in cache
-  await putInCache(kv, cachePath, data);
+  // Service invocation
+  const result = await getAyahDetail(env, surahNumber, ayahNum);
 
   const responseTimeMs = Date.now() - startTime;
   await logTelemetry(env, request, `/api/surah/${surahNumber}/${ayahNum}`, 200, responseTimeMs);
 
+  if (!result.success) {
+    return Response.json(
+      { success: false, error: { code: result.error.code, message: result.error.message } } satisfies ApiErrorResponse,
+      { status: result.error.status, headers: rateLimitHeaders(rateResult) },
+    );
+  }
+
   const body: ApiResponse<ApiAyahDetail> = {
     success: true,
-    data,
-    meta: { cached: false, responseTimeMs },
+    data: result.data,
+    meta: { cached: result.cached, responseTimeMs },
   };
 
   return Response.json(body, {
-    headers: { ...rateLimitHeaders(rateResult), "X-Cache": "MISS" },
+    headers: { ...rateLimitHeaders(rateResult), "X-Cache": result.cached ? "HIT" : "MISS" },
   });
 }
