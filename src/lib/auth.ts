@@ -42,6 +42,16 @@ function resolveBaseURL(cfEnv: CloudflareEnv | undefined): string {
 }
 
 /**
+ * Resolves optional NEXT_PUBLIC_APP_URL from Cloudflare context or process.env.
+ */
+function resolveAppURL(cfEnv: CloudflareEnv | undefined): string | undefined {
+  return (
+    (cfEnv as unknown as Record<string, string>)?.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_APP_URL
+  );
+}
+
+/**
  * Initializes Better Auth server configuration for Cloudflare D1 environment.
  * Resolves environment secrets from Cloudflare Context (including .dev.vars) or process.env.
  * Throws descriptive errors when required variables are missing.
@@ -60,12 +70,18 @@ export function getAuth(env?: CloudflareEnv) {
 
   const secret = requireEnv(cfEnv, "BETTER_AUTH_SECRET");
   const baseURL = resolveBaseURL(cfEnv);
+  const appURL = resolveAppURL(cfEnv);
+
+  const trustedOrigins = Array.from(
+    new Set([baseURL, appURL].filter((url): url is string => Boolean(url)))
+  );
   const googleClientId = requireEnv(cfEnv, "GOOGLE_CLIENT_ID");
   const googleClientSecret = requireEnv(cfEnv, "GOOGLE_CLIENT_SECRET");
 
   return betterAuth({
     baseURL,
     secret,
+    trustedOrigins,
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema: {
