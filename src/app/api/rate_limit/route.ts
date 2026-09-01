@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const kv = getKv(env);
 
   // Resolve identity (IP or API key)
-  const identity = await resolveIdentity(request, env?.DB);
+  const identity = await resolveIdentity(request, env);
 
   // Read rate limit status (read-only, 0 quota cost)
   const data: RateLimitStatusResponse = await getRateLimitStatus(kv, identity);

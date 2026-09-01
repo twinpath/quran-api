@@ -28,7 +28,7 @@ export async function GET(request: Request) {
   }
 
   // Rate limit check for search resource
-  const identity = await resolveIdentity(request);
+  const identity = await resolveIdentity(request, env);
   const rateResult = await checkRateLimit(kv, identity, "search");
   if (!rateResult.allowed) {
     const errorBody: ApiErrorResponse = {

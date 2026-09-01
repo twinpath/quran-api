@@ -40,7 +40,7 @@ export async function GET(
   }
 
   // Rate limit check
-  const identity = await resolveIdentity(request);
+  const identity = await resolveIdentity(request, env);
   const rateResult = await checkRateLimit(kv, identity, "core");
   if (!rateResult.allowed) {
     const errorBody: ApiErrorResponse = {

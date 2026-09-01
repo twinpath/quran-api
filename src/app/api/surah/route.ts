@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   const { env } = getCloudflareContext();
   const kv = getKv(env);
   // Rate limit check
-  const identity = await resolveIdentity(request);
+  const identity = await resolveIdentity(request, env);
   const rateResult = await checkRateLimit(kv, identity, "core");
   if (!rateResult.allowed) {
     const errorBody: ApiErrorResponse = {

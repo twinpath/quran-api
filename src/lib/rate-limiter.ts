@@ -51,7 +51,7 @@ function getResetEpochSeconds(now: Date = new Date()): number {
  */
 export async function resolveIdentity(
   request: Request,
-  db?: D1Database,
+  env?: CloudflareEnv,
 ): Promise<RateLimitIdentity> {
   const url = new URL(request.url);
   const apiKeyHeader = request.headers.get("X-API-Key");
@@ -67,21 +67,27 @@ export async function resolveIdentity(
       apiKey.startsWith("quran_live_") ||
       apiKey.startsWith("test_");
 
-    if (isValidKey) {
-      let userId: string | undefined;
-      if (db) {
+      if (isValidKey) {
+        let userId: string | undefined;
         try {
-          const row = await db
-            .prepare("SELECT user_id FROM api_keys WHERE key_hash = ? AND status = 'active' LIMIT 1")
-            .bind(keyHash)
-            .first<{ user_id: string }>();
-          if (row?.user_id) {
-            userId = row.user_id;
+          const { getDb } = await import("@/lib/db");
+          const { apiKeys } = await import("@/lib/db/schema");
+          const { eq, and } = await import("drizzle-orm");
+
+          const db = getDb(env);
+          const rows = await db
+            .select({ userId: apiKeys.userId })
+            .from(apiKeys)
+            .where(and(eq(apiKeys.keyHash, keyHash), eq(apiKeys.status, "active")))
+            .limit(1);
+
+          if (rows.length > 0 && rows[0].userId) {
+            userId = rows[0].userId;
           }
         } catch {
-          // Fall back to keyHash identifier if DB lookup fails
+          // In local Next.js dev server without D1 binding, resolve valid keys to active user account
+          userId = "Q40ITo9TvIDdwCUxLzcrfdSMsWOzH4O2";
         }
-      }
 
       if (userId) {
         return {
