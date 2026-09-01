@@ -75,48 +75,24 @@ export function ApiPlayground() {
             </Button>
           </div>
 
-          {/* Path & Query Parameters Form */}
+          {/* Path params */}
           {selectedEndpoint.pathParams.length > 0 && (
-            <div className="mt-4 rounded-lg border border-border/60 bg-muted/30 p-3 sm:p-4">
-              <div className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Request Parameters (Click to edit)
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {selectedEndpoint.pathParams.map((param) => {
-                  const helperText =
-                    param.name === "surahNumber"
-                      ? "Surah (1 - 114)"
-                      : param.name === "ayahNumber"
-                        ? "Ayah Number"
-                        : param.name === "query"
-                          ? "Min. 2 Characters"
-                          : param.description;
-
-                  return (
-                    <div key={param.name} className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between">
-                        <label
-                          htmlFor={`param-${param.name}`}
-                          className="font-mono text-xs font-semibold text-foreground"
-                        >
-                          {param.name}
-                        </label>
-                        <span className="text-[11px] font-medium text-muted-foreground">{helperText}</span>
-                      </div>
-                      <Input
-                        id={`param-${param.name}`}
-                        type={param.type === "number" ? "number" : "text"}
-                        min={param.name === "surahNumber" ? 1 : param.name === "ayahNumber" ? 1 : undefined}
-                        max={param.name === "surahNumber" ? 114 : undefined}
-                        className="h-9 font-mono text-sm border-input bg-background focus-visible:ring-1 focus-visible:ring-ring"
-                        placeholder={`e.g. ${param.defaultValue}`}
-                        value={state.paramValues[param.name] ?? param.defaultValue}
-                        onChange={(e) => setParamValue(param.name, e.target.value)}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              {selectedEndpoint.pathParams.map((param) => (
+                <div key={param.name} className="flex items-center gap-2">
+                  <label className="text-xs font-semibold text-foreground font-mono">{param.name}:</label>
+                  <Input
+                    className={
+                      param.name === "query"
+                        ? "h-8 w-44 font-mono text-sm font-medium border-2 border-input bg-background dark:bg-zinc-900 text-foreground shadow-sm hover:border-primary/60 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        : "h-8 w-24 font-mono text-sm font-medium border-2 border-input bg-background dark:bg-zinc-900 text-foreground shadow-sm hover:border-primary/60 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                    }
+                    placeholder={param.defaultValue}
+                    value={state.paramValues[param.name] ?? param.defaultValue}
+                    onChange={(e) => setParamValue(param.name, e.target.value)}
+                  />
+                </div>
+              ))}
             </div>
           )}
         </div>
