@@ -91,12 +91,12 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
   {
     id: "get-surah-detail",
     name: "Get Surah Detail",
-    path: API_PATHS.surahDetail("{number}"),
+    path: API_PATHS.surahDetail("{surahNumber}"),
     method: "GET",
     description: "Retrieve detailed surah data (with all ayahs, translations, and Tafsir) from D1. Edge-cached using KV.",
     pathParams: [
       {
-        name: "number",
+        name: "surahNumber",
         type: "number",
         required: true,
         description: "Surah number (1-114)",
@@ -108,12 +108,12 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
   {
     id: "get-ayah-detail",
     name: "Get Ayah Detail",
-    path: API_PATHS.surahAyahDetail("{number}", "{ayahNumber}"),
+    path: API_PATHS.surahAyahDetail("{surahNumber}", "{ayahNumber}"),
     method: "GET",
     description: "Retrieve a specific verse (ayah) with Arabic text, translation, and Tafsir from D1. Edge-cached using KV.",
     pathParams: [
       {
-        name: "number",
+        name: "surahNumber",
         type: "number",
         required: true,
         description: "Surah number (1-114)",
