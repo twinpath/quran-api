@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
-import type { ApiResponse } from "@/types/api";
+import { getAccountQuotaAction } from "@/lib/account-quota";
 import type { UserProfile, UseAccountProfileReturn } from "@/types/account";
-import type { RateLimitStatusResponse } from "@/types/rate-limit";
 
 /**
  * Custom hook managing profile state with reactive Better Auth session data
- * and real D1 rate limit quota queries (5,000 req/hour for authenticated users).
+ * and real D1 rate limit quota queries via Server Action Component.
  * Safely prevents SSR hydration mismatches using client mount detection.
  */
 export function useAccountProfile(): UseAccountProfileReturn {
@@ -21,23 +20,19 @@ export function useAccountProfile(): UseAccountProfileReturn {
   useEffect(() => {
     async function fetchQuota() {
       try {
-        const res = await fetch("/api/account/rate_limit");
-        if (res.ok) {
-          const json = (await res.json()) as ApiResponse<RateLimitStatusResponse>;
-          if (json.success && json.data) {
-            const data: RateLimitStatusResponse = json.data;
-            setRateLimitData({
-              used: data.rate.used ?? 0,
-              limit: data.rate.limit ?? 5000,
-            });
-          }
-        }
+        const data = await getAccountQuotaAction();
+        setRateLimitData({
+          used: data.used,
+          limit: data.limit,
+        });
       } catch {
         setRateLimitData({ used: 0, limit: 5000 });
       }
     }
-    fetchQuota();
-  }, []);
+    if (session?.user?.id) {
+      fetchQuota();
+    }
+  }, [session?.user?.id]);
 
   const isSessionPending = !isMounted || isPending;
 

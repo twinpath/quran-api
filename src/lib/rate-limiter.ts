@@ -21,7 +21,7 @@ async function hashString(value: string): Promise<string> {
   const data = encoder.encode(value);
   const digest = await crypto.subtle.digest("SHA-256", data);
   const bytes = new Uint8Array(digest);
-  return Array.from(bytes.slice(0, 8))
+  return Array.from(bytes)
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
