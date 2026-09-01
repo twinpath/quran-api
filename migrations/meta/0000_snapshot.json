@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "bfd42f52-c62e-4feb-98a3-fb8674447410",
+  "id": "d0f25175-c525-47e6-99b3-1edc58e84267",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -487,6 +487,87 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "telegram_connect_tokens": {
+      "name": "telegram_connect_tokens",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "telegram_connect_tokens_token_unique": {
+          "name": "telegram_connect_tokens_token_unique",
+          "columns": [
+            "token"
+          ],
+          "isUnique": true
+        },
+        "idx_telegram_tokens_token": {
+          "name": "idx_telegram_tokens_token",
+          "columns": [
+            "token"
+          ],
+          "isUnique": false
+        },
+        "idx_telegram_tokens_user": {
+          "name": "idx_telegram_tokens_user",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "telegram_connect_tokens_user_id_user_id_fk": {
+          "name": "telegram_connect_tokens_user_id_user_id_fk",
+          "tableFrom": "telegram_connect_tokens",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "telemetry_logs": {
       "name": "telemetry_logs",
       "columns": {
@@ -670,6 +751,29 @@
           "notNull": true,
           "autoincrement": false,
           "default": "'developer'"
+        },
+        "telegram_chat_id": {
+          "name": "telegram_chat_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "usage_alerts_enabled": {
+          "name": "usage_alerts_enabled",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "email_notifications_enabled": {
+          "name": "email_notifications_enabled",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
         },
         "created_at": {
           "name": "created_at",

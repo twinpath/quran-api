@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Send, ShieldAlert, Save, Check, ExternalLink, Loader2, Bot } from "lucide-react";
+import { Bell, Send, ShieldAlert, Save, Check, ExternalLink, Loader2, Bot, Unlink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +14,13 @@ export function NotificationPreferencesSection({
   emailNotifications,
   telegramChatId = "",
   telegramBotUsername = DEFAULT_TELEGRAM_BOT_USERNAME,
+  telegramConnectUrl = "",
   isTestingTelegram = false,
+  isDisconnectingTelegram = false,
   onTogglePreference,
   onUpdateTelegramChatId,
   onTestTelegramAlert,
+  onDisconnectTelegram,
   onSavePreferences,
   isLoading = false,
 }: NotificationPreferencesSectionProps) {
@@ -30,7 +33,8 @@ export function NotificationPreferencesSection({
     setTimeout(() => setIsSaved(false), 2000);
   };
 
-  const botDeepLink = `https://t.me/${telegramBotUsername}`;
+  const botDeepLink = telegramConnectUrl || `https://t.me/${telegramBotUsername}`;
+  const isTelegramConnected = Boolean(telegramChatId && telegramChatId.trim().length > 0);
 
   if (isLoading) {
     return <Skeleton className="h-48 w-full" />;
@@ -58,9 +62,15 @@ export function NotificationPreferencesSection({
               <div className="flex items-center gap-2">
                 <Send className="h-4 w-4 text-sky-500" />
                 <span className="text-sm font-medium text-foreground">Usage & Rate Limit Alerts</span>
-                <Badge variant="outline" className="text-[10px] bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20">
-                  Telegram Bot
-                </Badge>
+                {isTelegramConnected ? (
+                  <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
+                    Connected
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-[10px] bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20">
+                    Telegram Bot
+                  </Badge>
+                )}
               </div>
               <p className="text-xs text-muted-foreground">
                 Receive instant alerts on Telegram when your key consumption reaches 80% daily quota or rate limit thresholds.
@@ -89,15 +99,30 @@ export function NotificationPreferencesSection({
                   <Bot className="h-3.5 w-3.5 text-primary" />
                   Telegram Chat ID
                 </label>
-                <a
-                  href={botDeepLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  Connect Telegram Bot (@{telegramBotUsername})
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={botDeepLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Connect Telegram Bot (@{telegramBotUsername})
+                  </a>
+                  {isTelegramConnected && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={isDisconnectingTelegram}
+                      onClick={onDisconnectTelegram}
+                      className="h-6 px-2 text-[11px] text-destructive hover:text-destructive hover:bg-destructive/10 gap-1 cursor-pointer"
+                    >
+                      <Unlink className="h-3 w-3" />
+                      Disconnect
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -130,7 +155,7 @@ export function NotificationPreferencesSection({
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Click <strong>Connect Telegram Bot</strong> to send <code>/start</code> to our bot, then paste your Telegram Chat ID here.
+                Click <strong>Connect Telegram Bot</strong> to launch the bot with your unique one-click link, or paste your Chat ID manually.
               </p>
             </div>
           )}

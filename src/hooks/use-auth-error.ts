@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { AUTH_ERROR_MESSAGES } from "@/constants/auth";
@@ -13,28 +13,25 @@ import type { UseAuthErrorReturn } from "@/types/auth";
  */
 export function useAuthError(): UseAuthErrorReturn {
   const searchParams = useSearchParams();
-  const [errorCode, setErrorCode] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const errorParam = searchParams.get("error");
 
-  // Detect ?error= query parameter on mount and when searchParams change
+  const errorCode = errorParam;
+  const errorMessage = errorParam
+    ? AUTH_ERROR_MESSAGES[errorParam] ||
+      "An unexpected authentication error occurred. Please try again."
+    : null;
+
+  // Display Sonner toast error notification and clean up URL query parameter
   useEffect(() => {
-    const errorParam = searchParams.get("error");
-    if (errorParam) {
-      setErrorCode(errorParam);
-      const message =
-        AUTH_ERROR_MESSAGES[errorParam] ||
-        "An unexpected authentication error occurred. Please try again.";
-      setErrorMessage(message);
-
-      // Display Sonner toast error notification
-      toast.error(message, { duration: 8000 });
+    if (errorParam && errorMessage) {
+      toast.error(errorMessage, { duration: 8000 });
 
       // Clean up URL query parameter without triggering full page reload
       const url = new URL(window.location.href);
       url.searchParams.delete("error");
       window.history.replaceState({}, "", url.toString());
     }
-  }, [searchParams]);
+  }, [errorParam, errorMessage]);
 
   // Utility method to handle client API errors from Better Auth SDK calls
   const handleAuthError = useCallback((error: unknown) => {

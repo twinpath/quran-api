@@ -1,4 +1,7 @@
 import { DEFAULT_TELEGRAM_BOT_USERNAME } from "@/constants";
+import { getDb } from "@/lib/db";
+import { telegramConnectTokens } from "@/lib/db/schema";
+import { eq, and, gt } from "drizzle-orm";
 
 interface SendTelegramAlertParams {
   chatId: string;
@@ -12,9 +15,9 @@ interface TelegramResponse {
 }
 
 /**
-  * Pure helper for sending Telegram alerts via Telegram Bot API.
-  * Formats messages using HTML mode for clean presentation.
-  */
+ * Pure helper for sending Telegram alerts via Telegram Bot API.
+ * Formats messages using HTML mode for clean presentation.
+ */
 export async function sendTelegramAlert({
   chatId,
   message,
@@ -67,12 +70,68 @@ export async function sendTelegramAlert({
 }
 
 /**
-  * Generates a Telegram Bot deep link to start a conversation with the bot.
-  */
+ * Generates a Telegram Bot deep link to start a conversation with the bot.
+ */
 export function getTelegramBotDeepLink(botUsername?: string, startParam?: string): string {
   const username = botUsername || process.env.TELEGRAM_BOT_USERNAME || DEFAULT_TELEGRAM_BOT_USERNAME;
   if (startParam) {
     return `https://t.me/${username}?start=${encodeURIComponent(startParam)}`;
   }
   return `https://t.me/${username}`;
+}
+
+/**
+ * Creates a unique, short-lived connection token for a user to link Telegram Bot via deep link.
+ */
+export async function createTelegramConnectToken(
+  userId: string,
+  env?: CloudflareEnv
+): Promise<string> {
+  const db = getDb(env);
+  const rawId = crypto.randomUUID().replace(/-/g, "");
+  const token = `tok_${rawId.slice(0, 16)}`;
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes TTL
+
+  await db.insert(telegramConnectTokens).values({
+    id: `tgt_${rawId}`,
+    userId,
+    token,
+    expiresAt,
+    createdAt: new Date(),
+  });
+
+  return token;
+}
+
+/**
+ * Verifies and consumes a Telegram connection token, returning the associated userId if valid.
+ */
+export async function verifyAndConsumeTelegramToken(
+  token: string,
+  env?: CloudflareEnv
+): Promise<{ success: boolean; userId?: string; error?: string }> {
+  const db = getDb(env);
+  const now = new Date();
+
+  try {
+    const rows = await db
+      .select()
+      .from(telegramConnectTokens)
+      .where(and(eq(telegramConnectTokens.token, token), gt(telegramConnectTokens.expiresAt, now)))
+      .limit(1);
+
+    if (!rows.length) {
+      return { success: false, error: "Connection token is invalid or expired." };
+    }
+
+    const record = rows[0];
+
+    // Delete token once consumed to ensure single-use
+    await db.delete(telegramConnectTokens).where(eq(telegramConnectTokens.id, record.id));
+
+    return { success: true, userId: record.userId };
+  } catch (err) {
+    console.error("verifyAndConsumeTelegramToken error:", err);
+    return { success: false, error: "Failed to verify connection token." };
+  }
 }

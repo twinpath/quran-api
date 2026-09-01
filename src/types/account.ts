@@ -94,10 +94,13 @@ export interface NotificationPreferencesSectionProps {
   emailNotifications: boolean;
   telegramChatId?: string;
   telegramBotUsername?: string;
+  telegramConnectUrl?: string;
   isTestingTelegram?: boolean;
+  isDisconnectingTelegram?: boolean;
   onTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
   onUpdateTelegramChatId: (chatId: string) => void;
   onTestTelegramAlert: () => Promise<void>;
+  onDisconnectTelegram: () => Promise<void>;
   onSavePreferences: (e: React.FormEvent) => void;
   isLoading?: boolean;
 }
@@ -145,10 +148,13 @@ export interface UseAccountSettingsReturn {
   isUnlinkingGoogle: boolean;
   isDeletingAccount: boolean;
   telegramBotUsername?: string;
+  telegramConnectUrl?: string;
   isTestingTelegram: boolean;
+  isDisconnectingTelegram: boolean;
   handleTogglePreference: (key: "usageAlerts" | "emailNotifications") => void;
   handleUpdateTelegramChatId: (chatId: string) => void;
   handleTestTelegramAlert: () => Promise<void>;
+  handleDisconnectTelegram: () => Promise<void>;
   handleLinkGoogle: () => void;
   handleUnlinkGoogle: () => void;
   handleUpdatePassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<void>;

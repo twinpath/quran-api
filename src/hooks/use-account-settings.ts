@@ -31,9 +31,11 @@ export function useAccountSettings(): UseAccountSettingsReturn {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const [telegramBotUsername, setTelegramBotUsername] = useState<string>(DEFAULT_TELEGRAM_BOT_USERNAME);
+  const [telegramConnectUrl, setTelegramConnectUrl] = useState<string>("");
   const [isTestingTelegram, setIsTestingTelegram] = useState<boolean>(false);
+  const [isDisconnectingTelegram, setIsDisconnectingTelegram] = useState<boolean>(false);
 
-  // Fetch real linked accounts and notification settings on mount
+  // Fetch real linked accounts, notification settings, and Telegram deep link token on mount
   useEffect(() => {
     async function fetchLinkedAccountsAndSettings() {
       try {
@@ -78,6 +80,18 @@ export function useAccountSettings(): UseAccountSettingsReturn {
             }
           }
         }
+
+        // Fetch Telegram deep link connect token
+        const tokenRes = await fetch("/api/account/notifications/telegram-token");
+        if (tokenRes.ok) {
+          const tokenData = (await tokenRes.json()) as {
+            success?: boolean;
+            data?: { deepLink?: string };
+          };
+          if (tokenData.success && tokenData.data?.deepLink) {
+            setTelegramConnectUrl(tokenData.data.deepLink);
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch linked accounts or notification settings:", err);
       } finally {
@@ -99,6 +113,34 @@ export function useAccountSettings(): UseAccountSettingsReturn {
       ...prev,
       telegramChatId: chatId,
     }));
+  };
+
+  const handleDisconnectTelegram = async () => {
+    setIsDisconnectingTelegram(true);
+    try {
+      const res = await fetch("/api/account/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegramChatId: null,
+          usageAlerts: settings.usageAlerts,
+          emailNotifications: settings.emailNotifications,
+        }),
+      });
+
+      const data = (await res.json()) as { error?: string; message?: string };
+      if (!res.ok || data.error) {
+        toast.error(data.error || "Failed to disconnect Telegram");
+      } else {
+        setSettings((prev) => ({ ...prev, telegramChatId: "" }));
+        toast.info("Telegram Bot account disconnected");
+      }
+    } catch (err) {
+      console.error("Disconnect Telegram error:", err);
+      toast.error("Failed to disconnect Telegram");
+    } finally {
+      setIsDisconnectingTelegram(false);
+    }
   };
 
   const handleTestTelegramAlert = async () => {
@@ -277,10 +319,13 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     isUnlinkingGoogle,
     isDeletingAccount,
     telegramBotUsername,
+    telegramConnectUrl,
     isTestingTelegram,
+    isDisconnectingTelegram,
     handleTogglePreference,
     handleUpdateTelegramChatId,
     handleTestTelegramAlert,
+    handleDisconnectTelegram,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,

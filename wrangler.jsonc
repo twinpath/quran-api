@@ -49,6 +49,7 @@
 		"enabled": true
 	},
 	"upload_source_maps": true,
+	"keep_vars": true,
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -79,5 +80,13 @@
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
-	// "vars": {  "MY_VARIABLE": "production_value" }
+	"vars": {
+		"NEXTJS_ENV": "production",
+		"BETTER_AUTH_URL": "https://quran.dyzulk.com",
+		"GOOGLE_CLIENT_ID": "626644430757-jfa5e6b9pdnpq62b0cc00b0ebm2ter5j.apps.googleusercontent.com",
+		"TELEGRAM_BOT_USERNAME": "QuranApiAlertsBot",
+		"EMAIL_PROVIDER": "auto",
+		"RESEND_FROM_EMAIL": "alerts@quran.dyzulk.com",
+		"BREVO_FROM_EMAIL": "alerts@quran.dyzulk.com"
+	}
 }

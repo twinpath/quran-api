@@ -173,3 +173,25 @@ export const apiKeys = sqliteTable(
     index("idx_api_keys_user").on(table.userId),
   ],
 );
+
+/**
+ * Temporary Telegram Connection Tokens table.
+ * Stores short-lived tokens for one-click Telegram Bot deep linking.
+ */
+export const telegramConnectTokens = sqliteTable(
+  "telegram_connect_tokens",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    index("idx_telegram_tokens_token").on(table.token),
+    index("idx_telegram_tokens_user").on(table.userId),
+  ],
+);
+

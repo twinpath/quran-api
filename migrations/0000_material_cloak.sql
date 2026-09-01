@@ -70,6 +70,18 @@ CREATE TABLE `surahs` (
 	`revelation_type` text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `telegram_connect_tokens` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`token` text NOT NULL,
+	`expires_at` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `telegram_connect_tokens_token_unique` ON `telegram_connect_tokens` (`token`);--> statement-breakpoint
+CREATE INDEX `idx_telegram_tokens_token` ON `telegram_connect_tokens` (`token`);--> statement-breakpoint
+CREATE INDEX `idx_telegram_tokens_user` ON `telegram_connect_tokens` (`user_id`);--> statement-breakpoint
 CREATE TABLE `telemetry_logs` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`endpoint` text NOT NULL,
@@ -98,6 +110,9 @@ CREATE TABLE `user` (
 	`image` text,
 	`password` text,
 	`tier` text DEFAULT 'developer' NOT NULL,
+	`telegram_chat_id` text,
+	`usage_alerts_enabled` integer DEFAULT true NOT NULL,
+	`email_notifications_enabled` integer DEFAULT true NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
 );
