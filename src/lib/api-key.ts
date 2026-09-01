@@ -133,3 +133,27 @@ export function formatExpirationLabel(expiresAt?: Date | string | null): {
   return { label: `Expires in ${diffDays} days`, isExpired: false };
 }
 
+/**
+ * Formats last used timestamp into a human-friendly relative time or date label.
+ */
+export function formatLastUsedLabel(lastUsedAt?: Date | string | number | null): string {
+  if (!lastUsedAt) return "Never";
+  const date = new Date(lastUsedAt);
+  if (isNaN(date.getTime())) return "Never";
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHours = Math.floor(diffMin / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSec < 60) return "Just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+
+  return date.toISOString().split("T")[0];
+}
+
+

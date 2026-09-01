@@ -8,6 +8,7 @@ import {
   maskApiKey,
   calculateExpirationDate,
   formatExpirationLabel,
+  formatLastUsedLabel,
 } from "@/lib/api-key";
 import { generatePrefixedId, getAuth } from "@/lib/auth";
 import { API_KEY_PREFIX, DEFAULT_DEVELOPER_RATE_LIMIT, MAX_KEYS_PER_USER } from "@/constants/api-key";
@@ -79,7 +80,7 @@ export async function GET() {
         expiresAt: k.expiresAt ? new Date(k.expiresAt).toISOString() : null,
         expiresLabel,
         isExpired,
-        lastUsed: k.lastUsedAt ? new Date(k.lastUsedAt).toISOString() : "Never",
+        lastUsed: formatLastUsedLabel(k.lastUsedAt),
         status: computedStatus,
         rateLimit: `${k.rateLimit.toLocaleString()} req/hour`,
       };
