@@ -8,14 +8,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Combobox,
   ComboboxInput,
   ComboboxContent,
@@ -89,6 +81,7 @@ export function SurahCatalogClient({ initialSurahs }: SurahCatalogClientProps) {
           </div>
           <div className="flex items-center gap-2">
             <Combobox
+              items={initialSurahs.map((surah) => String(surah.number))}
               value={comboboxValue}
               onValueChange={(val) => {
                 if (val) {
@@ -99,17 +92,22 @@ export function SurahCatalogClient({ initialSurahs }: SurahCatalogClientProps) {
             >
               <ComboboxInput
                 placeholder="Jump to Surah..."
-                className="w-full sm:w-[200px]"
+                className="w-full sm:w-[220px]"
                 showClear
               />
-              <ComboboxContent className="w-[200px] z-50">
+              <ComboboxContent className="w-[260px] z-50">
                 <ComboboxList>
                   {initialSurahs.map((surah) => (
-                    <ComboboxItem key={surah.number} value={String(surah.number)}>
-                      <span className="text-muted-foreground mr-1.5 text-xs font-mono">
-                        {String(surah.number).padStart(3, "0")}
-                      </span>
-                      {surah.nameLatin}
+                    <ComboboxItem key={surah.number} value={String(surah.number)} className="text-xs px-2.5 py-1.5">
+                      <div className="flex items-center justify-between w-full pr-1">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center justify-center min-w-[2rem] px-1 py-0.5 rounded bg-muted/80 text-[10px] font-mono font-medium text-muted-foreground">
+                            {String(surah.number).padStart(3, "0")}
+                          </span>
+                          <span className="font-medium text-foreground">{surah.nameLatin}</span>
+                        </div>
+                        <span className="text-[11px] font-arabic-display text-muted-foreground/80">{surah.name}</span>
+                      </div>
                     </ComboboxItem>
                   ))}
                   <ComboboxEmpty>No surah found</ComboboxEmpty>
@@ -139,47 +137,63 @@ export function SurahCatalogClient({ initialSurahs }: SurahCatalogClientProps) {
               </Tabs>
             </div>
 
-            {/* Ayah Count Selector */}
+            {/* Ayah Count Combobox (Length Filter) */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-muted-foreground">Length:</span>
-              <Select value={ayahRange} onValueChange={(val) => setAyahRange(val as AyahCountRangeKey)}>
-                <SelectTrigger className="w-[140px] h-9 text-xs">
-                  <SelectValue placeholder="Any Length" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
+              <Combobox
+                items={AYAH_COUNT_FILTERS.map((opt) => opt.value)}
+                value={ayahRange}
+                onValueChange={(val) => {
+                  if (val) setAyahRange(val as AyahCountRangeKey);
+                }}
+              >
+                <ComboboxInput
+                  placeholder="Filter length..."
+                  className="w-[150px] h-9 text-xs"
+                />
+                <ComboboxContent className="w-[180px] z-50">
+                  <ComboboxList>
                     {AYAH_COUNT_FILTERS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                        {opt.label}
-                      </SelectItem>
+                      <ComboboxItem key={opt.value} value={opt.value} className="text-xs">
+                        <span className="font-medium">{opt.label}</span>
+                      </ComboboxItem>
                     ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                    <ComboboxEmpty>No length option found</ComboboxEmpty>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Sorting Dropdown */}
+            {/* Sorting Combobox (Sort Filter) */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <ArrowUpDown className="h-3.5 w-3.5" />
                 Sort:
               </span>
-              <Select value={sortKey} onValueChange={(val) => setSortKey(val as SurahSortKey)}>
-                <SelectTrigger className="w-[170px] h-9 text-xs">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
+              <Combobox
+                items={SURAH_SORT_OPTIONS.map((opt) => opt.value)}
+                value={sortKey}
+                onValueChange={(val) => {
+                  if (val) setSortKey(val as SurahSortKey);
+                }}
+              >
+                <ComboboxInput
+                  placeholder="Sort by..."
+                  className="w-[170px] h-9 text-xs"
+                />
+                <ComboboxContent className="w-[190px] z-50">
+                  <ComboboxList>
                     {SURAH_SORT_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                        {opt.label}
-                      </SelectItem>
+                      <ComboboxItem key={opt.value} value={opt.value} className="text-xs">
+                        <span className="font-medium">{opt.label}</span>
+                      </ComboboxItem>
                     ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                    <ComboboxEmpty>No sort option found</ComboboxEmpty>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </div>
 
             {/* Reset Filters button */}
