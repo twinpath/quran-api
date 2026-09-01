@@ -5,6 +5,7 @@
 
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { sql } from "drizzle-orm";
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { getDb } from "@/lib/db";
 import { telemetryLogs } from "@/lib/db/schema";
 import type {
@@ -90,7 +91,7 @@ export async function GET(request: Request) {
 
   // Distribution helper
   async function getDistribution(
-    column: any,
+    column: AnySQLiteColumn,
     limit = 20,
   ): Promise<TelemetryDistributionItem[]> {
     const rows = await db

@@ -92,6 +92,17 @@ export interface ApiSurahDetail {
   ayahs: ApiAyahItem[];
 }
 
+/** Shape of /api/surah/[number]/[ayahNumber] response data */
+export interface ApiAyahDetail {
+  surahNumber: number;
+  surahName: string;
+  surahNameLatin: string;
+  number: number;
+  textArabic: string;
+  translationId: string;
+  tafsirKemenag: string | null;
+}
+
 /** Shape of /api/search response data */
 export interface ApiSearchResult {
   query: string;

@@ -7,6 +7,7 @@ export const API_PATHS = {
   // Edge-native dynamic routes (D1 + KV)
   surahList: "/api/surah",
   surahDetail: (num: string | number) => `/api/surah/${num}`,
+  surahAyahDetail: (num: string | number, ayahNum: string | number) => `/api/surah/${num}/${ayahNum}`,
   search: (query: string) => `/api/search?q=${query}`,
 } as const;
 
@@ -36,6 +37,16 @@ const sampleSurahDetail = {
       tafsirKemenag: "Surah ini dimulai dengan membaca basmalah..."
     };
   })
+};
+
+const sampleAyahDetail = {
+  surahNumber: 1,
+  surahName: SAMPLE_ALFATIHAH.name,
+  surahNameLatin: SAMPLE_ALFATIHAH.name_latin,
+  number: 1,
+  textArabic: SAMPLE_ALFATIHAH.text["1"],
+  translationId: SAMPLE_ALFATIHAH.translations.id.text["1"],
+  tafsirKemenag: "Surah ini dimulai dengan membaca basmalah...",
 };
 
 /** Pre-formatted JSON string for the playground preview card on the home page */
@@ -93,6 +104,30 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
       },
     ],
     sampleResponse: { success: true, data: sampleSurahDetail } as unknown as Record<string, unknown>,
+  },
+  {
+    id: "get-ayah-detail",
+    name: "Get Ayah Detail",
+    path: API_PATHS.surahAyahDetail("{number}", "{ayahNumber}"),
+    method: "GET",
+    description: "Retrieve a specific verse (ayah) with Arabic text, translation, and Tafsir from D1. Edge-cached using KV.",
+    pathParams: [
+      {
+        name: "number",
+        type: "number",
+        required: true,
+        description: "Surah number (1-114)",
+        defaultValue: "1",
+      },
+      {
+        name: "ayahNumber",
+        type: "number",
+        required: true,
+        description: "Ayah number within the surah",
+        defaultValue: "1",
+      },
+    ],
+    sampleResponse: { success: true, data: sampleAyahDetail } as unknown as Record<string, unknown>,
   },
   {
     id: "search-ayahs",

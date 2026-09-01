@@ -16,7 +16,7 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress, ProgressTrack, ProgressIndicator, ProgressLabel, ProgressValue } from "@/components/ui/progress";
+import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -79,9 +79,17 @@ export function StatusPageClient() {
   }, []);
 
   useEffect(() => {
-    fetchStatusData(days, false);
+    let isSubscribed = true;
+    Promise.resolve().then(() => {
+      if (isSubscribed) {
+        fetchStatusData(days, false);
+      }
+    });
     const interval = setInterval(() => fetchStatusData(days, true), 60000);
-    return () => clearInterval(interval);
+    return () => {
+      isSubscribed = false;
+      clearInterval(interval);
+    };
   }, [days, fetchStatusData]);
 
   if (isLoading && !data) {

@@ -24,7 +24,13 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) setMounted(true);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (!mounted) {
