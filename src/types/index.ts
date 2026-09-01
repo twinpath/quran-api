@@ -7,4 +7,5 @@ export * from "./telemetry";
 export * from "./account";
 export * from "./auth";
 export * from "./rate-limit";
+export * from "./api-key";
 

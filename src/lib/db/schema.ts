@@ -61,3 +61,71 @@ export const telemetryLogs = sqliteTable(
     index("idx_telemetry_country").on(table.country),
   ],
 );
+
+/**
+ * User accounts table.
+ * Stores core user profile, password hash, and OAuth linking status.
+ */
+export const users = sqliteTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull().unique(),
+    name: text("name").notNull(),
+    passwordHash: text("password_hash").notNull(),
+    emailVerifiedAt: integer("email_verified_at", { mode: "timestamp" }),
+    googleId: text("google_id"),
+    googleEmail: text("google_email"),
+    avatarUrl: text("avatar_url"),
+    tier: text("tier").notNull().default("developer"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [index("idx_users_email").on(table.email)],
+);
+
+/**
+ * Authentication sessions table.
+ * Tracks user sessions for session-based authentication.
+ */
+export const sessions = sqliteTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    index("idx_sessions_token").on(table.token),
+    index("idx_sessions_user").on(table.userId),
+  ],
+);
+
+/**
+ * User API Keys table.
+ * Stores SHA-256 hashed API Keys for authenticated developer access.
+ */
+export const apiKeys = sqliteTable(
+  "api_keys",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    keyPrefix: text("key_prefix").notNull(),
+    keyHash: text("key_hash").notNull().unique(),
+    status: text("status").notNull().default("active"),
+    rateLimit: integer("rate_limit").notNull().default(5000),
+    lastUsedAt: integer("last_used_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    index("idx_api_keys_hash").on(table.keyHash),
+    index("idx_api_keys_user").on(table.userId),
+  ],
+);
+

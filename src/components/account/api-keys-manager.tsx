@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Key, Plus, Copy, Check, Trash2, Info } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,31 +15,80 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
   const [keys, setKeys] = useState<ApiKeyItem[]>(DEFAULT_API_KEYS);
   const [newKeyName, setNewKeyName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const handleCreateKey = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function fetchKeys() {
+      try {
+        const res = await fetch("/api/keys");
+        if (res.ok) {
+          const json = (await res.json()) as { success: boolean; data?: ApiKeyItem[] };
+          if (json.success && Array.isArray(json.data)) {
+            setKeys(json.data);
+          }
+        }
+
+      } catch (err) {
+        console.error("Failed to load API keys:", err);
+      }
+    }
+    fetchKeys();
+  }, []);
+
+  const handleCreateKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newKeyName.trim()) {
       toast.error("Please enter a name for your API key");
       return;
     }
 
-    const randomHash = Math.random().toString(36).substring(2, 8);
-    const newKey: ApiKeyItem = {
-      id: `key_live_${Date.now()}`,
-      name: newKeyName.trim(),
-      keyMasked: `quran_live_${randomHash}...${Math.random().toString(36).substring(2, 6)}`,
-      fullKey: `quran_live_${randomHash}${Math.random().toString(36).substring(2, 18)}`,
-      createdAt: new Date().toISOString().split("T")[0],
-      lastUsed: "Never",
-      status: "active",
-      rateLimit: "5,000 req/hour",
-    };
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newKeyName.trim() }),
+      });
 
-    setKeys([newKey, ...keys]);
-    setNewKeyName("");
-    setIsCreating(false);
-    toast.success(`API Key "${newKey.name}" generated successfully!`);
+      const json = (await res.json()) as {
+        success: boolean;
+        error?: string;
+        data?: {
+          id: string;
+          name: string;
+          keyMasked: string;
+          rawKey: string;
+          createdAt: string;
+          rateLimit: string;
+        };
+      };
+      if (json.success && json.data) {
+
+        const createdItem: ApiKeyItem = {
+          id: json.data.id,
+          name: json.data.name,
+          keyMasked: json.data.keyMasked,
+          fullKey: json.data.rawKey,
+          createdAt: json.data.createdAt,
+          lastUsed: "Never",
+          status: "active",
+          rateLimit: json.data.rateLimit,
+        };
+
+        setKeys([createdItem, ...keys]);
+        setNewKeyName("");
+        setIsCreating(false);
+        toast.success(`API Key "${createdItem.name}" generated! Copy your key now.`);
+      } else {
+        toast.error(json.error || "Failed to create API key");
+      }
+    } catch (err) {
+      console.error("Error creating API key:", err);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCopyKey = (key: ApiKeyItem) => {
@@ -50,11 +99,21 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleRevokeKey = (id: string, name: string) => {
-    setKeys(
-      keys.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k))
-    );
-    toast.info(`API Key "${name}" has been revoked`);
+  const handleRevokeKey = async (id: string, name: string) => {
+    try {
+      const res = await fetch(`/api/keys/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setKeys(
+          keys.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k)),
+        );
+        toast.info(`API Key "${name}" has been revoked`);
+      } else {
+        toast.error("Failed to revoke API key");
+      }
+    } catch (err) {
+      console.error("Error revoking key:", err);
+      toast.error("Failed to revoke API key");
+    }
   };
 
   return (
@@ -111,11 +170,21 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
                   value={newKeyName}
                   onChange={(e) => setNewKeyName(e.target.value)}
                   className="flex-1 text-sm"
+                  disabled={isSubmitting}
                   autoFocus
                 />
                 <div className="flex items-center gap-2">
-                  <Button type="submit" size="sm" className="cursor-pointer">Generate</Button>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setIsCreating(false)} className="cursor-pointer">
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="cursor-pointer">
+                    {isSubmitting ? "Generating..." : "Generate"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsCreating(false)}
+                    disabled={isSubmitting}
+                    className="cursor-pointer"
+                  >
                     Cancel
                   </Button>
                 </div>

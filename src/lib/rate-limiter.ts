@@ -57,12 +57,14 @@ export async function resolveIdentity(
   const apiKeyQuery = url.searchParams.get("api_key");
   const apiKey = apiKeyHeader?.trim() || apiKeyQuery?.trim();
 
-  // If API Key is provided, validate key format / mock presence
+  // If API Key is provided, validate key format / presence
   if (apiKey) {
     const keyHash = await hashString(apiKey);
-    // Valid mock keys: any key starting with "quran_live_" or "test_" or mock keys
+    // Valid keys: any key starting with "qr_live_", "quran_live_", or "test_"
     const isValidKey =
-      apiKey.startsWith("quran_live_") || apiKey.startsWith("test_");
+      apiKey.startsWith("qr_live_") ||
+      apiKey.startsWith("quran_live_") ||
+      apiKey.startsWith("test_");
 
     if (isValidKey) {
       return {

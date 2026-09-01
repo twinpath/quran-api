@@ -1,3 +1,5 @@
+import type { ApiKeyStatus } from "./api-key";
+
 /** Account tab navigation item definition */
 export interface AccountTab {
   value: string;
@@ -17,9 +19,6 @@ export interface UserProfile {
   apiUsageToday: number;
   apiUsageLimit: number;
 }
-
-/** API key item status */
-export type ApiKeyStatus = "active" | "revoked" | "expired";
 
 /** API Key item definition */
 export interface ApiKeyItem {
