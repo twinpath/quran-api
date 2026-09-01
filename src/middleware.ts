@@ -10,8 +10,8 @@ export function middleware(request: NextRequest) {
     request.cookies.get("better-auth.session_token")?.value ||
     request.cookies.get("__Secure-better-auth.session_token")?.value;
 
-  // Protect /account routes
-  if (pathname.startsWith("/account")) {
+  // Protect /account and /auth/create-password routes (requires active session)
+  if (pathname.startsWith("/account") || pathname === "/auth/create-password") {
     if (!sessionToken) {
       const signinUrl = new URL("/auth/signin", request.url);
       signinUrl.searchParams.set("redirect", pathname);
@@ -19,7 +19,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect authenticated users away from auth pages to /account
+  // Redirect authenticated users away from public auth pages to /account
   if (pathname === "/auth/signin" || pathname === "/auth/signup") {
     if (sessionToken) {
       return NextResponse.redirect(new URL("/account", request.url));
@@ -30,5 +30,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/auth/signin", "/auth/signup"],
+  matcher: [
+    "/account/:path*",
+    "/auth/signin",
+    "/auth/signup",
+    "/auth/create-password",
+  ],
 };

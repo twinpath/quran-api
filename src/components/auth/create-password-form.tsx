@@ -25,9 +25,13 @@ export function CreatePasswordForm({ isLoading = false }: CreatePasswordFormProp
     if (session?.user) {
       async function checkAlreadyHasPassword() {
         try {
+          const userObj = (session?.user ?? {}) as unknown as Record<string, unknown>;
+          const hasUserPassword = Boolean(userObj.password || userObj.passwordHash);
+
           const { data: accounts } = await authClient.listAccounts();
-          const hasCredential = accounts?.some((a) => a.providerId === "credential");
-          if (hasCredential) {
+          const hasCredentialAccount = accounts?.some((a) => a.providerId === "credential");
+
+          if (hasUserPassword || hasCredentialAccount) {
             toast.info("Your account already has a password.");
             router.push("/account");
           }
