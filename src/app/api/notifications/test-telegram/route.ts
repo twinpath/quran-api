@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const botToken =
       (env as Record<string, string> | undefined)?.TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN;
 
-    const message = `⚡ <b>Quran API Alert System Test</b>\n\nHello <b>${authUser.name || "Developer"}</b>!\nYour Telegram notification setup for rate limits and quota alerts is working successfully.`;
+    const message = `[ALERT] <b>Quran API Alert System Test</b>\n\nHello <b>${authUser.name || "Developer"}</b>!\nYour Telegram notification setup for rate limits and quota alerts is working successfully.`;
 
     const result = await sendTelegramAlert({
       chatId,

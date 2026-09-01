@@ -73,13 +73,13 @@ export async function POST(request: Request) {
           await sendTelegramAlert({
             chatId,
             botToken,
-            message: `🤖 <b>Quran API Bot Connected!</b>\n\nSelamat datang, <b>${senderName}</b>!\nAkun Telegram Anda berhasil terhubung dengan akun Quran API.\n\nChat ID: <code>${chatId}</code>\nAnda sekarang akan menerima notifikasi instan saat penggunaan API Key mencapai 80% kuota harian.`,
+            message: `[BOT] <b>Quran API Bot Connected!</b>\n\nSelamat datang, <b>${senderName}</b>!\nAkun Telegram Anda berhasil terhubung dengan akun Quran API.\n\nChat ID: <code>${chatId}</code>\nAnda sekarang akan menerima notifikasi instan saat penggunaan API Key mencapai 80% kuota harian.`,
           });
         } else {
           await sendTelegramAlert({
             chatId,
             botToken,
-            message: `⚠️ <b>Token Koneksi Tidak Valid</b>\n\nToken koneksi Telegram ini tidak valid atau sudah kadaluarsa.\nSilakan buka halaman <b>Account Settings</b> pada dashboard Quran API dan klik tombol <b>Connect Telegram Bot</b> kembali.`,
+            message: `[ALERT] <b>Token Koneksi Tidak Valid</b>\n\nToken koneksi Telegram ini tidak valid atau sudah kadaluarsa.\nSilakan buka halaman <b>Account Settings</b> pada dashboard Quran API dan klik tombol <b>Connect Telegram Bot</b> kembali.`,
           });
         }
       } else {
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
         await sendTelegramAlert({
           chatId,
           botToken,
-          message: `🤖 <b>Quran API Bot</b>\n\nHalo <b>${senderName}</b>!\n\nTelegram Chat ID Anda: <code>${chatId}</code>\n\nUntuk menghubungkan otomatis akun Quran API Anda, silakan klik tombol <b>Connect Telegram Bot</b> di halaman Account Settings dashboard Quran API.`,
+          message: `[BOT] <b>Quran API Bot</b>\n\nHalo <b>${senderName}</b>!\n\nTelegram Chat ID Anda: <code>${chatId}</code>\n\nUntuk menghubungkan otomatis akun Quran API Anda, silakan klik tombol <b>Connect Telegram Bot</b> di halaman Account Settings dashboard Quran API.`,
         });
       }
     }
