@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { User, Key, Settings } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,14 +12,18 @@ const ICON_MAP = {
   Settings,
 } as const;
 
+const emptySubscribe = () => () => {};
+
 export function AccountNavigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Hydration safety using React useSyncExternalStore
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   // Match current active pathname to tabs or default to /account
   const activeValue = ACCOUNT_TABS.some((tab) => tab.href === pathname)

@@ -114,6 +114,31 @@ export const SITE_PAGE_METADATA = {
       "Manage your personal profile, authentication, and API access keys for Quran Edge API.",
     path: "/account",
   },
+  signin: {
+    title: "Sign In",
+    description: "Sign in to your Quran Edge API developer account.",
+    path: "/auth/signin",
+  },
+  signup: {
+    title: "Sign Up",
+    description: "Create a free Quran Edge API developer account.",
+    path: "/auth/signup",
+  },
+  verifyEmail: {
+    title: "Verify Email",
+    description: "Verify your email address to activate your Quran Edge API account.",
+    path: "/auth/verify-email",
+  },
+  createPassword: {
+    title: "Set Password",
+    description: "Set a password to complete your Quran Edge API account setup.",
+    path: "/auth/create-password",
+  },
+  forgotPassword: {
+    title: "Forgot Password",
+    description: "Reset your Quran Edge API account password.",
+    path: "/auth/forgot-password",
+  },
 } as const;
 
 /** Data source attribution */

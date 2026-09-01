@@ -7,5 +7,7 @@ export * from "./about";
 export * from "./quickstart";
 export * from "./status";
 export * from "./account";
+export * from "./auth";
+
 
 
