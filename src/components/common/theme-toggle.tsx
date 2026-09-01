@@ -13,9 +13,9 @@ export function ThemeToggle() {
       <TooltipTrigger
         render={
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
-            className="relative h-9 w-9"
+            className="relative h-9 w-9 cursor-pointer"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           />
         }
