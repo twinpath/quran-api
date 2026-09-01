@@ -17,10 +17,12 @@ export function NotificationPreferencesSection({
   telegramConnectUrl = "",
   isTestingTelegram = false,
   isDisconnectingTelegram = false,
+  isConnectingTelegram = false,
   onTogglePreference,
   onUpdateTelegramChatId,
   onTestTelegramAlert,
   onDisconnectTelegram,
+  onConnectTelegram,
   onSavePreferences,
   isLoading = false,
 }: NotificationPreferencesSectionProps) {
@@ -33,7 +35,6 @@ export function NotificationPreferencesSection({
     setTimeout(() => setIsSaved(false), 2000);
   };
 
-  const botDeepLink = telegramConnectUrl || `https://t.me/${telegramBotUsername}`;
   const isTelegramConnected = Boolean(telegramChatId && telegramChatId.trim().length > 0);
 
   if (isLoading) {
@@ -100,15 +101,27 @@ export function NotificationPreferencesSection({
                   Telegram Chat ID
                 </label>
                 <div className="flex items-center gap-2">
-                  <a
-                    href={botDeepLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isConnectingTelegram}
+                    onClick={onConnectTelegram}
+                    className="h-7 text-xs gap-1.5 cursor-pointer font-medium"
                   >
-                    <ExternalLink className="h-3 w-3" />
-                    Connect Telegram Bot (@{telegramBotUsername})
-                  </a>
+                    {isConnectingTelegram ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Generating Link...
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-3.5 w-3.5 text-sky-500" />
+                        Connect Bot (@{telegramBotUsername})
+                        <ExternalLink className="h-3 w-3 opacity-60" />
+                      </>
+                    )}
+                  </Button>
                   {isTelegramConnected && (
                     <Button
                       type="button"
@@ -116,7 +129,7 @@ export function NotificationPreferencesSection({
                       size="sm"
                       disabled={isDisconnectingTelegram}
                       onClick={onDisconnectTelegram}
-                      className="h-6 px-2 text-[11px] text-destructive hover:text-destructive hover:bg-destructive/10 gap-1 cursor-pointer"
+                      className="h-7 px-2 text-[11px] text-destructive hover:text-destructive hover:bg-destructive/10 gap-1 cursor-pointer"
                     >
                       <Unlink className="h-3 w-3" />
                       Disconnect

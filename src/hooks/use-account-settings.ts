@@ -34,8 +34,9 @@ export function useAccountSettings(): UseAccountSettingsReturn {
   const [telegramConnectUrl, setTelegramConnectUrl] = useState<string>("");
   const [isTestingTelegram, setIsTestingTelegram] = useState<boolean>(false);
   const [isDisconnectingTelegram, setIsDisconnectingTelegram] = useState<boolean>(false);
+  const [isConnectingTelegram, setIsConnectingTelegram] = useState<boolean>(false);
 
-  // Fetch real linked accounts, notification settings, and Telegram deep link token on mount
+  // Fetch real linked accounts and notification settings on mount
   useEffect(() => {
     async function fetchLinkedAccountsAndSettings() {
       try {
@@ -80,18 +81,6 @@ export function useAccountSettings(): UseAccountSettingsReturn {
             }
           }
         }
-
-        // Fetch Telegram deep link connect token
-        const tokenRes = await fetch("/api/account/notifications/telegram-token");
-        if (tokenRes.ok) {
-          const tokenData = (await tokenRes.json()) as {
-            success?: boolean;
-            data?: { deepLink?: string };
-          };
-          if (tokenData.success && tokenData.data?.deepLink) {
-            setTelegramConnectUrl(tokenData.data.deepLink);
-          }
-        }
       } catch (err) {
         console.error("Failed to fetch linked accounts or notification settings:", err);
       } finally {
@@ -100,6 +89,31 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     }
     fetchLinkedAccountsAndSettings();
   }, [session]);
+
+  const handleConnectTelegram = async () => {
+    setIsConnectingTelegram(true);
+    try {
+      const tokenRes = await fetch("/api/account/notifications/telegram-token");
+      const tokenData = (await tokenRes.json()) as {
+        success?: boolean;
+        data?: { deepLink?: string };
+        error?: string;
+      };
+
+      if (tokenRes.ok && tokenData.success && tokenData.data?.deepLink) {
+        const link = tokenData.data.deepLink;
+        setTelegramConnectUrl(link);
+        window.open(link, "_blank", "noopener,noreferrer");
+      } else {
+        toast.error(tokenData.error || "Failed to generate Telegram connection link");
+      }
+    } catch (err) {
+      console.error("Connect Telegram error:", err);
+      toast.error("An error occurred while connecting Telegram Bot");
+    } finally {
+      setIsConnectingTelegram(false);
+    }
+  };
 
   const handleTogglePreference = (key: "usageAlerts" | "emailNotifications") => {
     setSettings((prev) => ({
@@ -322,10 +336,12 @@ export function useAccountSettings(): UseAccountSettingsReturn {
     telegramConnectUrl,
     isTestingTelegram,
     isDisconnectingTelegram,
+    isConnectingTelegram,
     handleTogglePreference,
     handleUpdateTelegramChatId,
     handleTestTelegramAlert,
     handleDisconnectTelegram,
+    handleConnectTelegram,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,

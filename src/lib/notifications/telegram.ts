@@ -88,6 +88,23 @@ export async function createTelegramConnectToken(
   env?: CloudflareEnv
 ): Promise<string> {
   const db = getDb(env);
+  const now = new Date();
+
+  // Check if an unexpired token already exists for this user
+  try {
+    const existing = await db
+      .select()
+      .from(telegramConnectTokens)
+      .where(and(eq(telegramConnectTokens.userId, userId), gt(telegramConnectTokens.expiresAt, now)))
+      .limit(1);
+
+    if (existing.length > 0 && existing[0].token) {
+      return existing[0].token;
+    }
+  } catch {
+    // Fall back to creating a new token
+  }
+
   const rawId = crypto.randomUUID().replace(/-/g, "");
   const token = `tok_${rawId.slice(0, 16)}`;
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes TTL

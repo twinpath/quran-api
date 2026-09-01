@@ -20,10 +20,12 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
     telegramConnectUrl,
     isTestingTelegram,
     isDisconnectingTelegram,
+    isConnectingTelegram,
     handleTogglePreference,
     handleUpdateTelegramChatId,
     handleTestTelegramAlert,
     handleDisconnectTelegram,
+    handleConnectTelegram,
     handleLinkGoogle,
     handleUnlinkGoogle,
     handleUpdatePassword,
@@ -76,10 +78,12 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
           telegramConnectUrl={telegramConnectUrl}
           isTestingTelegram={isTestingTelegram}
           isDisconnectingTelegram={isDisconnectingTelegram}
+          isConnectingTelegram={isConnectingTelegram}
           onTogglePreference={handleTogglePreference}
           onUpdateTelegramChatId={handleUpdateTelegramChatId}
           onTestTelegramAlert={handleTestTelegramAlert}
           onDisconnectTelegram={handleDisconnectTelegram}
+          onConnectTelegram={handleConnectTelegram}
           onSavePreferences={handleSavePreferences}
           isLoading={showSkeleton}
         />
