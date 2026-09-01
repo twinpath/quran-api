@@ -54,6 +54,7 @@ export function CreateApiKeySheet({
   onClose,
 }: CreateApiKeySheetProps) {
   const [copied, setCopied] = useState(false);
+  const [typedInput, setTypedInput] = useState("");
 
   const handleCopyRawKey = () => {
     if (!createdRawKey) return;
@@ -63,7 +64,32 @@ export function CreateApiKeySheet({
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const comboboxItems = EXPIRATION_OPTIONS.map((opt) => opt.value);
+  // Extract digits from typed input if any
+  const matchedDigits = typedInput.replace(/\D/g, "");
+  const parsedCustomDays = matchedDigits ? parseInt(matchedDigits, 10) : null;
+
+  // Build items array
+  const baseItems = EXPIRATION_OPTIONS.filter((o) => o.value !== "custom").map((o) => o.value);
+  const dynamicItems = parsedCustomDays && parsedCustomDays > 0 ? [`custom_${parsedCustomDays}`, ...baseItems] : baseItems;
+
+  const currentDisplayValue =
+    expirationOption === "custom"
+      ? `custom_${customDays}`
+      : expirationOption;
+
+  const handleSelectValue = (val: string | null) => {
+    if (!val) return;
+
+    if (val.startsWith("custom_")) {
+      const days = parseInt(val.replace("custom_", ""), 10);
+      if (days > 0) {
+        onExpirationOptionChange("custom");
+        onCustomDaysChange(days);
+      }
+    } else {
+      onExpirationOptionChange(val as ExpirationOption);
+    }
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => {
@@ -155,55 +181,52 @@ export function CreateApiKeySheet({
                 </label>
                 
                 <Combobox
-                  items={comboboxItems}
-                  value={expirationOption}
-                  onValueChange={(val) => {
-                    if (val) onExpirationOptionChange(val as ExpirationOption);
-                  }}
+                  items={dynamicItems}
+                  value={currentDisplayValue}
+                  onValueChange={handleSelectValue}
                 >
                   <ComboboxInput
-                    placeholder="Select expiration preset..."
+                    placeholder="Select preset or type custom days (e.g. 45)..."
                     className="w-full text-xs"
                     disabled={isSubmitting}
+                    onChange={(e) => setTypedInput(e.currentTarget.value)}
                     showTrigger
                   />
                   <ComboboxContent className="w-full z-50">
                     <ComboboxList>
-                      {EXPIRATION_OPTIONS.map((opt) => (
+                      {parsedCustomDays && parsedCustomDays > 0 && (
+                        <ComboboxItem
+                          key={`custom_${parsedCustomDays}`}
+                          value={`custom_${parsedCustomDays}`}
+                          className="text-xs py-2 bg-primary/10 font-medium"
+                        >
+                          <div className="flex items-center justify-between w-full pr-1">
+                            <span className="font-semibold text-primary">Use {parsedCustomDays} Days (Custom)</span>
+                          </div>
+                        </ComboboxItem>
+                      )}
+
+                      {EXPIRATION_OPTIONS.filter((o) => o.value !== "custom").map((opt) => (
                         <ComboboxItem key={opt.value} value={opt.value} className="text-xs py-2">
                           <div className="flex items-center justify-between w-full pr-1">
                             <span className="font-medium text-foreground">{opt.label}</span>
                           </div>
                         </ComboboxItem>
                       ))}
-                      <ComboboxEmpty>No option found</ComboboxEmpty>
+                      <ComboboxEmpty>No option found. Type a number for custom days.</ComboboxEmpty>
                     </ComboboxList>
                   </ComboboxContent>
                 </Combobox>
 
                 <p className="text-[11px] text-muted-foreground">
-                  The token will automatically expire after the selected duration.
+                  Select a preset or type a number directly into the Combobox for custom days.
                 </p>
               </div>
 
               {expirationOption === "custom" && (
-                <div className="space-y-2 p-3 bg-muted/30 border border-border">
-                  <label htmlFor="custom-days-input" className="text-xs font-medium text-foreground">
-                    Custom Expiration (Days)
-                  </label>
-                  <Input
-                    id="custom-days-input"
-                    type="number"
-                    min={1}
-                    max={1095}
-                    value={customDays}
-                    onChange={(e) => onCustomDaysChange(parseInt(e.target.value, 10) || 1)}
-                    className="text-xs"
-                    disabled={isSubmitting}
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Specify valid lifetime in days (e.g. 45 days).
-                  </p>
+                <div className="p-3 bg-primary/5 border border-primary/20 flex items-center justify-between text-xs text-foreground">
+                  <span className="font-medium">Selected Custom Expiration:</span>
+                  <span className="font-semibold text-primary">{customDays} Days</span>
                 </div>
               )}
 
