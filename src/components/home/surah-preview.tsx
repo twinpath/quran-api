@@ -9,6 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { LoadingProps } from "@/types/components";
 
+const FALLBACK_PREVIEW_SURAHS = [
+  { number: 1, nameLatin: "Al-Fatihah", translationName: "Pembukaan", name: "الفاتحة", revelationType: "Makkiyah", numberOfAyah: 7 },
+  { number: 2, nameLatin: "Al-Baqarah", translationName: "Sapi Betina", name: "البقرة", revelationType: "Madaniyah", numberOfAyah: 286 },
+  { number: 3, nameLatin: "Ali 'Imran", translationName: "Keluarga 'Imran", name: "آل عمران", revelationType: "Madaniyah", numberOfAyah: 200 },
+];
+
 export async function SurahPreview({ isLoading }: LoadingProps = {}) {
   let surahList: Array<{ number: string | number; nameLatin: string; translationName: string; name: string; revelationType: string; numberOfAyah: string | number }> = [];
   if (!isLoading) {
@@ -20,13 +26,15 @@ export async function SurahPreview({ isLoading }: LoadingProps = {}) {
     }
   }
 
-  const previewSurahs = isLoading || surahList.length === 0
+  const previewSurahs = isLoading
     ? [
         { number: 1, nameLatin: "", translationName: "", name: "", revelationType: "", numberOfAyah: "" },
         { number: 2, nameLatin: "", translationName: "", name: "", revelationType: "", numberOfAyah: "" },
         { number: 3, nameLatin: "", translationName: "", name: "", revelationType: "", numberOfAyah: "" },
       ]
-    : surahList.slice(0, 3);
+    : surahList.length > 0
+    ? surahList.slice(0, 3)
+    : FALLBACK_PREVIEW_SURAHS;
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
