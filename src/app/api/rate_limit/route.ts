@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getKv } from "@/lib/db";
+import { getKv } from "@/lib/kv";
 import { resolveIdentity, getRateLimitStatus } from "@/lib/rate-limiter";
 import type { ApiResponse } from "@/types/api";
 import type { RateLimitStatusResponse } from "@/types/rate-limit";

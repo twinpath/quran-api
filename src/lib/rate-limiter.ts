@@ -1,10 +1,11 @@
 /**
  * GitHub-style KV-based rate limiter for API endpoints.
- * Supports dual identity (IP & API Key), hourly reset windows,
+ * Supports dual identity (IP, API Key, or User), hourly reset windows,
  * resource-based quotas (core & search), and rate limit status introspection.
  */
 
 import { RATE_LIMITS, RATE_LIMIT_WINDOW_SECONDS } from "@/constants/rate-limit";
+import { getUserIdByApiKeyHash } from "@/lib/db/api-keys";
 import type {
   RateLimitResult,
   RateLimitIdentity,
@@ -61,33 +62,13 @@ export async function resolveIdentity(
   // If API Key is provided, validate key format / presence
   if (apiKey) {
     const keyHash = await hashString(apiKey);
-    // Valid keys: any key starting with "qr_live_", "quran_live_", or "test_"
     const isValidKey =
       apiKey.startsWith("qr_live_") ||
       apiKey.startsWith("quran_live_") ||
       apiKey.startsWith("test_");
 
-      if (isValidKey) {
-        let userId: string | undefined;
-        try {
-          const { getDb } = await import("@/lib/db");
-          const { apiKeys } = await import("@/lib/db/schema");
-          const { eq, and } = await import("drizzle-orm");
-
-          const db = getDb(env);
-          const rows = await db
-            .select({ userId: apiKeys.userId })
-            .from(apiKeys)
-            .where(and(eq(apiKeys.keyHash, keyHash), eq(apiKeys.status, "active")))
-            .limit(1);
-
-          if (rows.length > 0 && rows[0].userId) {
-            userId = rows[0].userId;
-          }
-        } catch {
-          // In local Next.js dev server without D1 binding, resolve valid keys to active user account
-          userId = "Q40ITo9TvIDdwCUxLzcrfdSMsWOzH4O2";
-        }
+    if (isValidKey) {
+      const userId = await getUserIdByApiKeyHash(env, keyHash);
 
       if (userId) {
         return {
@@ -131,7 +112,7 @@ export async function checkRateLimit(
   const tier = identity.authenticated ? "authenticated" : "unauthenticated";
   const limit = RATE_LIMITS[tier][resource];
 
-  // If KV is not available (e.g. mock/build time), return permissive result
+  // If KV is not available, return permissive result
   if (!kv) {
     return {
       allowed: true,

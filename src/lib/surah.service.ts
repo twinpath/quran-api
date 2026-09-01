@@ -1,5 +1,6 @@
 import { eq, and } from "drizzle-orm";
-import { getDb, getKv } from "@/lib/db";
+import { getDb } from "@/lib/db";
+import { getKv } from "@/lib/kv";
 import { surahs, ayahs } from "@/lib/db/schema";
 import { getFromCache, putInCache } from "@/lib/cache-helper";
 import type {

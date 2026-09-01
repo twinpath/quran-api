@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getKv } from "@/lib/db";
+import { getKv } from "@/lib/kv";
 import { resolveIdentity, checkRateLimit, rateLimitHeaders } from "@/lib/rate-limiter";
 import { logTelemetry } from "@/lib/telemetry";
 import { getSurahDetail } from "@/lib/surah.service";

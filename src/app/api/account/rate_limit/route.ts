@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getKv } from "@/lib/db";
+import { getKv } from "@/lib/kv";
 import { getAuth } from "@/lib/auth";
 import { getAccountRateLimitStatus } from "@/lib/rate-limiter";
 import type { ApiResponse } from "@/types/api";
