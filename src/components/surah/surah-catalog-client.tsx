@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Search, Filter, BookOpen, X, ArrowUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -196,18 +197,23 @@ export function SurahCatalogClient({ initialSurahs }: SurahCatalogClientProps) {
               </Combobox>
             </div>
 
-            {/* Reset Filters button */}
-            {isFiltered && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetFilters}
-                className="h-9 px-3 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-all"
-              >
-                <X className="h-3.5 w-3.5" />
-                Reset
-              </Button>
-            )}
+            {/* Reset Filters button - Persistent layout to prevent layout shift */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetFilters}
+              disabled={!isFiltered}
+              tabIndex={isFiltered ? 0 : -1}
+              className={cn(
+                "h-9 px-3 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-all duration-200",
+                isFiltered
+                  ? "opacity-100 scale-100 pointer-events-auto visible"
+                  : "opacity-0 scale-95 pointer-events-none invisible"
+              )}
+            >
+              <X className="h-3.5 w-3.5" />
+              Reset
+            </Button>
           </div>
         </div>
       </div>
