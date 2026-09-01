@@ -35,8 +35,8 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
 
   if (!mounted) {
     return (
-      <div className={cn("group relative border border-border bg-muted/50 font-mono text-sm", className)}>
-        <div className="flex items-center justify-between border-b border-border/60 px-4 py-2">
+      <div className={cn("group relative border border-border bg-card font-mono text-sm", className)}>
+        <div className="flex items-center justify-between border-b border-border/80 bg-muted/40 px-4 py-2">
           {language && (
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {language}
@@ -54,9 +54,9 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
   }
 
   return (
-    <div className={cn("group relative border border-border bg-muted/50 font-mono text-sm", className)}>
+    <div className={cn("group relative border border-border bg-card font-mono text-sm", className)}>
       {/* Header bar */}
-      <div className="flex items-center justify-between border-b border-border/60 px-4 py-2">
+      <div className="flex items-center justify-between border-b border-border/80 bg-muted/40 px-4 py-2">
         {language && (
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {language}
@@ -95,7 +95,7 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
                 return (
                   <div key={i} {...lineProps} className={cn("flex", lineProps.className)}>
                     {showLineNumbers && (
-                      <span className="mr-4 inline-block w-6 select-none text-right text-muted-foreground/50 shrink-0">
+                      <span className="mr-4 inline-block w-6 select-none text-right text-muted-foreground/80 shrink-0">
                         {i + 1}
                       </span>
                     )}
