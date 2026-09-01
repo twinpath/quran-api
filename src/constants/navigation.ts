@@ -7,7 +7,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "API Playground", href: "/playground" },
   { label: "Status", href: "/status" },
   { label: "About", href: "/about" },
-  { label: "Account", href: "/account" },
 ];
 
 /** Footer sections */

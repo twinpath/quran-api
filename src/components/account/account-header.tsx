@@ -1,8 +1,26 @@
-import { ShieldCheck, Zap } from "lucide-react";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { ShieldCheck, Zap, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { DEFAULT_USER_PROFILE } from "@/constants/account";
+import { authClient } from "@/lib/auth-client";
 
 export function AccountHeader() {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+      toast.info("Logged out successfully");
+      router.push("/");
+    } catch {
+      toast.error("Failed to sign out");
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-6 border-b border-border">
       <div>
@@ -20,9 +38,21 @@ export function AccountHeader() {
         </p>
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 px-3 py-2 border border-border">
-        <Zap className="h-4 w-4 text-amber-500" />
-        <span>Rate Limit Quota: <strong>{DEFAULT_USER_PROFILE.apiUsageToday.toLocaleString()} / {DEFAULT_USER_PROFILE.apiUsageLimit.toLocaleString()} req/day</strong></span>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 px-3 py-2 border border-border">
+          <Zap className="h-4 w-4 text-amber-500" />
+          <span>Quota: <strong>{DEFAULT_USER_PROFILE.apiUsageToday.toLocaleString()} / {DEFAULT_USER_PROFILE.apiUsageLimit.toLocaleString()} req/day</strong></span>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSignOut}
+          className="gap-1.5 text-xs font-semibold cursor-pointer text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+          Log Out
+        </Button>
       </div>
     </div>
   );
