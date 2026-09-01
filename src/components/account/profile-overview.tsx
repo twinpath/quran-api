@@ -14,7 +14,7 @@ export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
   const showSkeleton = isLoading || isSessionPending;
   const used = rateLimitData?.used ?? profile.apiUsageToday;
   const limit = rateLimitData?.limit ?? profile.apiUsageLimit;
-  const usagePercentage = Math.round((used / limit) * 100);
+  const usagePercentage = Number(((used / limit) * 100).toFixed(2));
 
   return (
     <div className="space-y-6">
