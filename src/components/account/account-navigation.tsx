@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { User, Key, Settings } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,6 +15,11 @@ const ICON_MAP = {
 export function AccountNavigation() {
   const pathname = usePathname();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Match current active pathname to tabs or default to /account
   const activeValue = ACCOUNT_TABS.some((tab) => tab.href === pathname)
@@ -23,6 +29,32 @@ export function AccountNavigation() {
   const handleTabChange = (value: string) => {
     router.push(value);
   };
+
+  if (!mounted) {
+    return (
+      <div className="w-full mb-6">
+        <div className="inline-flex w-full sm:w-auto h-auto p-1 bg-muted/80 dark:bg-muted border border-border justify-start gap-1">
+          {ACCOUNT_TABS.map((tab) => {
+            const Icon = ICON_MAP[tab.iconName as keyof typeof ICON_MAP] || User;
+            const isActive = tab.href === (pathname || "/account");
+            return (
+              <div
+                key={tab.value}
+                className={`py-2.5 px-4 text-sm font-semibold transition-all rounded-none border text-muted-foreground inline-flex items-center ${
+                  isActive
+                    ? "bg-card text-card-foreground border-border shadow-xs"
+                    : "border-transparent"
+                }`}
+              >
+                <Icon className="h-4 w-4 mr-2 text-primary" />
+                {tab.label}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mb-6">
