@@ -89,7 +89,7 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
           <Button
             onClick={() => setIsCreating(!isCreating)}
             size="sm"
-            className="gap-2 shrink-0"
+            className="gap-2 shrink-0 cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Create New Key
@@ -114,8 +114,8 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
                   autoFocus
                 />
                 <div className="flex items-center gap-2">
-                  <Button type="submit" size="sm">Generate</Button>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setIsCreating(false)}>
+                  <Button type="submit" size="sm" className="cursor-pointer">Generate</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setIsCreating(false)} className="cursor-pointer">
                     Cancel
                   </Button>
                 </div>
@@ -172,7 +172,7 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
                             variant="outline"
                             size="sm"
                             onClick={() => handleCopyKey(keyItem)}
-                            className="gap-1.5 text-xs"
+                            className="gap-1.5 text-xs cursor-pointer"
                           >
                             {copiedId === keyItem.id ? (
                               <>
@@ -190,7 +190,7 @@ export function ApiKeysManager({ isLoading = false }: ApiKeysManagerProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleRevokeKey(keyItem.id, keyItem.name)}
-                            className="gap-1 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                            className="gap-1 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                             Revoke

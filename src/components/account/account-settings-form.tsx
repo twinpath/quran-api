@@ -66,7 +66,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
                   variant={settings.usageAlerts ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleToggle("usageAlerts")}
-                  className="w-20"
+                  className="w-20 cursor-pointer"
                 >
                   {settings.usageAlerts ? "Enabled" : "Disabled"}
                 </Button>
@@ -88,7 +88,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
                   variant={settings.emailNotifications ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleToggle("emailNotifications")}
-                  className="w-20"
+                  className="w-20 cursor-pointer"
                 >
                   {settings.emailNotifications ? "Enabled" : "Disabled"}
                 </Button>
@@ -113,7 +113,7 @@ export function AccountSettingsForm({ isLoading = false }: AccountSettingsFormPr
           )}
 
           <div className="pt-4 border-t border-border flex justify-end">
-            <Button type="submit" disabled={isLoading} className="gap-2">
+            <Button type="submit" disabled={isLoading} className="gap-2 cursor-pointer">
               {isSaved ? (
                 <>
                   <Check className="h-4 w-4 text-emerald-400" />

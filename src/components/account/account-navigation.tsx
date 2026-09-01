@@ -34,7 +34,7 @@ export function AccountNavigation() {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="py-2.5 px-4 text-sm font-semibold transition-all rounded-none border border-transparent text-muted-foreground hover:text-foreground data-active:bg-card data-active:text-card-foreground data-active:border-border dark:data-active:bg-card dark:data-active:text-card-foreground dark:data-active:border-border shadow-xs"
+                className="py-2.5 px-4 text-sm font-semibold transition-all rounded-none border border-transparent text-muted-foreground hover:text-foreground data-active:bg-card data-active:text-card-foreground data-active:border-border dark:data-active:bg-card dark:data-active:text-card-foreground dark:data-active:border-border shadow-xs cursor-pointer"
               >
                 <Icon className="h-4 w-4 mr-2 text-primary" />
                 {tab.label}
