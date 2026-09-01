@@ -84,7 +84,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
     name: "Get Surah List",
     path: API_PATHS.surahList,
     method: "GET",
-    description: "Retrieve a list of all 114 surahs from the D1 database. Edge-cached using KV.",
+    description: "Retrieve a list of all 114 surahs with basic metadata including Arabic names, transliterations, and revelation types.",
     pathParams: [],
     sampleResponse: { success: true, data: sampleSurahList } as unknown as Record<string, unknown>,
   },
@@ -93,7 +93,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
     name: "Get Surah Detail",
     path: API_PATHS.surahDetail("{surahNumber}"),
     method: "GET",
-    description: "Retrieve detailed surah data (with all ayahs, translations, and Tafsir) from D1. Edge-cached using KV.",
+    description: "Retrieve complete surah data including all verses (ayahs), Indonesian translations, and Tafsir Kemenag.",
     pathParams: [
       {
         name: "surahNumber",
@@ -110,7 +110,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
     name: "Get Ayah Detail",
     path: API_PATHS.surahAyahDetail("{surahNumber}", "{ayahNumber}"),
     method: "GET",
-    description: "Retrieve a specific verse (ayah) with Arabic text, translation, and Tafsir from D1. Edge-cached using KV.",
+    description: "Retrieve a specific verse (ayah) with Arabic text, Indonesian translation, and Tafsir Kemenag.",
     pathParams: [
       {
         name: "surahNumber",
@@ -134,7 +134,7 @@ export const API_ENDPOINTS: ApiEndpoint[] = [
     name: "Search Ayahs",
     path: API_PATHS.search("{query}"),
     method: "GET",
-    description: "Search ayahs by translation text or surah name using SQL LIKE query on D1.",
+    description: "Search verses across all surahs by matching translation text or surah name keywords.",
     pathParams: [
       {
         name: "query",
