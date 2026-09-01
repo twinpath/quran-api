@@ -34,7 +34,7 @@ export function PlaygroundPreview() {
           </div>
 
           <div className="min-w-0 lg:col-span-6">
-            <Card className="border-border/80 bg-background/80 shadow-md">
+            <Card className="border-border/80 shadow-md">
               <CardContent className="min-w-0 p-5">
                 <div className="flex min-w-0 items-center justify-between gap-3 border-b border-border/60 pb-3">
                   <div className="flex min-w-0 items-center gap-2">
