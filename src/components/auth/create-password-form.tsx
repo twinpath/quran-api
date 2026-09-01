@@ -8,25 +8,51 @@ import { AuthCardWrapper } from "./auth-card-wrapper";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/common/password-input";
 import { AUTH_MESSAGES } from "@/constants/auth";
+import { authClient, useSession } from "@/lib/auth-client";
 import type { CreatePasswordFormProps, CreatePasswordFormData } from "@/types/auth";
+import { useEffect } from "react";
 
 export function CreatePasswordForm({ isLoading = false }: CreatePasswordFormProps) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [formData, setFormData] = useState<CreatePasswordFormData>({
     password: "",
     confirmPassword: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (session?.user) {
+      async function checkAlreadyHasPassword() {
+        try {
+          const { data: accounts } = await authClient.listAccounts();
+          const hasCredential = accounts?.some((a) => a.providerId === "credential");
+          if (hasCredential) {
+            toast.info("Your account already has a password.");
+            router.push("/account");
+          }
+        } catch {
+          // ignore check failure
+        }
+      }
+      checkAlreadyHasPassword();
+    }
+  }, [session, router]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.password || !formData.confirmPassword) {
       toast.error("Please fill in both password fields");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
       return;
     }
 
@@ -36,11 +62,25 @@ export function CreatePasswordForm({ isLoading = false }: CreatePasswordFormProp
     }
 
     setIsSubmitting(true);
-    toast.success("Password created! Your account is now fully active with multi-login support.");
-    setTimeout(() => {
+    try {
+      const { error } = await authClient.changePassword({
+        currentPassword: "",
+        newPassword: formData.password,
+        revokeOtherSessions: false,
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to save password");
+      } else {
+        toast.success("Password created! Your account is now fully active with multi-login support.");
+        router.push("/account");
+      }
+    } catch (err) {
+      console.error("Create password error:", err);
+      toast.error("An unexpected error occurred while saving password");
+    } finally {
       setIsSubmitting(false);
-      router.push("/account");
-    }, 1200);
+    }
   };
 
   return (

@@ -7,12 +7,14 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { DEFAULT_USER_PROFILE } from "@/constants/account";
-import { useSession } from "@/lib/auth-client";
+import { useSession, authClient } from "@/lib/auth-client";
 import type { ApiResponse } from "@/types/api";
 import type { ProfileOverviewProps, UserProfile } from "@/types/account";
 import type { RateLimitStatusResponse } from "@/types/rate-limit";
+import { useRouter } from "next/navigation";
 
 export function ProfileOverview({ isLoading = false }: ProfileOverviewProps) {
+  const router = useRouter();
   const { data: session, isPending: isSessionPending } = useSession();
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
   const [rateLimitData, setRateLimitData] = useState<{ used: number; limit: number } | null>(null);
